@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "Path.hpp"
-#include "ConfigServer.hpp"
 
 /*
 *Webserver
@@ -22,8 +21,8 @@
 */
 class ConfigWebserver
 {
-	uint32_t					max_connection;
-	std::vector<ConfigServer>	config_servers;		
+	uint32_t							max_connection;
+	std::vector<std::vector<Config> >	config_servers;		
 	// ConfigServer 클래스를 폐기하고, 벡터<벡터<Config>>로 할 수도 있음
 	
 	public:

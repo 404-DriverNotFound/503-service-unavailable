@@ -14,10 +14,10 @@ class Webserver
 	std::vector<Server>		servers;
 
 	public:
-					Webserver(const Path&); // config 파일의 경로를 받아서 초기화
-	void			start_server();			// 서버 시작
+					Webserver(const Path&); 	// config 파일의 경로를 받아서 초기화
+	void			create_server(const std::vector<Config>& config_locations);
+	void			start_server();				// 서버 시작
 
 	private:
-	void			parse_config(const Path&);			// config 파일 해석
-	void			create_server(const ConfigServer&);
+	void			parse_config(const Path& path_config);			// config 파일 해석
 };
