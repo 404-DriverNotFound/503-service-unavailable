@@ -1,0 +1,172 @@
+
+./get_token.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	53                   	push   rbx
+   9:	48 83 ec 58          	sub    rsp,0x58
+   d:	48 89 7d c8          	mov    QWORD PTR [rbp-0x38],rdi
+  11:	48 89 75 c0          	mov    QWORD PTR [rbp-0x40],rsi
+  15:	48 89 55 b8          	mov    QWORD PTR [rbp-0x48],rdx
+  19:	48 89 4d b0          	mov    QWORD PTR [rbp-0x50],rcx
+  1d:	4c 89 45 a8          	mov    QWORD PTR [rbp-0x58],r8
+  21:	64 48 8b 04 25 28 00 	mov    rax,QWORD PTR fs:0x28
+  28:	00 00 
+  2a:	48 89 45 e8          	mov    QWORD PTR [rbp-0x18],rax
+  2e:	31 c0                	xor    eax,eax
+  30:	48 8b 45 c8          	mov    rax,QWORD PTR [rbp-0x38]
+  34:	48 89 c7             	mov    rdi,rax
+  37:	e8 00 00 00 00       	call   3c <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x3c>
+  3c:	48 89 45 e0          	mov    QWORD PTR [rbp-0x20],rax
+  40:	48 8b 45 b0          	mov    rax,QWORD PTR [rbp-0x50]
+  44:	48 89 c7             	mov    rdi,rax
+  47:	e8 00 00 00 00       	call   4c <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x4c>
+  4c:	89 45 dc             	mov    DWORD PTR [rbp-0x24],eax
+  4f:	48 8b 45 b8          	mov    rax,QWORD PTR [rbp-0x48]
+  53:	48 89 c7             	mov    rdi,rax
+  56:	e8 00 00 00 00       	call   5b <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x5b>
+  5b:	48 8b 55 a8          	mov    rdx,QWORD PTR [rbp-0x58]
+  5f:	48 8b 45 b8          	mov    rax,QWORD PTR [rbp-0x48]
+  63:	48 89 d6             	mov    rsi,rdx
+  66:	48 89 c7             	mov    rdi,rax
+  69:	e8 00 00 00 00       	call   6e <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x6e>
+  6e:	48 8d 55 e0          	lea    rdx,[rbp-0x20]
+  72:	48 8b 45 c0          	mov    rax,QWORD PTR [rbp-0x40]
+  76:	48 89 d6             	mov    rsi,rdx
+  79:	48 89 c7             	mov    rdi,rax
+  7c:	e8 00 00 00 00       	call   81 <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x81>
+  81:	84 c0                	test   al,al
+  83:	74 7d                	je     102 <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x102>
+  85:	8b 45 dc             	mov    eax,DWORD PTR [rbp-0x24]
+  88:	48 63 d8             	movsxd rbx,eax
+  8b:	48 8b 45 c0          	mov    rax,QWORD PTR [rbp-0x40]
+  8f:	48 89 c7             	mov    rdi,rax
+  92:	e8 00 00 00 00       	call   97 <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x97>
+  97:	48 8b 00             	mov    rax,QWORD PTR [rax]
+  9a:	48 8b 4d b0          	mov    rcx,QWORD PTR [rbp-0x50]
+  9e:	48 89 da             	mov    rdx,rbx
+  a1:	48 89 ce             	mov    rsi,rcx
+  a4:	48 89 c7             	mov    rdi,rax
+  a7:	e8 00 00 00 00       	call   ac <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0xac>
+  ac:	85 c0                	test   eax,eax
+  ae:	0f 94 c0             	sete   al
+  b1:	84 c0                	test   al,al
+  b3:	74 1c                	je     d1 <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0xd1>
+  b5:	8b 45 dc             	mov    eax,DWORD PTR [rbp-0x24]
+  b8:	48 63 d0             	movsxd rdx,eax
+  bb:	48 8b 45 c0          	mov    rax,QWORD PTR [rbp-0x40]
+  bf:	48 89 d6             	mov    rsi,rdx
+  c2:	48 89 c7             	mov    rdi,rax
+  c5:	e8 00 00 00 00       	call   ca <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0xca>
+  ca:	b8 01 00 00 00       	mov    eax,0x1
+  cf:	eb 36                	jmp    107 <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x107>
+  d1:	48 8b 45 c0          	mov    rax,QWORD PTR [rbp-0x40]
+  d5:	48 89 c7             	mov    rdi,rax
+  d8:	e8 00 00 00 00       	call   dd <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0xdd>
+  dd:	0f b6 00             	movzx  eax,BYTE PTR [rax]
+  e0:	0f be d0             	movsx  edx,al
+  e3:	48 8b 45 b8          	mov    rax,QWORD PTR [rbp-0x48]
+  e7:	89 d6                	mov    esi,edx
+  e9:	48 89 c7             	mov    rdi,rax
+  ec:	e8 00 00 00 00       	call   f1 <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0xf1>
+  f1:	48 8b 45 c0          	mov    rax,QWORD PTR [rbp-0x40]
+  f5:	48 89 c7             	mov    rdi,rax
+  f8:	e8 00 00 00 00       	call   fd <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0xfd>
+  fd:	e9 6c ff ff ff       	jmp    6e <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x6e>
+ 102:	b8 00 00 00 00       	mov    eax,0x0
+ 107:	48 8b 5d e8          	mov    rbx,QWORD PTR [rbp-0x18]
+ 10b:	64 48 33 1c 25 28 00 	xor    rbx,QWORD PTR fs:0x28
+ 112:	00 00 
+ 114:	74 05                	je     11b <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x11b>
+ 116:	e8 00 00 00 00       	call   11b <_Z13get_seq_tokenRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERN9__gnu_cxx17__normal_iteratorIPcS4_EES5_S8_m+0x11b>
+ 11b:	48 83 c4 58          	add    rsp,0x58
+ 11f:	5b                   	pop    rbx
+ 120:	5d                   	pop    rbp
+ 121:	c3                   	ret    
+
+Disassembly of section .text._ZN9__gnu_cxxneIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEbRKNS_17__normal_iteratorIT_T0_EESD_:
+
+0000000000000000 <_ZN9__gnu_cxxneIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEbRKNS_17__normal_iteratorIT_T0_EESD_>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	53                   	push   rbx
+   9:	48 83 ec 18          	sub    rsp,0x18
+   d:	48 89 7d e8          	mov    QWORD PTR [rbp-0x18],rdi
+  11:	48 89 75 e0          	mov    QWORD PTR [rbp-0x20],rsi
+  15:	48 8b 45 e8          	mov    rax,QWORD PTR [rbp-0x18]
+  19:	48 89 c7             	mov    rdi,rax
+  1c:	e8 00 00 00 00       	call   21 <_ZN9__gnu_cxxneIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEbRKNS_17__normal_iteratorIT_T0_EESD_+0x21>
+  21:	48 8b 18             	mov    rbx,QWORD PTR [rax]
+  24:	48 8b 45 e0          	mov    rax,QWORD PTR [rbp-0x20]
+  28:	48 89 c7             	mov    rdi,rax
+  2b:	e8 00 00 00 00       	call   30 <_ZN9__gnu_cxxneIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEbRKNS_17__normal_iteratorIT_T0_EESD_+0x30>
+  30:	48 8b 00             	mov    rax,QWORD PTR [rax]
+  33:	48 39 c3             	cmp    rbx,rax
+  36:	0f 95 c0             	setne  al
+  39:	48 83 c4 18          	add    rsp,0x18
+  3d:	5b                   	pop    rbx
+  3e:	5d                   	pop    rbp
+  3f:	c3                   	ret    
+
+Disassembly of section .text._ZNK9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE4baseEv:
+
+0000000000000000 <_ZNK9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE4baseEv>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	48 89 7d f8          	mov    QWORD PTR [rbp-0x8],rdi
+   c:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  10:	5d                   	pop    rbp
+  11:	c3                   	ret    
+
+Disassembly of section .text._ZN9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEpLEl:
+
+0000000000000000 <_ZN9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEpLEl>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	48 89 7d f8          	mov    QWORD PTR [rbp-0x8],rdi
+   c:	48 89 75 f0          	mov    QWORD PTR [rbp-0x10],rsi
+  10:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  14:	48 8b 10             	mov    rdx,QWORD PTR [rax]
+  17:	48 8b 45 f0          	mov    rax,QWORD PTR [rbp-0x10]
+  1b:	48 01 c2             	add    rdx,rax
+  1e:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  22:	48 89 10             	mov    QWORD PTR [rax],rdx
+  25:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  29:	5d                   	pop    rbp
+  2a:	c3                   	ret    
+
+Disassembly of section .text._ZNK9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEdeEv:
+
+0000000000000000 <_ZNK9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEdeEv>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	48 89 7d f8          	mov    QWORD PTR [rbp-0x8],rdi
+   c:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  10:	48 8b 00             	mov    rax,QWORD PTR [rax]
+  13:	5d                   	pop    rbp
+  14:	c3                   	ret    
+
+Disassembly of section .text._ZN9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEppEv:
+
+0000000000000000 <_ZN9__gnu_cxx17__normal_iteratorIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEppEv>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	55                   	push   rbp
+   5:	48 89 e5             	mov    rbp,rsp
+   8:	48 89 7d f8          	mov    QWORD PTR [rbp-0x8],rdi
+   c:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  10:	48 8b 00             	mov    rax,QWORD PTR [rax]
+  13:	48 8d 50 01          	lea    rdx,[rax+0x1]
+  17:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  1b:	48 89 10             	mov    QWORD PTR [rax],rdx
+  1e:	48 8b 45 f8          	mov    rax,QWORD PTR [rbp-0x8]
+  22:	5d                   	pop    rbp
+  23:	c3                   	ret    
