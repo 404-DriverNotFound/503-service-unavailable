@@ -27,14 +27,18 @@ int					Buffer::read_buffer()
 	return len;
 }
 
-//------------------------------------------------------------------------------
-int					Buffer::get_token(std::string& token, int seq)
+/*
+* param
+* std::string&		token
+* int				sep
+*/
+int					Buffer::get_token(std::string& token, int sep)
 {
 	if (flag_token == 1)
 		token.clear();
 	while (cursor != end)
 	{
-		if (seq == *cursor)
+		if (sep == *cursor)
 		{
 			flag_token = 1;
 			cursor++;
@@ -44,4 +48,29 @@ int					Buffer::get_token(std::string& token, int seq)
 	}
 	flag_token = 0;
 	return 0;
+}
+
+//------------------------------------------------------------------------------
+int					Buffer::get_token(std::deque<uint8_t>& token, int sep)
+{
+	if (flag_token == 1)
+		token.clear();
+	while (cursor != end)
+	{
+		if (sep == *cursor)
+		{
+			flag_token = 1;
+			cursor++;
+			return 1;
+		}
+		token.push_back(*cursor++);
+	}
+	flag_token = 0;
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+ssize_t				Buffer::size() const
+{
+	return buffer - end;
 }

@@ -1,4 +1,6 @@
+#include <deque>
 #include <string>
+#include <unistd.h>
 
 struct				Buffer
 {
@@ -12,9 +14,9 @@ struct				Buffer
 					Buffer(int fd, size_t buffer_size);
 	virtual			~Buffer();
 
-	int				get_token(std::string& token, int seq);
+	int				get_token(std::string& token, int sep);
+	int				get_token(std::deque<uint8_t>& token, int sep);
 	int				read_buffer();
-	int				get_rest();
-	bool			is_eof();	
+	ssize_t			size() const;
 };
 
