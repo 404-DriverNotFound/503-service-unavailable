@@ -5,6 +5,7 @@ class Client;
 #include "Http.hpp"
 #include <sys/types.h>
 #include "Config.hpp"
+#include "Cgi.hpp"
 
 #define BUFFER_SIZE		16
 
@@ -17,6 +18,7 @@ enum e_status
 	PROC_CGI,
 	END_CGI,
 	RECV_BODY,
+	RECV_BODY_CHUNKED,
 	MAKE_MSG,
 	SEND_MSG,
 	SEND_DONE
@@ -26,10 +28,12 @@ class Client
 {
 	Socket		sock;
 	Buffer		buffer;
+	ssize_t		write_remain;
 	std::string	line;
 	e_status	status;
 	Http		req;
 	Http		res;
+	Cgi			cgi;
 	Config&		config_location;
 
 	public:
@@ -38,6 +42,7 @@ class Client
 	void		recv_start_line();
 	void		recv_header();
 	void		recv_body();
+	void		recv_chunked_body();
 	void		proc_cgi();
 	void		terminate_cgi();
 	void		make_msg();

@@ -11,11 +11,10 @@ class Cgi
 	char**	meta_variable;
 
 	public:
-			Cgi(char* path, char** meta_variable);
+			Cgi();
+	void	init(char* path, char** meta_variable);
 	void	start_cgi();
 	void	connect();
 	void	disconnect();
-	void	stdout_set();
-	void	stdout_restore();
 	void	destroy_pipe();
 };

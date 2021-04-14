@@ -2,9 +2,14 @@
 // #include <cstdio>
 #include <iostream>
 
-Cgi::Cgi(char* path, char** meta_variable)
-: path(path), meta_variable(meta_variable)
+			Cgi::Cgi()
+: path(0), meta_variable(0)
+{}
+
+void		Cgi::init(char* path, char** meta_variable)
 {
+	path = path;
+	meta_variable = meta_variable;
 	pipe(fd_pipe);
 }
 

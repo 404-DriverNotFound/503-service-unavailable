@@ -24,6 +24,10 @@ void		Client::manage_client(bool is_buffer)
 			recv_body();
 			if (status == RECV_BODY)
 				break;
+		case RECV_BODY_CHUNKED:
+			recv_body();
+			if (status == RECV_BODY)
+				break;
 		case END_CGI:
 			recv_header();
 			if (status == END_CGI)
@@ -70,7 +74,20 @@ void	Client::recv_header()
 
 void	Client::proc_cgi()
 {
-	
+	// cgi.init_cgi();
+	cgi.start_cgi();
+}
+
+void	Client::recv_body()
+{
+	cgi.connect();
+	buffer.write();
+	cgi.disconnect();
+}
+
+void	Client::recv_chunked_body()
+{
+
 }
 
 void	Client::terminate_cgi()

@@ -18,5 +18,6 @@ struct				Buffer
 	int				get_token(std::deque<uint8_t>& token, int sep);
 	int				read_buffer();
 	ssize_t			size() const;
+	ssize_t			write(size_t s);
 };
 

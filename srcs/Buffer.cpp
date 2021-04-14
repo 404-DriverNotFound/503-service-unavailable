@@ -27,6 +27,7 @@ int					Buffer::read_buffer()
 	return len;
 }
 
+//------------------------------------------------------------------------------
 /*
 * param
 * std::string&		token
@@ -74,3 +75,27 @@ ssize_t				Buffer::size() const
 {
 	return buffer - end;
 }
+
+//------------------------------------------------------------------------------
+// param:
+// length to read
+// return:
+// remain length
+ssize_t				Buffer::write(size_t s)
+{
+	if ((end - cursor) > s)
+	{
+		::write(1, cursor, s);
+		return 0;
+	}
+	else
+	{
+		::write(1, cursor, (end - cursor));
+		return s - (end - cursor);
+	}
+
+
+}
+
+int		main()
+{}
