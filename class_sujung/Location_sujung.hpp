@@ -17,6 +17,7 @@ class Location
 		bool						autoindex;
 		u_int16_t					timeout;
 		Location();
+		void	chunked(std::vector<std::string>&);
 	public:
 		Location(std::deque<std::string>&);
 		~Location();

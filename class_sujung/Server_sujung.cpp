@@ -24,19 +24,19 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		}
 		else if (strncmp(base, "root", 1))
 		{
-
+			root += (base + 5);
 		}
 		else if (strncmp(base, "server_name", 1))
 		{
-
+			server_name += (base + 12);
 		}
 		else if (strncmp(base, "port", 1))
 		{
-
+			port = static_cast<u_int16_t>(atoi(base + 5));
 		}
 		else if (strncmp(base, "error_page", 1))
 		{
-
+	
 		}
 		else if (strncmp(base, "index", 1))
 		{
@@ -68,3 +68,8 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		base = token[0].begin().base();
 	}
 }
+
+const char*	Server::InvalidConfig::what() const throw()
+{
+	return ("Server Config is Invalid");
+} 
