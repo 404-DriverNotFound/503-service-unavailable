@@ -4,6 +4,7 @@
 					Buffer::Buffer(int fd, size_t buffer_size)
 : fd(fd), buffer_size(buffer_size)
 {
+	read_request = 1;
 	buffer = new char[buffer_size + 1];
 	cursor = buffer;
 	end = buffer;
@@ -18,55 +19,89 @@
 //------------------------------------------------------------------------------
 int					Buffer::read_buffer()
 {
-	ssize_t		len = -1;
 
-	len = read(fd, buffer, buffer_size);
+	if (!read_request)
+		return 0;
+	len = -1;
+	if ((len = read(fd, buffer, buffer_size)) < 0)
+		return len;
 	end = buffer + len;
 	cursor = buffer;
-	// write(1, buffer, len);
+	read_request = 0; // off
 	return len;
+
 }
 
+
 //------------------------------------------------------------------------------
-/*
-* param
-* std::string&		token
-* int				sep
-*/
-int					Buffer::get_token(std::string& token, int sep)
+
+void				Buffer::get_token(std::string& token, int sep)
 {
-	if (flag_token == 1)
+	if (read_request)
+		return ;
+	if (is_token_complete)
 		token.clear();
 	while (cursor != end)
 	{
 		if (sep == *cursor)
 		{
-			flag_token = 1;
 			cursor++;
-			return 1;
+			is_token_complete = 1;
+			return ;
 		}
 		token.push_back(*cursor++);
 	}
-	flag_token = 0;
-	return 0;
+	is_token_complete = 0;
+	read_request = 1; // on
 }
 
 //------------------------------------------------------------------------------
-int					Buffer::get_token(std::deque<uint8_t>& token, int sep)
+
+void				Buffer::get_token_seq(std::string& token, char* seq)
 {
-	if (flag_token == 1)
+	ssize_t			len_seq = strlen(seq);
+
+	if (read_request)
+		return ;
+	if (is_token_complete)
 		token.clear();
 	while (cursor != end)
 	{
-		if (sep == *cursor)
+		token.push_back(*cursor++);
+		if (len_seq <= token.length() && strcmp(&*token.end() - len_seq, seq) == 0)
 		{
-			flag_token = 1;
+			token.erase(token.end() - len_seq, token.end());
+			is_token_complete = 1;
+			return ;
+		}
+	}
+	is_token_complete = 0;
+	read_request = 1; // on
+}
+
+//------------------------------------------------------------------------------
+
+char				Buffer::get_token_set(std::string& token, char* set)
+{
+	ssize_t			len_seq = strlen(set);
+	char*			seperator;
+
+	if (read_request)
+		return 0;
+	if (is_token_complete)
+		token.clear();
+	while (cursor != end)
+	{
+		if ((seperator = strchr(set, *cursor)))
+		{
 			cursor++;
-			return 1;
+			is_token_complete = 1;
+			return *seperator;
 		}
 		token.push_back(*cursor++);
 	}
-	flag_token = 0;
+	is_token_complete = 0;
+	read_request = 1; // on
 	return 0;
 }
 
@@ -77,25 +112,48 @@ ssize_t				Buffer::size() const
 }
 
 //------------------------------------------------------------------------------
-// param:
-// length to read
-// return:
-// remain length
-ssize_t				Buffer::write(size_t s)
+
+void				Buffer::write(size_t s, int fd)
 {
 	if ((end - cursor) > s)
 	{
-		::write(1, cursor, s);
-		return 0;
+		::write(fd, cursor, s);
+		write_request = 0;
 	}
 	else
 	{
-		::write(1, cursor, (end - cursor));
-		return s - (end - cursor);
+		::write(fd, cursor, (end - cursor));
+		write_request = s - (end - cursor);
+		read_request = 1;
+	}
+}
+
+
+/*
+// tester
+#include <fcntl.h>
+int		main()
+{
+
+	int		fd = open("Buffer.hpp", O_RDONLY);
+
+	Buffer	buffer(fd, 4);
+
+	std::string	token;
+
+
+	while (1)
+	{
+		if (buffer.read_request)
+			buffer.read_buffer();
+		if (buffer.len == 0)
+			break ;
+		buffer.get_token_set(token, ";\n");
+		if (buffer.is_token_complete)
+			std::cout << token << std::endl;
 	}
 
 
-}
 
-int		main()
-{}
+}
+*/

@@ -28,7 +28,6 @@ class Client
 {
 	Socket		sock;
 	Buffer		buffer;
-	ssize_t		write_remain;
 	std::string	line;
 	e_status	status;
 	Http		req;
