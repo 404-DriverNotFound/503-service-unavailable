@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <deque>
 #include <vector>
 
 class Location
@@ -15,5 +16,8 @@ class Location
 		u_int64_t					body_length;
 		bool						autoindex;
 		u_int16_t					timeout;
+		Location();
 	public:
+		Location(std::deque<std::string>&);
+		~Location();
 };
