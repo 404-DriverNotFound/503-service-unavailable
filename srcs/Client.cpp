@@ -53,8 +53,12 @@ void	Client::read_buffer()
 void	Client::recv_start_line()
 {
 	// 첫 번째 개행을 만나기 전이라면 그대로 리턴
-	if (!buffer.get_token(line, '\n'))
+	buffer.get_token(line, '\n');
+	if (!buffer.is_token_complete)
+	{
+		buffer.read_request = true;
 		return ;
+	}
 	// 첫 번째 개행을 만났다면 헤더를 구문분석 한다
 	// 시작줄 구문분석 완료 후 상태플래그 변경
 	status = RECV_HEADER;
@@ -62,8 +66,12 @@ void	Client::recv_start_line()
 
 void	Client::recv_header()
 {
-	if (!buffer.get_token(line, '\n'))
+	buffer.get_token(line, '\n');
+	if (!buffer.is_token_complete)
+	{
+		buffer.read_request = true;
 		return ;
+	}
 	if (line == "" || line == "\r")
 	{
 		status = PROC_CGI;
@@ -78,16 +86,31 @@ void	Client::proc_cgi()
 	cgi.start_cgi();
 }
 
-void	Client::recv_body()
+void	Client::recv_body(size_t len)
 {
-	cgi.connect();
-	buffer.write();
-	cgi.disconnect();
+	if (buffer.write_request)
+		buffer.write(buffer.write_request, cgi.fd_out);
+	else
+		buffer.write(len, cgi.fd_out);
 }
 
 void	Client::recv_chunked_body()
 {
-
+	if (!buffer.write_request)
+	{
+		buffer.get_token(line, '\n');
+		if (!buffer.is_token_complete)
+		{
+			buffer.read_request = true;
+			return ;
+		}
+		size_t	len = atol(line.c_str());
+		buffer.write(len, cgi.fd_out);
+	}
+	else
+	{
+		buffer.write(buffer.write_request, cgi.fd_out);
+	}
 }
 
 void	Client::terminate_cgi()

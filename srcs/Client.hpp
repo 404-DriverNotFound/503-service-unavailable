@@ -40,7 +40,7 @@ class Client
 	void		read_buffer();
 	void		recv_start_line();
 	void		recv_header();
-	void		recv_body();
+	void		recv_body(size_t len);
 	void		recv_chunked_body();
 	void		proc_cgi();
 	void		terminate_cgi();

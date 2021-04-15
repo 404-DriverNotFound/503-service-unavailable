@@ -11,9 +11,9 @@ struct				Buffer
 	char*			buffer;
 	char*			cursor;
 	char*			end;
-	int				read_request;
+	int				read_request;		// 소켓의 버퍼를 읽어야 하는 상태
 	int				is_token_complete;
-	ssize_t			write_request;
+	ssize_t			write_request;		// cgi에 쓸 것이 남은 상태
 	ssize_t			len;
 
 					Buffer(int fd, size_t buffer_size);

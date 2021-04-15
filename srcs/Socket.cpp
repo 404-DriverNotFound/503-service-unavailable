@@ -1,31 +1,50 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Socket.hpp                                         :+:      :+:    :+:   */
+/*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: minckim <minckim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/15 19:35:43 by minckim          ###   ########.fr       */
+/*   Updated: 2021/04/15 19:45:25 by minckim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include "Utils.hpp"
+#include "Socket.hpp"
 
-class Socket : public sockaddr
+			Socket::Socket()
 {
-	int			fd;
-	socklen_t	socklen;
+}
 
-	public:
-				Socket();
-				Socket(const Socket& x);
-	Socket&		operator=(const Socket& x);
-	virtual		~Socket();
-	void		bind(uint16_t port, uint32_t ip);
-	void		accept(int serv_sock);
-	void		listen();
-};
+			Socket::~Socket()
+{
+}
+
+void		Socket::bind(uint16_t port, uint32_t ip = INADDR_ANY)
+{
+	sockaddr_in&	tmp = reinterpret_cast<sockaddr_in&>(*this);
+	fd = socket(PF_INET, SOCK_STREAM, 0);
+	ft::memset(this, 0, sizeof(*this));
+	socklen = sizeof(sockaddr_in);
+	tmp.sin_family = AF_INET;
+	tmp.sin_addr.s_addr = ft::hton(ip);
+	tmp.sin_port = ft::hton(port);
+	::bind(fd, this, socklen);
+}
+
+void		Socket::accept(int serv_sock)
+{
+	fd = ::accept(serv_sock, this, &socklen);
+}
+
+void		Socket::listen()
+{
+
+}
+
+/*
+int			main()
+{
+	
+}
+*/

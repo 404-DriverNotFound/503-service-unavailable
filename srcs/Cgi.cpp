@@ -3,7 +3,7 @@
 #include <iostream>
 
 			Cgi::Cgi()
-: path(0), meta_variable(0)
+: path(0), meta_variable(0), fd_out(fd_pipe[1])
 {}
 
 void		Cgi::init(char* path, char** meta_variable)
@@ -29,18 +29,6 @@ void		Cgi::start_cgi()
 	{
 		close(fd_pipe[0]);
 	}
-}
-
-void		Cgi::connect()
-{
-	fd_out_tmp = dup(1);
-	dup2(fd_pipe[1], 1);
-}
-
-void		Cgi::disconnect()
-{
-	dup2(fd_out_tmp, 1);
-	close(fd_out_tmp);
 }
 
 void		Cgi::destroy_pipe()
