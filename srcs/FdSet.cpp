@@ -1,8 +1,5 @@
 #include "FdSet.hpp"
 #include <string.h>
-// #ifdef __linux__
-// #ifdef __unix__
-// #ifdef __apple__
 
 		FdSet::FdSet()
 {}
@@ -13,42 +10,39 @@
 
 bool	FdSet::get(uint64_t fd) const
 {
-	#ifdef __linux__
+	#ifdef __APPLE__
+	return fds_bits[fd >> 5] & (1u << (fd & 31));
 	#else
-	# ifdef __apple__
+	# ifdef __linux__
+	return fds_bits[fd >> 6] & (1ull << (fd & 63));
 	# endif
 	#endif
-	return fds_bits[fd >> 6] & (1ull << (fd & 63));
 }
 
 void	FdSet::set(uint64_t fd)
 {
-	#ifdef __linux__
+	#ifdef __APPLE__
+	fds_bits[fd >> 5] |= (1u << (fd & 31));
 	#else
-	# ifdef __apple__
+	# ifdef __linux__
+	fds_bits[fd >> 6] |= (1ull << (fd & 63));
 	# endif
 	#endif
-	fds_bits[fd >> 6] |= (1ull << (fd & 63));
 }
 
 void	FdSet::del(uint64_t fd)
 {
-	#ifdef __linux__
-	fds_bits[fd / 64] ^= (1ull << (fd & 63));
+	#ifdef __APPLE__
+	fds_bits[fd >> 5] ^= (1ull << (fd & 31));
 	#else
-	# ifdef __apple__
+	# ifdef __linux__
+	fds_bits[fd >> 6] ^= (1ull << (fd & 63));
 	# endif
 	#endif
 }
 
 void	FdSet::zero()
 {
-	#ifdef __linux__
-	#else
-	# ifdef __apple__
-	# endif
-	#endif
-	std::cout << sizeof(fds_bits) << std::endl;
 	memset(fds_bits, 0, 128);
 }
 
@@ -56,13 +50,12 @@ void	FdSet::print_bit() const
 {
 	for (int i = 0 ; i < sizeof(FdSet::fds_bits) * 8 ; ++i)
 	{
-		std::cout << FD_ISSET(i, this);
-		// std::cout << get(i);
+		std::cout << get(i);
 		if (!((i + 1) & 127))
 			std::cout << std::endl;
 	}
 }
-
+/*
 int		main(void)
 {
 	FdSet		a;
@@ -78,11 +71,12 @@ int		main(void)
 	a.print_bit();
 	std::cout << std::endl;
 
-
+	std::cout << "set511\n";
 	a.set(511);
 	a.print_bit();
 	std::cout << std::endl;
 
+	std::cout << "set512 ~ 514\n";
 	a.set(512);
 	a.set(513);
 	a.set(514);
@@ -97,3 +91,4 @@ int		main(void)
 	std::cout << "514 " << a.get(514) << std::endl;
 	std::cout << "515 " << a.get(515) << std::endl;
 }
+*/
