@@ -36,7 +36,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		}
 		else if (strncmp(base, "error_page", 1))
 		{
-	
+			
 		}
 		else if (strncmp(base, "index", 1))
 		{

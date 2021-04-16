@@ -7,7 +7,7 @@
 class Location : public ConfigSet
 {
 	private:
-		std::string					location;
+		std::string		location;
 		Location();
 		void	chunked(std::vector<std::string>&);
 	public:
