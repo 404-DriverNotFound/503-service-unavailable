@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Server_sujung.hpp"
+#include "utils.hpp"
 
 Server::Server(std::deque<std::string>& token)
 {

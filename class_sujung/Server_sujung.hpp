@@ -15,7 +15,7 @@ class Server : public ConfigSet
 		~Server();
 		// exception
 		class InvalidConfig: public std::exception {
-            public:
-                virtual const char *what() const throw();
-        };
+			public:
+				virtual const char *what() const throw();
+		};
 };
