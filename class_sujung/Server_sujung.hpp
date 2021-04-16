@@ -1,7 +1,8 @@
 #pragma once
 #include "Location_sujung.hpp"
+#include "DataClass_sujung.hpp"
 
-class Server : public Location
+class Server : public ConfigSet
 {
 	private:
 		std::string					server_name;
