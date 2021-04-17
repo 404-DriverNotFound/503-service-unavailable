@@ -13,7 +13,8 @@ Server::~Server()
 
 void	Server::Server_setter(std::deque<std::string>&	token)
 {
-	char	*base;
+	std::string	str = " \t";
+	char	*base, *seq = str.begin().base();
 
 	base = token[0].begin().base();
 	while (!strncmp(base, "\t", 1))
@@ -27,11 +28,11 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		}
 		else if (!strncmp(base, "root", 4))
 		{
-			root += (base + 4);
+			root += (base + 5);
 		}
 		else if (!strncmp(base, "server_name", 11))
 		{
-			server_name += (base + 11);
+			server_name += (base + 12);
 		}
 		else if (!strncmp(base, "port", 4))
 		{
@@ -42,8 +43,8 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			std::string::iterator	it;
 			std::string				temp;
 
-			it = token[0].begin() + 11;
-			while (get_set_token(token[0], it, temp, " \t"))
+			it = token[0].begin() + 12;
+			while (get_set_token(token[0], it, temp, seq))
 			{
 				error_page.push_back(temp);
 			}
@@ -53,11 +54,12 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			std::string::iterator	it;
 			std::string				temp;
 
-			it = token[0].begin() + 6;
-			while (get_set_token(token[0], it, temp, " \t"))
+			it = token[0].begin() + 7;
+			while (get_set_token(token[0], it, temp, seq))
 			{
 				index.push_back(temp);
 			}
+			index.push_back(temp);
 		}
 		else if (!strncmp(base, "head_length", 11))
 		{

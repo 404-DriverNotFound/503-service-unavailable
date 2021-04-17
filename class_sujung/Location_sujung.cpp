@@ -3,7 +3,8 @@
 
 Location::Location(std::deque<std::string>& token)
 {
-	char	*base;
+	std::string	str = " \t";
+	char	*base, *seq = str.begin().base();
 
 	base = token[0].begin().base();
 	location += base + 10;
@@ -21,33 +22,36 @@ Location::Location(std::deque<std::string>& token)
 			std::string::iterator	it;
 			std::string				temp;
 
-			it = token[0].begin() + 12;
-			while (get_set_token(token[0], it, temp, " \t"))
+			it = token[0].begin() + 13;
+			while (get_set_token(token[0], it, temp, seq))
 			{
 				error_page.push_back(temp);
 			}
+			error_page.push_back(temp);
 		}
 		else if (!strncmp(base, "index", 5))
 		{
 			std::string::iterator	it;
 			std::string				temp;
 
-			it = token[0].begin() + 7;
-			while (get_set_token(token[0], it, temp, " \t"))
+			it = token[0].begin() + 8;
+			while (get_set_token(token[0], it, temp, seq))
 			{
 				index.push_back(temp);
 			}
+			index.push_back(temp);
 		}
 		else if (!strncmp(base, "method", 6))
 		{
 			std::string::iterator	it;
 			std::string				temp;
 
-			it = token[0].begin() + 8;
-			while (get_set_token(token[0], it, temp, " \t"))
+			it = token[0].begin() + 9;
+			while (get_set_token(token[0], it, temp, seq))
 			{
 				method.push_back(temp);
 			}
+			method.push_back(temp);
 		}
 		else if (!strncmp(base, "body_length", 11))
 		{
