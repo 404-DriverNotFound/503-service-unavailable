@@ -23,7 +23,7 @@ int					strncmp(char* a, char* b, size_t len)
 	return 0;
 }
 
-bool	get_seq_token(std::string &origin, std::string::iterator &it, std::string &token, char *seq, size_t	reserve_size = 1000)
+bool	get_seq_token(std::string &origin, std::string::iterator &it, std::string &token, char *seq, size_t	reserve_size)
 {
 	std::string::iterator	end = origin.end();
 	int						seq_len;
@@ -44,7 +44,7 @@ bool	get_seq_token(std::string &origin, std::string::iterator &it, std::string &
 	return false;
 }
 
-int	get_set_token(std::string &origin, std::string::iterator &it, std::string &token, char *set, size_t	reserve_size = 1000)
+int	get_set_token(std::string &origin, std::string::iterator &it, std::string &token, char *set, size_t	reserve_size)
 {
 	char	*p;
 	std::string::iterator	end = origin.end();
@@ -64,7 +64,7 @@ int	get_set_token(std::string &origin, std::string::iterator &it, std::string &t
 	return 0;
 }
 
-bool	get_chr_token(std::string &origin, std::string::iterator &it, std::string &token, char c, size_t reserve_size = 1000)
+bool	get_chr_token(std::string &origin, std::string::iterator &it, std::string &token, char c, size_t reserve_size)
 {
 	std::string::iterator	end = origin.end();
 

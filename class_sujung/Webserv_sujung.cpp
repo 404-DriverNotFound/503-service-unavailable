@@ -28,15 +28,15 @@ void	WebServ::config_parser(std::deque<std::string>& token)
 	while ((n = read(fd, buf, 29)) > 0)
 	{
 		buf[n] = 0;
-		base = strchr(buf, '\n');
-		if (!base)
-			token[vdx] += buf;
-		else
+		for (int idx=0;idx<n;++idx)
 		{
-			for (idx=0;idx<base - buf;idx++)
+			if (buf[idx] == '\n')
+			{
+				token.push_back(std::string());
+				++vdx;
+			}
+			else
 				token[vdx].push_back(buf[idx]);
-			vdx++;
-			token.push_back(buf+ ++idx);
 		}
 	}
 	close(fd);
@@ -50,7 +50,7 @@ void	WebServ::server_create(std::deque<std::string>& token)
 	while (!token.empty())
 	{
 		it = token[0].begin();
-		if (!std::strncmp(it.base(), "server", 0) && token[0].length() == 6)
+		if (!std::strncmp(it.base(), "server", 6) && token[0].length() == 6)
 		{
 			token.pop_front();
 			server.push_back(Server(token));
@@ -63,4 +63,8 @@ void	WebServ::server_create(std::deque<std::string>& token)
 const char*	WebServ::InvalidServerBlock::what() const throw()
 {
 	return ("Server Block start line name Invalid");
-} 
+}
+
+std::ostream&	operator<<(std::ostream& os, WebServ& ref) {
+	return (os);
+}

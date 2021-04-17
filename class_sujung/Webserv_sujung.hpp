@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <vector>
 #include <deque>
 #include "Server_sujung.hpp"
@@ -18,3 +19,5 @@ class WebServ
                 virtual const char *what() const throw();
         };
 };
+
+std::ostream&	operator<<(std::ostream&, WebServ&);
