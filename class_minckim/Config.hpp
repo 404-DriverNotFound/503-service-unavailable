@@ -4,9 +4,9 @@
 #include <string>
 
 
-class Config
+struct Config
 {
-	protected:
+	public:
 	std::string			name;
 	Path				root;				// def = /
 	uint16_t			port;				// def = 80;
@@ -18,5 +18,4 @@ class Config
 	uint32_t			timeout;			// def = 5s
 	Path				auth;
 
-	public:
 };

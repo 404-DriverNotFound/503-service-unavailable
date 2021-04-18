@@ -16,6 +16,7 @@ enum e_status
 {
 	RECV_START_LINE,
 	RECV_HEADER,
+	SET_LOCATION,
 	PROC_CGI,
 	END_CGI,
 	RECV_BODY,
@@ -24,9 +25,14 @@ enum e_status
 	SEND_MSG,
 	SEND_DONE
 };
-
+/*##############################################################################
+Client
+##############################################################################*/
 class Client
 {
+	/*--------------------------------------------------------------------------
+	Member
+	--------------------------------------------------------------------------*/
 	public:
 	Socket		sock;
 	Buffer		buffer;
@@ -36,17 +42,21 @@ class Client
 	HttpRes		res;
 	Cgi			cgi;
 	std::string	path;
-	Config&		config_location;
+	Config*		config_location;
 
+	/*--------------------------------------------------------------------------
+	Method
+	--------------------------------------------------------------------------*/
 				Client(int fd);
 	void		client_process(FdSet& r, FdSet& w);
 	void		read_buffer();
 	void		recv_start_line();
 	void		recv_header();
+	void		set_location(std::vector<Config>& configs);
 	void		recv_body(size_t len);
 	void		recv_chunked_body();
 	void		proc_cgi();
 	void		terminate_cgi();
 	void		make_msg();
 	void		send_msg();
-};
+};	//Client
