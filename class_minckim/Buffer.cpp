@@ -61,7 +61,7 @@ void				Buffer::get_token(std::string& token, int sep)
 
 void				Buffer::get_token_seq(std::string& token, char* seq)
 {
-	ssize_t			len_seq = strlen(seq);
+	ssize_t			len_seq = ft::strlen(seq);
 
 	if (read_request)
 		return ;
@@ -85,7 +85,7 @@ void				Buffer::get_token_seq(std::string& token, char* seq)
 
 char				Buffer::get_token_set(std::string& token, char* set)
 {
-	ssize_t			len_seq = strlen(set);
+	ssize_t			len_seq = ft::strlen(set);
 	char*			seperator;
 
 	if (read_request)

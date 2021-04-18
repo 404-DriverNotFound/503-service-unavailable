@@ -2,6 +2,8 @@
 #include <vector>
 #include "Config.hpp"
 #include "Path.hpp"
+#include "Cgi.hpp"
+#include "Http.hpp"
 
 /*
 *Webserver
@@ -28,5 +30,6 @@ class ConfigWebserver
 	std::vector<std::vector<Config> >	config_servers;		
 
 				ConfigWebserver(const Path&);
-	void		set_path_cig_bin();
+	void		set_path_cgi_bin(char** env);
+	void		set_status_code();
 };

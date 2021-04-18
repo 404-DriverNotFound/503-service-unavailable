@@ -2,6 +2,7 @@
 #include <map>
 #include <unistd.h>
 #include <sys/wait.h>
+#include "Utils.hpp"
 
 class Cgi
 {

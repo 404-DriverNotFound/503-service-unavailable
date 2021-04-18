@@ -1,4 +1,21 @@
 #include "Http.hpp"
+/*##############################################################################
+Http
+##############################################################################*/
+
+const char*		Http::HttpFormException::what() const throw()
+{	return "HttpFormException";	}
+
+
+
+
+/*##############################################################################
+Http Request
+##############################################################################*/
+
+std::map<int, std::string>	status_code_map;
+
+//------------------------------------------------------------------------------
 
 void		HttpReq::set_start_line(const std::string& line)
 {
@@ -19,7 +36,9 @@ void		HttpReq::set_start_line(const std::string& line)
 	token.swap(protocol);
 }
 
-void	HttpReq::set_headers(const std::string& line)
+//------------------------------------------------------------------------------
+
+void		HttpReq::set_headers(const std::string& line)
 {
 	std::string::const_iterator			it_line = line.begin();
 	std::string							key;
@@ -31,30 +50,76 @@ void	HttpReq::set_headers(const std::string& line)
 	headers[key].assign(it_line, line.end());
 }
 
-void	HttpReq::set_method(const std::string& token)
+//------------------------------------------------------------------------------
+
+void		HttpReq::set_method(const std::string& token)
 {
-	if (token == "GET")
+	if (token == "CONNECT")
+		method = CONNECT;
+	else if (token == "DELETE")
+		method = DELETE;
+	else if (token == "GET")
 		method = GET;
 	else if (token == "HEAD")
 		method = HEAD;
-	else if (token == "PUT")
-		method = PUT;
+	else if (token == "OPTIONS")
+		method = OPTIONS;
+	else if (token == "PATCH")
+		method = PATCH;
 	else if (token == "POST")
 		method = POST;
+	else if (token == "PUT")
+		method = PUT;
 	else if (token == "TRACE")
 		method = TRACE;
-	else if (token == "DELETE")
-		method = DELETE;
-	else if (token == "OPTION")
-		method = OPTION;
 	else
 		throw HttpFormException();
 }
 
-const char*		Http::HttpFormException::what() const throw()
+
+/*##############################################################################
+Http Response
+##############################################################################*/
+
+//------------------------------------------------------------------------------
+
+void		HttpRes::set_last_modified()
 {
-	return "HttpFormException";
+	headers["Last-Modified"] = ft::get_last_modified(cl->path.c_str());
 }
+
+//------------------------------------------------------------------------------
+
+void		HttpRes::set_location()
+{}
+
+//------------------------------------------------------------------------------
+
+void		HttpRes::set_retry_after()
+{}
+
+//------------------------------------------------------------------------------
+
+void		HttpRes::set_server()
+{
+	headers["Server"] = std::string("Webserver42/1.0.0 (Unix)");
+}
+
+//------------------------------------------------------------------------------
+
+void		HttpRes::set_transfer_encoding()
+{
+
+}
+
+//------------------------------------------------------------------------------
+
+void		HttpRes::set_www_authenticate()
+{
+
+}
+
+//------------------------------------------------------------------------------
 
 //startline test
 /*

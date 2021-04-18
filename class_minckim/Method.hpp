@@ -2,11 +2,13 @@
 
 enum e_method
 {
+	CONNECT,
+	DELETE,
 	GET,
 	HEAD,
-	PUT,
+	OPTIONS,
+	PATCH,
 	POST,
+	PUT,
 	TRACE,
-	DELETE,
-	OPTION,
 };

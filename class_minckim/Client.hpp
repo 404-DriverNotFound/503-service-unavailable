@@ -1,9 +1,9 @@
 #pragma once
 class Client;
+#include <sys/types.h>
 #include "Socket.hpp"
 #include "Buffer.hpp"
 #include "Http.hpp"
-#include <sys/types.h>
 #include "Config.hpp"
 #include "Cgi.hpp"
 #include "FdSet.hpp"
@@ -27,6 +27,7 @@ enum e_status
 
 class Client
 {
+	public:
 	Socket		sock;
 	Buffer		buffer;
 	std::string	line;
@@ -34,9 +35,9 @@ class Client
 	HttpReq		req;
 	HttpRes		res;
 	Cgi			cgi;
+	std::string	path;
 	Config&		config_location;
 
-	public:
 				Client(int fd);
 	void		client_process(FdSet& r, FdSet& w);
 	void		read_buffer();
