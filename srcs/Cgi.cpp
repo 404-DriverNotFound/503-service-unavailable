@@ -7,15 +7,15 @@ Cgi::map_path	Cgi::cgi_bin;
 //------------------------------------------------------------------------------
 
 				Cgi::Cgi()
-: path(0), meta_variable(0), fd_in(fd_read[0]), fd_out(fd_write[1])
+: fd_in(fd_read[0]), fd_out(fd_write[1]), path(0), meta_variable(0)
 {}
 
 //------------------------------------------------------------------------------
 
 void			Cgi::init(char* path, char** meta_variable)
 {
-	path = path;
-	meta_variable = meta_variable;
+	this->path = path;
+	this->meta_variable = meta_variable;
 	set_extension();
 	pipe(fd_write);
 	pipe(fd_read);

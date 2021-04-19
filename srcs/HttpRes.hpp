@@ -14,13 +14,12 @@ struct HttpRes : public Http
 	int									status_code;
 	static std::map<int, std::string>	status_code_map;
 	std::deque<uint8_t>					body;
-	Client*								cl;
 
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
 	void			set_startline();
-	void			set_last_modified();
+	void			set_last_modified(const char* path);
 	void			set_location();
 	void			set_retry_after();
 	void			set_server();

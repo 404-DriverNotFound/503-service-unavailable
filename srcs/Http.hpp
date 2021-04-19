@@ -1,5 +1,5 @@
 #pragma once
-// struct Http;
+struct Http;
 #include <unistd.h>
 #include <string>
 #include <map>
@@ -8,7 +8,7 @@
 #include "Url.hpp"
 #include "Path.hpp"
 #include "Utils.hpp"
-#include "Client.hpp"
+// #include "Client.hpp"
 
 /*##############################################################################
 Http

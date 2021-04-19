@@ -9,7 +9,20 @@ ASAN = -fsanitize=address
 #-------------------------------------------------------------------------------
 #	FILE NAMES
 #-------------------------------------------------------------------------------
-LIST_SRCS = Webserver Utils Server Location FdSet main Client Http HttpReq HttpRes
+LIST_SRCS = \
+	Buffer\
+	Cgi\
+	Client\
+	FdSet\
+	Http\
+	HttpReq\
+	HttpRes\
+	Location\
+	main\
+	Server\
+	Socket\
+	Utils\
+	Webserver
 
 	
 	

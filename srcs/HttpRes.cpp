@@ -6,9 +6,9 @@ Http Response
 
 //------------------------------------------------------------------------------
 
-void		HttpRes::set_last_modified()
+void		HttpRes::set_last_modified(const char* path)
 {
-	headers["Last-Modified"] = ft::get_last_modified(cl->path.c_str());
+	headers["Last-Modified"] = ft::get_last_modified(path);
 }
 
 //------------------------------------------------------------------------------

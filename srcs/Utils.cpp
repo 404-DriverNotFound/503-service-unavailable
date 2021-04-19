@@ -2,7 +2,7 @@
 
 //------------------------------------------------------------------------------
 
-void*	memset(void* dest, int c, size_t size)
+void*	ft::memset(void* dest, int c, size_t size)
 {
 	uint8_t*	head = static_cast<uint8_t*>(dest);
 	while (size--)
