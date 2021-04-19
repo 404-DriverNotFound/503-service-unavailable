@@ -7,7 +7,9 @@
 #include <list>
 #include "UtilsTemplate.hpp"
 #include <dirent.h>
-
+/*##############################################################################
+utils
+##############################################################################*/
 namespace ft{
 
 struct	Date
@@ -20,7 +22,9 @@ struct	Date
 	int	minute;
 	int	second;
 };
-
+/*--------------------------------------------------------------------------
+function
+--------------------------------------------------------------------------*/
 void*	memset(void* dest, int c, size_t size);
 size_t	strlen(const char* str);
 int		strncmp(const char* a, const char* b, size_t len);

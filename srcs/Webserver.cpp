@@ -1,9 +1,10 @@
-#include "Webserver.hpp"
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
-#include "Webserv.hpp"
-
+#include "Webserver.hpp"
+/*#####################################
+Webserver
+######################################*/
 Webserver::Webserver()
 {
 	std::deque<std::string>	token(1);
@@ -14,6 +15,7 @@ Webserver::Webserver()
 Webserver::~Webserver()
 {
 }
+//------------------------------------------------------------------------------
 
 void	Webserver::config_parser(std::deque<std::string>& token)
 {
@@ -43,6 +45,8 @@ void	Webserver::config_parser(std::deque<std::string>& token)
 	close(fd);
 }
 
+//------------------------------------------------------------------------------
+
 void	Webserver::server_create(std::deque<std::string>& token)
 {
 	std::string::iterator	it;
@@ -54,23 +58,30 @@ void	Webserver::server_create(std::deque<std::string>& token)
 		if (!std::strncmp(it.base(), "server", 6) && token[0].length() == 6)
 		{
 			token.pop_front();
-			server.push_back(Server(token));
+			servers.push_back(Server(token));
 		}
 		else
 			throw Webserver::InvalidServerBlock();
 	}
 }
 
+//------------------------------------------------------------------------------
+
 const char*	Webserver::InvalidServerBlock::what() const throw()
 {
 	return ("Server Block start line name Invalid");
 }
+
+//------------------------------------------------------------------------------
 
 void		Webserver::set_path_cgi_bin(char** env)
 {
 	Cgi::cgi_bin["php"] = ft::which("php", env);
 	Cgi::cgi_bin["py"] = ft::which("python3", env);
 }
+
+//------------------------------------------------------------------------------
+
 void		Webserver::set_status_code()
 {
 	HttpRes::status_code_map[100] = "Continue";
@@ -128,6 +139,8 @@ void		Webserver::set_status_code()
 	HttpRes::status_code_map[510] = "Not Extended";
 	HttpRes::status_code_map[511] = "Network Authentication Required";
 }
+
+//------------------------------------------------------------------------------
 
 std::ostream&	operator<<(std::ostream& os, Webserver& ref) {
 	return (os);
