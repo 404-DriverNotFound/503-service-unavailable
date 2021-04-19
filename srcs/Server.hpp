@@ -1,6 +1,7 @@
 #pragma once
 #include "Location.hpp"
 #include "DataClass.hpp"
+#include "Socket.hpp"
 
 /*##############################################################################
 Http

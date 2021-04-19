@@ -21,11 +21,11 @@ Location::Location(std::deque<std::string>& token)
 		}
 		else if (!strncmp(base, "error_page", 10))
 		{
-			std::string::iterator	it;
-			std::string				temp;
+			std::string::const_iterator	it;
+			std::string					temp;
 
 			it = token[0].begin() + 13;
-			while (get_set_token(token[0], it, temp, seq))
+			while (ft::get_set_token(token[0], it, temp, seq))
 			{
 				error_page.push_back(temp);
 			}
@@ -33,11 +33,11 @@ Location::Location(std::deque<std::string>& token)
 		}
 		else if (!strncmp(base, "index", 5))
 		{
-			std::string::iterator	it;
-			std::string				temp;
+			std::string::const_iterator	it;
+			std::string					temp;
 
 			it = token[0].begin() + 8;
-			while (get_set_token(token[0], it, temp, seq))
+			while (ft::get_set_token(token[0], it, temp, seq))
 			{
 				index.push_back(temp);
 			}
@@ -45,11 +45,11 @@ Location::Location(std::deque<std::string>& token)
 		}
 		else if (!strncmp(base, "method", 6))
 		{
-			std::string::iterator	it;
-			std::string				temp;
+			std::string::const_iterator	it;
+			std::string					temp;
 
 			it = token[0].begin() + 9;
-			while (get_set_token(token[0], it, temp, seq))
+			while (ft::get_set_token(token[0], it, temp, seq))
 			{
 				method.push_back(temp);
 			}

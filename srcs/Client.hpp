@@ -16,6 +16,7 @@ enum e_status
 {
 	RECV_START_LINE,
 	RECV_HEADER,
+	PROC_MSG,
 	SET_LOCATION,
 	PROC_CGI,
 	END_CGI,
@@ -52,9 +53,9 @@ struct Client
 	void		read_buffer();
 	void		recv_start_line();
 	void		recv_header();
-	void		set_location(std::vector<Config>& configs);
+	void		set_location();
 	void		recv_body(size_t len);
-	void		recv_chunked_body();
+	void		recv_body_chunked();
 	void		proc_cgi();
 	void		terminate_cgi();
 	void		make_msg();

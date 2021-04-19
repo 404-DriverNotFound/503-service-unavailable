@@ -29,11 +29,11 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			if (status == PROC_CGI)
 				break;
 		case RECV_BODY:
-			recv_body();
+			recv_body(0);
 			if (status == RECV_BODY)
 				break;
 		case RECV_BODY_CHUNKED:
-			recv_body();
+			recv_body_chunked();
 			if (status == RECV_BODY)
 				break;
 		case END_CGI:

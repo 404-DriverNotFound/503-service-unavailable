@@ -84,7 +84,7 @@ void	ft::lowercase(std::string& str)
 
 //------------------------------------------------------------------------------
 
-bool	ft::get_seq_token(const std::string &origin, std::string::const_iterator &it, std::string &token, const char *seq, size_t	reserve_size)
+bool	ft::get_seq_token(const std::string &origin, std::string::const_iterator &it, std::string &token, const char *seq, size_t reserve_size)
 {
 	std::string::const_iterator	end = origin.end();
 	int						seq_len;
@@ -107,7 +107,7 @@ bool	ft::get_seq_token(const std::string &origin, std::string::const_iterator &i
 
 //------------------------------------------------------------------------------
 
-int		ft::get_set_token(const std::string &origin, std::string::const_iterator &it, std::string &token, const char *set, size_t	reserve_size)
+int		ft::get_set_token(const std::string &origin, std::string::const_iterator &it, std::string &token, const char *set, size_t reserve_size)
 {
 	char	*p;
 	std::string::const_iterator	end = origin.end();
@@ -211,7 +211,7 @@ std::string	ft::itoa(long n)
 
 	std::cout << '<' << n << '>' << std::endl;
 	*cursor = 0;
-	if (n == 0x8000000000000000l)
+	if (static_cast<unsigned long>(n) == 0x8000000000000000l)
 		return "-9223372036854775808";
 	if (n < 0)
 	{
@@ -234,8 +234,11 @@ std::string	ft::get_last_modified(const char* path)
 	struct stat		stat_f;
 	
 	stat(path, &stat_f);
-
-	return ft::date_to_str(ft::time_convert(stat_f.st_mtim.tv_sec));
+	#ifdef __APPLE__
+		return ft::date_to_str(ft::time_convert(stat_f.st_mtimespec.tv_sec));
+	#else
+		return ft::date_to_str(ft::time_convert(stat_f.st_mtim.tv_sec));
+	#endif
 }
 
 ft::Date		ft::time_convert(long time_sec)
@@ -319,9 +322,9 @@ std::string		ft::date_to_str(const ft::Date& d)
 	return result;
 }
 
-int		main(int argc, char** argv, char** env)
-{
-	timeval		t;
-	gettimeofday(&t, 0);
-	std::cout << ft::date_to_str(ft::time_convert(t.tv_sec)) << std::endl;
-}
+// int		main(int argc, char** argv, char** env)
+// {
+// 	timeval		t;
+// 	gettimeofday(&t, 0);
+// 	std::cout << ft::date_to_str(ft::time_convert(t.tv_sec)) << std::endl;
+// }

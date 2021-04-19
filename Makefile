@@ -9,7 +9,7 @@ CFLAG = -Wall -Wextra -Werror --std c++98 -g
 #-------------------------------------------------------------------------------
 #	FILE NAMES
 #-------------------------------------------------------------------------------
-LIST_SRCS = \
+LIST_SRCS = Webserver Utils Server Location FdSet main
 
 	
 	
