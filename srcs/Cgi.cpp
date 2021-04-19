@@ -104,6 +104,3 @@ int			main(void)
 	c0.destroy_pipe();
 }
 */
-
-int			main()
-{}

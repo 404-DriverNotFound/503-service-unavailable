@@ -4,6 +4,7 @@
 #include "FdSet.hpp"
 #include "Server.hpp"
 #include "Client.hpp"
+#include "Http.hpp"
 #include <sys/select.h>
 #include <vector>
 /*#####################################

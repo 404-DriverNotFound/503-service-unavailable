@@ -83,15 +83,15 @@ const char*	Webserver::InvalidServerBlock::what() const throw()
 
 void	Webserver::set_mapmethod()
 {
-	Http::mapMethod.insert(std::make_pair("CONNECT", CONNECT));
-	Http::mapMethod.insert(std::make_pair("DELETE", DELETE));
-	Http::mapMethod.insert(std::make_pair("GET", GET));
-	Http::mapMethod.insert(std::make_pair("HEAD", HEAD));
-	Http::mapMethod.insert(std::make_pair("OPTIONS", OPTIONS));
-	Http::mapMethod.insert(std::make_pair("PATCH", PATCH));
-	Http::mapMethod.insert(std::make_pair("POST", POST));
-	Http::mapMethod.insert(std::make_pair("PUT", PUT));
-	Http::mapMethod.insert(std::make_pair("TRACE", TRACE));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("CONNECT", CONNECT));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("DELETE", DELETE));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("GET", GET));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("HEAD", HEAD));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("OPTIONS", OPTIONS));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("PATCH", PATCH));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("POST", POST));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("PUT", PUT));
+	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("TRACE", TRACE));
 }
 //------------------------------------------------------------------------------
 

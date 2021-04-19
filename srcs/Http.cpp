@@ -4,6 +4,8 @@
 Http
 ##############################################################################*/
 
+std::map<std::string, u_int16_t>	Http::mapMethod;
+
 const char*		Http::HttpFormException::what() const throw()
 {	return "HttpFormException";	}
 

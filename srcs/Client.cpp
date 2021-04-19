@@ -91,6 +91,9 @@ void	Client::recv_header()
 
 //------------------------------------------------------------------------------
 
+void		Client::set_location()
+{}
+
 // void	Client::set_server(std::vector<Config>& configs)
 // {
 // 	std::vector<Config>::iterator	it = configs.begin();
