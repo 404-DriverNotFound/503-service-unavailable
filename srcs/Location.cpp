@@ -1,6 +1,8 @@
 #include "Location.hpp"
 #include "Utils.hpp"
 
+//------------------------------------------------------------------------------
+
 Location::Location(std::deque<std::string>& token)
 {
 	std::string	str = " \t";
@@ -68,6 +70,8 @@ Location::Location(std::deque<std::string>& token)
 		base = token[0].begin().base();
 	}
 }
+
+//------------------------------------------------------------------------------
 
 Location::~Location()
 {

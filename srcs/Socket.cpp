@@ -1,31 +1,27 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Socket.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: elegie <elegie@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/17 08:42:39 by elegie           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "Socket.hpp"
+
+//------------------------------------------------------------------------------
 
 			Socket::Socket(uint16_t port, uint32_t ip = INADDR_ANY)
 {
 	bind(port, ip);
 }
 
+//------------------------------------------------------------------------------
+
 			Socket::Socket(int fd)
 {
 	accept(fd);
 }
 
+//------------------------------------------------------------------------------
+
 			Socket::~Socket()
 {
 	close(fd);
 }
+
+//------------------------------------------------------------------------------
 
 void		Socket::bind(uint16_t port, uint32_t ip = INADDR_ANY)
 {
@@ -42,11 +38,15 @@ void		Socket::bind(uint16_t port, uint32_t ip = INADDR_ANY)
 		throw bind_failed_exception();
 }
 
+//------------------------------------------------------------------------------
+
 void		Socket::accept(int serv_sock)
 {
 	if ((fd = ::accept(serv_sock, this, &socklen)))
 		throw accept_failed_exception();
 }
+
+//------------------------------------------------------------------------------
 
 void		Socket::listen(size_t connections)
 {
@@ -54,8 +54,10 @@ void		Socket::listen(size_t connections)
 		throw listen_failed_exception();
 }
 
-//------------------------------------------------------------------------------
-// exceptions
+/*--------------------------------------------------------------------------
+Exception
+--------------------------------------------------------------------------*/
+
 const char*	Socket::socket_failed_exception::what() const throw()
 { return "Socket failed"; }
 

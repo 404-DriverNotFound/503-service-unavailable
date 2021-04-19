@@ -4,8 +4,14 @@
 #include <unistd.h>
 #include "Utils.hpp"
 
+/*##############################################################################
+Buffer
+##############################################################################*/
 struct				Buffer
 {
+	/*--------------------------------------------------------------------------
+	Member
+	--------------------------------------------------------------------------*/
 	int				fd;
 	ssize_t			buffer_size;
 	char*			buffer;
@@ -16,16 +22,16 @@ struct				Buffer
 	ssize_t			write_request;		// cgi에 쓸 것이 남은 상태
 	ssize_t			len;
 
+	/*--------------------------------------------------------------------------
+	Method
+	--------------------------------------------------------------------------*/
 					Buffer(int fd, size_t buffer_size = 0x100000);
 	virtual			~Buffer();
-
 	void			get_token(std::string& token, int sep);
 	void			get_token_seq(std::string& token, char* seq);
 	char			get_token_set(std::string& token, char* set);
 	int				read_buffer();
 	ssize_t			size() const;
 	void			write(size_t s, int fd);
-
-	private:
 };
 

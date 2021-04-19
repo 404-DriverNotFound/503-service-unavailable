@@ -2,14 +2,20 @@
 #include "Server.hpp"
 #include "Utils.hpp"
 
+//------------------------------------------------------------------------------
+
 Server::Server(std::deque<std::string>& token)
 {
 	Server_setter(token);
 }
 
+//------------------------------------------------------------------------------
+
 Server::~Server()
 {
 }
+
+//------------------------------------------------------------------------------
 
 void	Server::Server_setter(std::deque<std::string>&	token)
 {
@@ -91,6 +97,10 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		base = token[0].begin().base();
 	}
 }
+
+/*--------------------------------------------------------------------------
+Exception
+--------------------------------------------------------------------------*/
 
 const char*	Server::InvalidConfig::what() const throw()
 {
