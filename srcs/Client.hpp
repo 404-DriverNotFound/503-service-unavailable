@@ -7,6 +7,7 @@ struct Client;
 #include "HttpRes.hpp"
 #include "Cgi.hpp"
 #include "FdSet.hpp"
+#include "Server.hpp"
 
 #define BUFFER_SIZE		16
 
@@ -35,20 +36,21 @@ struct Client
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	Socket		sock;
-	Buffer		buffer;
-	std::string	line;
-	e_status	status;
-	HttpReq		req;
-	HttpRes		res;
-	Cgi			cgi;
-	std::string	path;
-	// Config*		config_location;
+	Socket					sock;
+	Buffer					buffer;
+	std::string				line;
+	e_status				status;
+	HttpReq					req;
+	HttpRes					res;
+	Cgi						cgi;
+	std::string				path;
+	Server*					server;
+	std::vector<Server>&	vec_server;
 
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
-				Client(int fd);
+				Client(int fd, std::vector<Server>& vec_server);
 	void		client_process(FdSet& r, FdSet& w);
 	void		read_buffer();
 	void		recv_start_line();

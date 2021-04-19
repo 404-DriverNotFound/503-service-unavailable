@@ -2,8 +2,8 @@
 
 //------------------------------------------------------------------------------
 
-			Client::Client(int fd)
-: sock(fd), buffer(fd), status(RECV_START_LINE)
+			Client::Client(int fd, std::vector<Server>& vec_server)
+: sock(fd), buffer(fd), status(RECV_START_LINE), vec_server(vec_server)
 {}
 
 //------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			if (status == RECV_HEADER)
 				break;
 		case PROC_MSG:
-			set_location();		// 포트, 호스트, 로케이션 설정 - 권한 확인
+			set_location();		// 포트, 호스트, 로케이션 설정, 메서드, 권한 확인
 		case PROC_CGI:
 			proc_cgi();
 		case RECV_BODY:

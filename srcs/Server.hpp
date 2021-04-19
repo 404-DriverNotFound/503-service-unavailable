@@ -12,6 +12,7 @@ struct Server : public ConfigSet
 	Member
 	--------------------------------------------------------------------------*/
 	public:
+	Socket						sock;
 	std::string					server_name;
 	u_int16_t					port;
 	std::string					auth;

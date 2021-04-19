@@ -4,6 +4,8 @@
 Http Response
 ##############################################################################*/
 
+std::map<int, std::string>	HttpRes::status_code_map;
+
 //------------------------------------------------------------------------------
 
 void		HttpRes::set_last_modified(const char* path)
