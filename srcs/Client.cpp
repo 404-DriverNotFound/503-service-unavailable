@@ -24,28 +24,26 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			recv_header();
 			if (status == RECV_HEADER)
 				break;
+		case PROC_MSG:
+			set_location();		// 포트, 호스트, 로케이션 설정 - 권한 확인
 		case PROC_CGI:
 			proc_cgi();
-			if (status == PROC_CGI)
-				break;
 		case RECV_BODY:
 			recv_body(0);
 			if (status == RECV_BODY)
 				break;
 		case RECV_BODY_CHUNKED:
-			recv_body_chunked();
+			recv_body_chunked();	// cgi 종료상태도 체크
 			if (status == RECV_BODY)
 				break;
 		case END_CGI:
-			recv_header();
+			terminate_cgi();
 			if (status == END_CGI)
 				break;
 		case MAKE_MSG:
-			recv_header();
-			if (status == MAKE_MSG)
-				break;
+			make_msg();
 		case SEND_MSG:
-			recv_header();
+			send_msg();
 			if (status == SEND_MSG)
 				break;
 		default:
