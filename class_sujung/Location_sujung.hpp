@@ -4,9 +4,9 @@
 #include <vector>
 #include "DataClass_sujung.hpp"
 
-class Location : public ConfigSet
+struct Location : public ConfigSet
 {
-	private:
+	public:
 		std::string		location;
 		Location();
 	public:

@@ -4,10 +4,10 @@
 #include <deque>
 #include "Server_sujung.hpp"
 
-class WebServ
+struct WebServ
 {
-	private:
 		std::vector<Server>		server;
+	private:
 		void	config_parser(std::deque<std::string>&);
 		void	server_create(std::deque<std::string>&);
 	public:

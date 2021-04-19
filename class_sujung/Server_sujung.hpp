@@ -2,14 +2,14 @@
 #include "Location_sujung.hpp"
 #include "DataClass_sujung.hpp"
 
-class Server : public ConfigSet
+struct Server : public ConfigSet
 {
-	private:
 		std::string					server_name;
 		u_int16_t					port;
 		std::string					auth;
 		std::vector<Location>		location;
 		Server();
+	private:
 		void	Server_setter(std::deque<std::string>&);
 	public:
 		Server(std::deque<std::string>&);

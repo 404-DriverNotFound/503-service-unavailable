@@ -5,7 +5,6 @@
 
 struct ConfigSet
 {
-	protected:
 		std::string					root;
 		std::vector<std::string>	error_page;
 		std::vector<std::string>	index;
