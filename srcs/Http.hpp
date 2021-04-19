@@ -1,5 +1,5 @@
 #pragma once
-struct Http;
+// struct Http;
 #include <unistd.h>
 #include <string>
 #include <map>

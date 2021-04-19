@@ -1,9 +1,10 @@
 #pragma once
-class Client;
+struct Client;
 #include <sys/types.h>
 #include "Socket.hpp"
 #include "Buffer.hpp"
-#include "Http.hpp"
+#include "HttpReq.hpp"
+#include "HttpRes.hpp"
 #include "Cgi.hpp"
 #include "FdSet.hpp"
 
@@ -42,7 +43,7 @@ struct Client
 	HttpRes		res;
 	Cgi			cgi;
 	std::string	path;
-	Config*		config_location;
+	// Config*		config_location;
 
 	/*--------------------------------------------------------------------------
 	Method

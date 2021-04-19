@@ -64,7 +64,7 @@ Location::Location(std::deque<std::string>& token)
 			{
 				for (int idx=0;idx<9;idx++)
 					if (temp == methodSet[idx].str) {
-						method.insert(temp, methodSet)
+						method |= methodSet[idx].flag;
 						break;
 					}
 			}

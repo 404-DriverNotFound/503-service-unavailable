@@ -10,6 +10,7 @@
 
 void		Client::client_process(FdSet& r, FdSet& w)
 {
+	(void)w; // 아직 사용안햠
 	if (buffer.read_request && r.get(sock.fd))
 	{
 		read_buffer();
@@ -121,7 +122,7 @@ void	Client::recv_body(size_t len)
 
 //------------------------------------------------------------------------------
 
-void	Client::recv_chunked_body()
+void	Client::recv_body_chunked()
 {
 	if (!buffer.write_request)
 	{
