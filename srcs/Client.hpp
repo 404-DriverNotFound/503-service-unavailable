@@ -4,7 +4,6 @@ class Client;
 #include "Socket.hpp"
 #include "Buffer.hpp"
 #include "Http.hpp"
-#include "Config.hpp"
 #include "Cgi.hpp"
 #include "FdSet.hpp"
 
