@@ -4,7 +4,7 @@
 #include <sys/wait.h>
 #include "Utils.hpp"
 
-class Cgi
+struct Cgi
 {
 	public:
 	typedef std::map<std::string, std::string>	 map_path;

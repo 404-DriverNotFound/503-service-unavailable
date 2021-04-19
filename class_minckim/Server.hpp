@@ -5,7 +5,7 @@
 #include "Client.hpp"
 #include "Config.hpp"
 
-class Server
+struct Server
 {
 	public:
 	Socket					sock;

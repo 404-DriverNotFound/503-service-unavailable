@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elegie <elegie@student.42.fr>              +#+  +:+       +#+        */
+/*   By: minckim <minckim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/17 08:26:50 by elegie           ###   ########.fr       */
+/*   Updated: 2021/04/19 13:10:18 by minckim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <arpa/inet.h>
 #include "Utils.hpp"
 
-class Socket : public sockaddr
+struct Socket : public sockaddr
 {
 
 	public:

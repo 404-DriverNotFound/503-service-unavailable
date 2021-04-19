@@ -6,7 +6,7 @@
 #include <sys/select.h>
 #include <vector>
 
-class Webserver
+struct Webserver
 {
 	ConfigWebserver			config;
 	FdSet					to_be_checked;

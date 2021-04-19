@@ -22,7 +22,7 @@
 *	.
 *	.
 */
-class ConfigWebserver
+struct ConfigWebserver
 {
 	public:
 	uint32_t							max_connection;
