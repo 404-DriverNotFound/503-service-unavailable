@@ -54,7 +54,7 @@ void	Webserver::server_create(std::deque<std::string>& token)
 	while (!token.empty())
 	{
 		it = token[0].begin();
-		if (!ft::strncmp(it.base(), "server", 6) && token[0].length() == 6)
+		if (!token.empty() && !ft::strncmp(it.base(), "server", 6) && token[0].length() == 6)
 		{
 			token.pop_front();
 			servers.push_back(Server(token));

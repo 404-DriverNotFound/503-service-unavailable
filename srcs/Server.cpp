@@ -23,7 +23,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 	char	*base, *seq = str.begin().base();
 
 	base = token[0].begin().base();
-	while (!ft::strncmp(base, "\t", 1))
+	while (!token.empty() && !ft::strncmp(base, "\t", 1))
 	{
 		++base;
 		bool	flag = true;

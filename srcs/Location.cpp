@@ -22,8 +22,7 @@ Location::Location(std::deque<std::string>& token)
 	location += base + 10;
 	token.pop_front();
 	base = token[0].begin().base();
-	std::cout << "body_len : " << body_length << std::endl;
-	while (!ft::strncmp(base, "\t\t", 2))
+	while (!token.empty() && !ft::strncmp(base, "\t\t", 2))
 	{
 		base += 2;
 		if (!ft::strncmp(base, "root", 4))
