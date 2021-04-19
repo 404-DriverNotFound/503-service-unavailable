@@ -10,7 +10,7 @@ struct FdSet : public fd_set
 {
 	public:
 				FdSet();
-	FdSet&		operator=(FdSet&);
+	FdSet&		operator=(FdSet& x);
 	virtual		~FdSet();
 	bool		get(uint64_t fd) const;		// == is_set
 	void		set(uint64_t fd);

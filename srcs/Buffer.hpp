@@ -2,7 +2,7 @@
 #include <deque>
 #include <string>
 #include <unistd.h>
-#include "utils.hpp"
+#include "Utils.hpp"
 
 struct				Buffer
 {
@@ -16,7 +16,7 @@ struct				Buffer
 	ssize_t			write_request;		// cgi에 쓸 것이 남은 상태
 	ssize_t			len;
 
-					Buffer(int fd, size_t buffer_size);
+					Buffer(int fd, size_t buffer_size = 0x100000);
 	virtual			~Buffer();
 
 	void			get_token(std::string& token, int sep);

@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-class Path
+struct Path
 {
 	private:
 	std::vector<std::string>	segments;

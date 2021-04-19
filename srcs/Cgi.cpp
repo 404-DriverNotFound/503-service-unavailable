@@ -2,38 +2,71 @@
 // #include <cstdio>
 #include <iostream>
 
-			Cgi::Cgi()
-: path(0), meta_variable(0), fd_out(fd_pipe[1])
+Cgi::map_path	Cgi::cgi_bin;
+
+//------------------------------------------------------------------------------
+
+				Cgi::Cgi()
+: path(0), meta_variable(0), fd_in(fd_read[0]), fd_out(fd_write[1])
 {}
 
-void		Cgi::init(char* path, char** meta_variable)
+//------------------------------------------------------------------------------
+
+void			Cgi::init(char* path, char** meta_variable)
 {
 	path = path;
 	meta_variable = meta_variable;
-	pipe(fd_pipe);
+	set_extension();
+	pipe(fd_write);
+	pipe(fd_read);
 }
 
-void		Cgi::start_cgi()
+//------------------------------------------------------------------------------
+
+void			Cgi::start_cgi()
 {
 	pid = fork();
 
 	if (pid == 0)
 	{
-		std::cout << "fork\n";
-		dup2(fd_pipe[0], 0);
-		close(fd_pipe[1]);
-		if (execve(path, 0, meta_variable))
-			std::cout << "fxxxx\n" << path << std::endl;
+		dup2(fd_write[0], 0);
+		dup2(fd_read[1], 1);
+		close(fd_write[1]);
+		close(fd_read[0]);
+		if (execve(cgi_bin[extension].c_str(), make_argv(), meta_variable))
+			throw 500;	// status code 500
 	}
 	else
 	{
-		close(fd_pipe[0]);
+		close(fd_read[1]);
+		close(fd_write[0]);
 	}
 }
 
-void		Cgi::destroy_pipe()
+//------------------------------------------------------------------------------
+
+void			Cgi::destroy_pipe()
 {
-	close(fd_pipe[1]);
+	close(fd_read[0]);
+	close(fd_write[1]);
+}
+
+//------------------------------------------------------------------------------
+
+void			Cgi::set_extension()
+{
+	extension.assign(path.begin() + path.find_last_of("."), path.end());
+}
+
+//------------------------------------------------------------------------------
+
+char* const*	Cgi::make_argv()
+{
+	char**	argv = new char*[2];
+
+	argv[0] = const_cast<char*>(cgi_bin[extension].c_str());
+	argv[1] = 0;
+	return argv;
 }
 
 /*
@@ -71,3 +104,6 @@ int			main(void)
 	c0.destroy_pipe();
 }
 */
+
+int			main()
+{}

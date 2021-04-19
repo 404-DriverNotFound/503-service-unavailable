@@ -1,6 +1,7 @@
 #include "Buffer.hpp"
 
 //------------------------------------------------------------------------------
+
 					Buffer::Buffer(int fd, size_t buffer_size)
 : fd(fd), buffer_size(buffer_size)
 {
@@ -11,12 +12,14 @@
 }
 
 //------------------------------------------------------------------------------
+
 					Buffer::~Buffer()
 {
 	delete[] buffer;
 }
 
 //------------------------------------------------------------------------------
+
 int					Buffer::read_buffer()
 {
 
@@ -31,7 +34,6 @@ int					Buffer::read_buffer()
 	return len;
 
 }
-
 
 //------------------------------------------------------------------------------
 
@@ -59,7 +61,7 @@ void				Buffer::get_token(std::string& token, int sep)
 
 void				Buffer::get_token_seq(std::string& token, char* seq)
 {
-	ssize_t			len_seq = strlen(seq);
+	ssize_t			len_seq = ft::strlen(seq);
 
 	if (read_request)
 		return ;
@@ -68,7 +70,7 @@ void				Buffer::get_token_seq(std::string& token, char* seq)
 	while (cursor != end)
 	{
 		token.push_back(*cursor++);
-		if (len_seq <= token.length() && strcmp(&*token.end() - len_seq, seq) == 0)
+		if (len_seq <= token.length() && ft::strcmp(&*token.end() - len_seq, seq) == 0)
 		{
 			token.erase(token.end() - len_seq, token.end());
 			is_token_complete = 1;
@@ -83,7 +85,7 @@ void				Buffer::get_token_seq(std::string& token, char* seq)
 
 char				Buffer::get_token_set(std::string& token, char* set)
 {
-	ssize_t			len_seq = strlen(set);
+	ssize_t			len_seq = ft::strlen(set);
 	char*			seperator;
 
 	if (read_request)
@@ -92,7 +94,7 @@ char				Buffer::get_token_set(std::string& token, char* set)
 		token.clear();
 	while (cursor != end)
 	{
-		if ((seperator = strchr(set, *cursor)))
+		if ((seperator = ft::strchr(set, *cursor)))
 		{
 			cursor++;
 			is_token_complete = 1;
@@ -106,6 +108,7 @@ char				Buffer::get_token_set(std::string& token, char* set)
 }
 
 //------------------------------------------------------------------------------
+
 ssize_t				Buffer::size() const
 {
 	return buffer - end;

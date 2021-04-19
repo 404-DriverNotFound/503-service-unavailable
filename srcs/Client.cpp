@@ -1,8 +1,16 @@
 #include "Client.hpp"
 
-void		Client::manage_client(bool is_buffer)
+//------------------------------------------------------------------------------
+
+			Client::Client(int fd)
+: sock(fd), buffer(fd), status(RECV_START_LINE)
+{}
+
+//------------------------------------------------------------------------------
+
+void		Client::client_process(FdSet& r, FdSet& w)
 {
-	if (is_buffer)
+	if (buffer.read_request && r.get(sock.fd))
 	{
 		read_buffer();
 	}
@@ -45,24 +53,26 @@ void		Client::manage_client(bool is_buffer)
 	}
 }
 
+//------------------------------------------------------------------------------
+
 void	Client::read_buffer()
-{
-	buffer.read_buffer();
-}
+{	buffer.read_buffer();	}
+
+//------------------------------------------------------------------------------
 
 void	Client::recv_start_line()
 {
-	// 첫 번째 개행을 만나기 전이라면 그대로 리턴
-	buffer.get_token(line, '\n');
+	buffer.get_token(line, '\n');	// 첫 번째 개행을 만나기 전이라면 그대로 리턴
 	if (!buffer.is_token_complete)
 	{
 		buffer.read_request = true;
 		return ;
 	}
-	// 첫 번째 개행을 만났다면 헤더를 구문분석 한다
-	// 시작줄 구문분석 완료 후 상태플래그 변경
-	status = RECV_HEADER;
+	req.set_start_line(line);		// 첫 번째 개행을 만났다면 헤더를 구문분석
+	status = RECV_HEADER;			// 시작줄 구문분석 완료 후 상태플래그 변경
 }
+
+//------------------------------------------------------------------------------
 
 void	Client::recv_header()
 {
@@ -77,14 +87,31 @@ void	Client::recv_header()
 		status = PROC_CGI;
 		return ;
 	}
-	// Http 한 줄 구문분석
+	req.set_headers(line);		// Http 한 줄 구문분석 (키/값 분리)
 }
+
+//------------------------------------------------------------------------------
+
+// void	Client::set_server(std::vector<Config>& configs)
+// {
+// 	std::vector<Config>::iterator	it = configs.begin();
+// 	std::vector<Config>::iterator	end = configs.end();
+
+// 	while (it != end)
+// 	{
+// 		if (it->root == req.path)
+// 	}
+// }
+
+//------------------------------------------------------------------------------
 
 void	Client::proc_cgi()
 {
 	// cgi.init_cgi();
 	cgi.start_cgi();
 }
+
+//------------------------------------------------------------------------------
 
 void	Client::recv_body(size_t len)
 {
@@ -93,6 +120,8 @@ void	Client::recv_body(size_t len)
 	else
 		buffer.write(len, cgi.fd_out);
 }
+
+//------------------------------------------------------------------------------
 
 void	Client::recv_chunked_body()
 {
@@ -113,15 +142,21 @@ void	Client::recv_chunked_body()
 	}
 }
 
+//------------------------------------------------------------------------------
+
 void	Client::terminate_cgi()
 {
 
 }
 
+//------------------------------------------------------------------------------
+
 void	Client::make_msg()
 {
 
 }
+
+//------------------------------------------------------------------------------
 
 void	Client::send_msg()
 {

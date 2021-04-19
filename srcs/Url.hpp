@@ -2,7 +2,7 @@
 #include <string>
 #include "Path.hpp"
 
-class Url
+struct Url
 {
 	std::string		scheme;
 	std::string		user;

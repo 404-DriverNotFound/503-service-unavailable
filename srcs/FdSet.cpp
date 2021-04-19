@@ -46,6 +46,17 @@ void	FdSet::zero()
 	memset(fds_bits, 0, 128);
 }
 
+FdSet&	FdSet::operator=(FdSet& x)
+{
+	if (&x == this)
+		return *this;
+	memcpy(fds_bits, x.fds_bits, sizeof(*this));
+	return *this;
+}
+
+
+
+/*
 void	FdSet::print_bit() const
 {
 	for (int i = 0 ; i < sizeof(FdSet::fds_bits) * 8 ; ++i)
@@ -55,6 +66,7 @@ void	FdSet::print_bit() const
 			std::cout << std::endl;
 	}
 }
+*/
 /*
 int		main(void)
 {

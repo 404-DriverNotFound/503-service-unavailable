@@ -6,7 +6,7 @@
 /*   By: minckim <minckim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/16 10:40:15 by minckim          ###   ########.fr       */
+/*   Updated: 2021/04/19 13:10:18 by minckim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 #include <arpa/inet.h>
 #include "Utils.hpp"
 
-class Socket : public sockaddr
+struct Socket : public sockaddr
 {
-	int			fd;
-	socklen_t	socklen;
 
 	public:
+	int			fd;
+	socklen_t	socklen;
 				Socket(uint16_t port, uint32_t ip);
 				Socket(int fd);
 				Socket(const Socket& x);

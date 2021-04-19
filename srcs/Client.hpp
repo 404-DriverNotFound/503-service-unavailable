@@ -1,11 +1,12 @@
 #pragma once
 class Client;
+#include <sys/types.h>
 #include "Socket.hpp"
 #include "Buffer.hpp"
 #include "Http.hpp"
-#include <sys/types.h>
 #include "Config.hpp"
 #include "Cgi.hpp"
+#include "FdSet.hpp"
 
 #define BUFFER_SIZE		16
 
@@ -15,6 +16,7 @@ enum e_status
 {
 	RECV_START_LINE,
 	RECV_HEADER,
+	SET_LOCATION,
 	PROC_CGI,
 	END_CGI,
 	RECV_BODY,
@@ -23,27 +25,38 @@ enum e_status
 	SEND_MSG,
 	SEND_DONE
 };
-
-class Client
+/*##############################################################################
+Client
+##############################################################################*/
+struct Client
 {
+	/*--------------------------------------------------------------------------
+	Member
+	--------------------------------------------------------------------------*/
+	public:
 	Socket		sock;
 	Buffer		buffer;
 	std::string	line;
 	e_status	status;
-	Http		req;
-	Http		res;
+	HttpReq		req;
+	HttpRes		res;
 	Cgi			cgi;
-	Config&		config_location;
+	std::string	path;
+	Config*		config_location;
 
-	public:
-	void		manage_client(bool is_buffer);
+	/*--------------------------------------------------------------------------
+	Method
+	--------------------------------------------------------------------------*/
+				Client(int fd);
+	void		client_process(FdSet& r, FdSet& w);
 	void		read_buffer();
 	void		recv_start_line();
 	void		recv_header();
+	void		set_location(std::vector<Config>& configs);
 	void		recv_body(size_t len);
 	void		recv_chunked_body();
 	void		proc_cgi();
 	void		terminate_cgi();
 	void		make_msg();
 	void		send_msg();
-};
+};	//Client
