@@ -141,6 +141,8 @@ const char*	Webserver::InvalidServerBlock::what() const throw()
 
 //------------------------------------------------------------------------------
 
-// std::ostream&	operator<<(std::ostream& os, Webserver& ref) {
-// 	return (os);
-// }
+std::ostream&	operator<<(std::ostream& os, Webserver& ref) {
+	for (int idx=0;idx<ref.servers.size();idx++)
+		os << ref.servers[idx];
+	return (os);
+}

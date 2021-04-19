@@ -106,3 +106,10 @@ const char*	Server::InvalidConfig::what() const throw()
 {
 	return ("Server Config is Invalid");
 } 
+
+std::ostream&	operator<<(std::ostream& os, Server& ref) {
+	os << "server_name: " << ref.server_name << std::endl
+		<< "port: " << ref.port << std::endl
+		<< "auth: " << ref.auth << std::endl
+		<< 
+}
