@@ -23,28 +23,28 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 	char	*base, *seq = str.begin().base();
 
 	base = token[0].begin().base();
-	while (!strncmp(base, "\t", 1))
+	while (!ft::strncmp(base, "\t", 1))
 	{
 		++base;
 		bool	flag = true;
-		if (!strncmp(base, "location", 8))
+		if (!ft::strncmp(base, "location", 8))
 		{
 			location.push_back(Location(token));
 			flag = false;
 		}
-		else if (!strncmp(base, "root", 4))
+		else if (!ft::strncmp(base, "root", 4))
 		{
 			root += (base + 5);
 		}
-		else if (!strncmp(base, "server_name", 11))
+		else if (!ft::strncmp(base, "server_name", 11))
 		{
 			server_name += (base + 12);
 		}
-		else if (!strncmp(base, "port", 4))
+		else if (!ft::strncmp(base, "port", 4))
 		{
 			port = static_cast<u_int16_t>(atoi(base + 4));
 		}
-		else if (!strncmp(base, "error_page", 10))
+		else if (!ft::strncmp(base, "error_page", 10))
 		{
 			std::string::const_iterator	it;
 			std::string					temp;
@@ -56,7 +56,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			}
 			error_page.insert(temp);
 		}
-		else if (!strncmp(base, "index", 5))
+		else if (!ft::strncmp(base, "index", 5))
 		{
 			std::string::const_iterator	it;
 			std::string					temp;
@@ -68,26 +68,26 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			}
 			index.insert(temp);
 		}
-		else if (!strncmp(base, "head_length", 11))
+		else if (!ft::strncmp(base, "head_length", 11))
 		{
 			head_length = static_cast<u_int32_t>(atoi(base + 12));
 		}
-		else if (!strncmp(base, "body_length", 11))
+		else if (!ft::strncmp(base, "body_length", 11))
 		{
 			body_length = static_cast<u_int64_t>(atoi(base + 12));
 		}
-		else if (!strncmp(base, "autoindex", 8))
+		else if (!ft::strncmp(base, "autoindex", 8))
 		{
-			if (!strncmp(base + 9, " on", 0))
+			if (!ft::strncmp(base + 9, " on", 0))
 				autoindex = true;
 			else
 				autoindex = false;
 		}
-		else if (!strncmp(base, "timeout", 7))
+		else if (!ft::strncmp(base, "timeout", 7))
 		{
 				timeout = static_cast<u_int16_t>(atoi(base + 7));
 		}
-		else if (!strncmp(base, "auth", 4))
+		else if (!ft::strncmp(base, "auth", 4))
 		{
 			auth += base + 5;
 		}

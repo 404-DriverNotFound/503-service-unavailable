@@ -23,14 +23,14 @@ Location::Location(std::deque<std::string>& token)
 	token.pop_front();
 	base = token[0].begin().base();
 	std::cout << "body_len : " << body_length << std::endl;
-	while (!strncmp(base, "\t\t", 2))
+	while (!ft::strncmp(base, "\t\t", 2))
 	{
 		base += 2;
-		if (!strncmp(base, "root", 4))
+		if (!ft::strncmp(base, "root", 4))
 		{
 			root += (base + 5);
 		}
-		else if (!strncmp(base, "error_page", 10))
+		else if (!ft::strncmp(base, "error_page", 10))
 		{
 			std::string::const_iterator	it;
 			std::string					temp;
@@ -42,7 +42,7 @@ Location::Location(std::deque<std::string>& token)
 			}
 			error_page.insert(temp);
 		}
-		else if (!strncmp(base, "index", 5))
+		else if (!ft::strncmp(base, "index", 5))
 		{
 			std::string::const_iterator	it;
 			std::string					temp;
@@ -54,7 +54,7 @@ Location::Location(std::deque<std::string>& token)
 			}
 			index.insert(temp);
 		}
-		else if (!strncmp(base, "method", 6))
+		else if (!ft::strncmp(base, "method", 6))
 		{
 			std::string::const_iterator	it;
 			std::string					temp;
@@ -69,13 +69,13 @@ Location::Location(std::deque<std::string>& token)
 					}
 			}
 		}
-		else if (!strncmp(base, "body_length", 11))
+		else if (!ft::strncmp(base, "body_length", 11))
 		{
 			body_length = static_cast<u_int64_t>(atoi(base + 12));
 		}
-		else if (!strncmp(base, "autoindex", 8))
+		else if (!ft::strncmp(base, "autoindex", 8))
 		{
-			if (!strncmp(base + 9, " on", 0))
+			if (!ft::strncmp(base + 9, " on", 0))
 				autoindex = true;
 			else
 				autoindex = false;

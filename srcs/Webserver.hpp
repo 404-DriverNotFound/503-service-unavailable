@@ -5,6 +5,7 @@
 #include "Server.hpp"
 #include "Client.hpp"
 #include "Http.hpp"
+#include "Buffer.hpp"
 #include <sys/select.h>
 #include <vector>
 /*#####################################
@@ -30,6 +31,7 @@ struct Webserver
 	// std::vector<Client>		clients;
 
 	Webserver();
+	Webserver(const std::string& path_config);
 	~Webserver();
 	// Webserver(const Path&); 	// config 파일의 경로를 받아서 초기화
 	/*----------------------

@@ -193,7 +193,7 @@ std::string		ft::which(const std::string& exe, char** env)
 		{
 			if (exe == ent->d_name)
 			{
-				if (it->back() != '/')
+				if (*--(it->end()) != '/')
 					return (std::string(*it) + "/" + exe);
 				return (it->c_str() + exe);
 			}

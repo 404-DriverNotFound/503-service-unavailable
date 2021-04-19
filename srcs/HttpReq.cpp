@@ -22,8 +22,8 @@ void		HttpReq::set_start_line(const std::string& line)
 	ft::get_chr_token(line, it_line, token, ' ');
 	if (token.empty())
 		throw HttpFormException();
-	if (!token.empty() && token.back() == '\r')
-		token.pop_back();
+	if (!token.empty() && *--token.end() == '\r')
+		token.erase(--token.end());
 	token.swap(protocol);
 }
 

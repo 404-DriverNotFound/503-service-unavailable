@@ -1,4 +1,5 @@
 #pragma once
+#include "Utils.hpp"
 
 enum e_method
 {
@@ -15,5 +16,5 @@ enum e_method
 
 struct	Method {
 	std::string	str;
-	u_int16_t	flag;
+	uint16_t	flag;
 };
