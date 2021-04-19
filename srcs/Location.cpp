@@ -1,7 +1,17 @@
 #include "Location.hpp"
 #include "Utils.hpp"
-
 //------------------------------------------------------------------------------
+Method Location::methodSet[9] = {
+	{"CONNECT", 1 << CONNECT},
+	{"DELETE", 1 << DELETE},
+	{"GET", 1 << GET},
+	{"HEAD", 1 << HEAD},
+	{"OPTIONS", 1 << OPTIONS},
+	{"PATCH", 1 << PATCH},
+	{"POST", 1 << POST},
+	{"PUT", 1 << PUT},
+	{"TRACE", 1 << TRACE}
+};
 
 Location::Location(std::deque<std::string>& token)
 {
@@ -12,6 +22,7 @@ Location::Location(std::deque<std::string>& token)
 	location += base + 10;
 	token.pop_front();
 	base = token[0].begin().base();
+	std::cout << "body_len : " << body_length << std::endl;
 	while (!strncmp(base, "\t\t", 2))
 	{
 		base += 2;
@@ -27,9 +38,9 @@ Location::Location(std::deque<std::string>& token)
 			it = token[0].begin() + 13;
 			while (ft::get_set_token(token[0], it, temp, seq))
 			{
-				error_page.push_back(temp);
+				error_page.insert(temp);
 			}
-			error_page.push_back(temp);
+			error_page.insert(temp);
 		}
 		else if (!strncmp(base, "index", 5))
 		{
@@ -39,9 +50,9 @@ Location::Location(std::deque<std::string>& token)
 			it = token[0].begin() + 8;
 			while (ft::get_set_token(token[0], it, temp, seq))
 			{
-				index.push_back(temp);
+				index.insert(temp);
 			}
-			index.push_back(temp);
+			index.insert(temp);
 		}
 		else if (!strncmp(base, "method", 6))
 		{
@@ -51,13 +62,16 @@ Location::Location(std::deque<std::string>& token)
 			it = token[0].begin() + 9;
 			while (ft::get_set_token(token[0], it, temp, seq))
 			{
-				method.push_back(temp);
+				for (int idx=0;idx<9;idx++)
+					if (temp == methodSet[idx].str) {
+						method.insert(temp, methodSet)
+						break;
+					}
 			}
-			method.push_back(temp);
 		}
 		else if (!strncmp(base, "body_length", 11))
 		{
-			body_length = static_cast<u_int16_t>(atoi(base + 12));
+			body_length = static_cast<u_int64_t>(atoi(base + 12));
 		}
 		else if (!strncmp(base, "autoindex", 8))
 		{
@@ -75,4 +89,24 @@ Location::Location(std::deque<std::string>& token)
 
 Location::~Location()
 {
+}
+
+std::ostream&	operator<<(std::ostream& os, Location& ref) {
+	os <<"location " << ref.location << std::endl
+		<< "root: " << ref.root << std::endl
+		<<"error_page: ";
+	std::set<std::string>::iterator	it;
+
+	it = ref.error_page.begin();
+	for (;it != ref.error_page.end();++it)
+		os << *it << " ";
+	os << std::endl
+		<< "index: ";
+	it = ref.index.begin();
+	for (; it != ref.index.end();++it)
+		os << *it << " ";
+	os << std::endl
+		<< "body_length: " << ref.body_length << std::endl;
+	os << "method: " << ref.method;
+	return os;
 }

@@ -2,7 +2,7 @@
 
 enum e_method
 {
-	CONNECT,
+	CONNECT = 0,
 	DELETE,
 	GET,
 	HEAD,
@@ -11,4 +11,9 @@ enum e_method
 	POST,
 	PUT,
 	TRACE,
+};
+
+struct	Method {
+	std::string	str;
+	u_int16_t	flag;
 };

@@ -3,6 +3,7 @@
 // #include "Path.hpp"
 #include "FdSet.hpp"
 #include "Server.hpp"
+#include "Http.hpp"
 #include <sys/select.h>
 #include <vector>
 /*#####################################
@@ -39,6 +40,7 @@ struct Webserver
 	// void			manage_clients();
 	// void			set_status_code();
 	// void			set_path_cgi_bin(char** env);
+	void			set_mapmethod();
 
 	private:
 		void		config_parser(std::deque<std::string>&);

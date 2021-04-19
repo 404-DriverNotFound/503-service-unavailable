@@ -27,7 +27,7 @@ struct Http
 	std::map<std::string, std::string>	headers;
 	std::deque<uint8_t>					body;
 	std::string							protocol;
-
+	static std::map<std::string, u_int16_t>	mapMethod;
 	/*--------------------------------------------------------------------------
 	Exception
 	--------------------------------------------------------------------------*/

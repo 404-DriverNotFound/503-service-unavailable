@@ -52,8 +52,9 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			it = token[0].begin() + 12;
 			while (ft::get_set_token(token[0], it, temp, seq))
 			{
-				error_page.push_back(temp);
+				error_page.insert(temp);
 			}
+			error_page.insert(temp);
 		}
 		else if (!strncmp(base, "index", 5))
 		{
@@ -63,9 +64,9 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			it = token[0].begin() + 7;
 			while (ft::get_set_token(token[0], it, temp, seq))
 			{
-				index.push_back(temp);
+				index.insert(temp);
 			}
-			index.push_back(temp);
+			index.insert(temp);
 		}
 		else if (!strncmp(base, "head_length", 11))
 		{
@@ -73,7 +74,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		}
 		else if (!strncmp(base, "body_length", 11))
 		{
-			body_length = static_cast<u_int16_t>(atoi(base + 12));
+			body_length = static_cast<u_int64_t>(atoi(base + 12));
 		}
 		else if (!strncmp(base, "autoindex", 8))
 		{
@@ -108,8 +109,30 @@ const char*	Server::InvalidConfig::what() const throw()
 } 
 
 std::ostream&	operator<<(std::ostream& os, Server& ref) {
-	os << "server_name: " << ref.server_name << std::endl
+	os << "root: " << ref.root << std::endl
+		<<"server_name: " << ref.server_name << std::endl
+		<<"error_page: ";
+	std::set<std::string>::iterator	it;
+	it = ref.error_page.begin();
+	for (;it != ref.error_page.end();++it)
+		os << *it << " ";
+	os << std::endl
 		<< "port: " << ref.port << std::endl
-		<< "auth: " << ref.auth << std::endl
-		<< 
+		<< "index: ";
+	it = ref.index.begin();
+	for (; it != ref.index.end();++it)
+		os << *it << " ";
+	os << std::endl
+		<< "head_length: " << ref.head_length << std::endl
+		<< "body_length: " << ref.body_length << std::endl
+		<< "autoindex: ";
+	if (ref.autoindex)
+		os << "on";
+	else
+		os << "off";
+	os << std::endl
+		<< "auth: " << ref.auth << std::endl;
+	for (size_t idx=0;idx<ref.location.size();++idx)
+		os << ref.location[idx] << std::endl;
+	return os;
 }

@@ -3,6 +3,7 @@
 #include <deque>
 #include <vector>
 #include "DataClass.hpp"
+#include "Method.hpp"
 
 /*##############################################################################
 Location
@@ -15,7 +16,7 @@ struct Location : public ConfigSet
 	public:
 	std::string		location;
 	Location();
-
+	static Method	methodSet[9];
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
@@ -23,3 +24,5 @@ struct Location : public ConfigSet
 	Location(std::deque<std::string>&);
 	~Location();
 };
+
+std::ostream&	operator<<(std::ostream&, Location&);

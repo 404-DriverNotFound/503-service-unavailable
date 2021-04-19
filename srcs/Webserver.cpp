@@ -81,6 +81,20 @@ const char*	Webserver::InvalidServerBlock::what() const throw()
 
 //------------------------------------------------------------------------------
 
+void	Webserver::set_mapmethod()
+{
+	Http::mapMethod.insert(std::make_pair("CONNECT", CONNECT));
+	Http::mapMethod.insert(std::make_pair("DELETE", DELETE));
+	Http::mapMethod.insert(std::make_pair("GET", GET));
+	Http::mapMethod.insert(std::make_pair("HEAD", HEAD));
+	Http::mapMethod.insert(std::make_pair("OPTIONS", OPTIONS));
+	Http::mapMethod.insert(std::make_pair("PATCH", PATCH));
+	Http::mapMethod.insert(std::make_pair("POST", POST));
+	Http::mapMethod.insert(std::make_pair("PUT", PUT));
+	Http::mapMethod.insert(std::make_pair("TRACE", TRACE));
+}
+//------------------------------------------------------------------------------
+
 // void		Webserver::set_status_code()
 // {
 // 	HttpRes::status_code_map[100] = "Continue";
@@ -142,7 +156,7 @@ const char*	Webserver::InvalidServerBlock::what() const throw()
 //------------------------------------------------------------------------------
 
 std::ostream&	operator<<(std::ostream& os, Webserver& ref) {
-	for (int idx=0;idx<ref.servers.size();idx++)
-		os << ref.servers[idx];
+	for (size_t idx=0;idx<ref.servers.size();idx++)
+		os << ref.servers[idx] << std::endl;
 	return (os);
 }

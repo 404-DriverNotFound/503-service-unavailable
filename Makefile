@@ -5,7 +5,7 @@ NAME = webserv
 #-------------------------------------------------------------------------------
 CC = clang++
 CFLAG = -Wall -Wextra -Werror --std c++98 -g
-
+ASAN = -fsanitize=address
 #-------------------------------------------------------------------------------
 #	FILE NAMES
 #-------------------------------------------------------------------------------
@@ -34,6 +34,9 @@ $(DIR_OBJS):
 
 $(NAME) : $(DIR_OBJS) $(OBJS)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME)
+
+asan : $(DIR_OBJS) $(OBJS)
+	$(CC) $(ASAN) $(CFLAG) $(OBJS) -o $(NAME)
 
 $(DIR_OBJS)%.o : $(DIR_SRCS)%.cpp
 	$(CC) $(CFLAG) -c $< -o $@
