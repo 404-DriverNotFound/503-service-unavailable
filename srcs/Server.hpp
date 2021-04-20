@@ -14,7 +14,7 @@ struct Server : public ConfigSet
 	public:
 	Socket						sock;
 	std::string					server_name;
-	u_int16_t					port;
+	uint16_t					port;
 	std::string					auth;
 	std::vector<Location>		location;
 	Server();

@@ -27,8 +27,9 @@ void		Client::client_process(FdSet& r, FdSet& w)
 				break;
 		case PROC_MSG:
 			set_location();		// 포트, 호스트, 로케이션 설정, 메서드, 권한 확인
-		case PROC_CGI:
+			check_auth();
 			proc_cgi();
+			status = RECV_BODY;
 		case RECV_BODY:
 			recv_body(0);
 			if (status == RECV_BODY)
@@ -83,7 +84,7 @@ void	Client::recv_header()
 	}
 	if (line == "" || line == "\r")
 	{
-		status = PROC_CGI;
+		status = PROC_MSG;
 		return ;
 	}
 	req.set_headers(line);		// Http 한 줄 구문분석 (키/값 분리)
@@ -92,18 +93,40 @@ void	Client::recv_header()
 //------------------------------------------------------------------------------
 
 void		Client::set_location()
-{}
+{
+	typedef std::vector<Server>::iterator		server_iterator;
+	typedef std::vector<Location>::iterator		location_iterator;
 
-// void	Client::set_server(std::vector<Config>& configs)
-// {
-// 	std::vector<Config>::iterator	it = configs.begin();
-// 	std::vector<Config>::iterator	end = configs.end();
+	std::string			http_location_name;
+	req.get_location_name(http_location_name);
+	server_iterator 	server_it = vec_server.begin();
+	server_iterator 	server_end = vec_server.end();
+	while (server_it != server_end)
+	{
+		if (req.headers["host"] == server_it->server_name)
+		{
+			server = &(*server_it);
+			location_iterator 	location_it = server->location.begin();
+			location_iterator 	location_end = server->location.end();
+			while (location_it != location_end)
+			{
+				if (location_it->location == http_location_name)
+				{
+					location = &(*location_it);
+					return ;
+				}
+				++location_it;
+			}
+		}
+		++server_it;
+	}
+	throw 404;
+}
 
-// 	while (it != end)
-// 	{
-// 		if (it->root == req.path)
-// 	}
-// }
+void		Client::check_auth()
+{
+
+}
 
 //------------------------------------------------------------------------------
 
@@ -117,6 +140,12 @@ void	Client::proc_cgi()
 
 void	Client::recv_body(size_t len)
 {
+	cgi.check_exit();
+	if (cgi.is_exit)
+	{
+		status = END_CGI;
+		return ;
+	}
 	if (buffer.write_request)
 		buffer.write(buffer.write_request, cgi.fd_out);
 	else
@@ -127,6 +156,12 @@ void	Client::recv_body(size_t len)
 
 void	Client::recv_body_chunked()
 {
+	cgi.check_exit();
+	if (cgi.is_exit)
+	{
+		status = END_CGI;
+		return ;
+	}
 	if (!buffer.write_request)
 	{
 		buffer.get_token(line, '\n');
@@ -148,7 +183,7 @@ void	Client::recv_body_chunked()
 
 void	Client::terminate_cgi()
 {
-
+	cgi.terminate();
 }
 
 //------------------------------------------------------------------------------

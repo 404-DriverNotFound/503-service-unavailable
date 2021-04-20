@@ -69,6 +69,18 @@ char* const*	Cgi::make_argv()
 	return argv;
 }
 
+void			Cgi::check_exit()
+{
+	is_exit = waitpid(pid, &status, WNOHANG);
+	if (is_exit)
+		return_code = (status & 0xff00) >> 8;	// WEXITSTATUS
+}
+
+void			Cgi::terminate()
+{
+	destroy_pipe();
+}
+
 /*
 int			main(void)
 {

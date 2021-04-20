@@ -27,6 +27,7 @@ enum e_status
 	SEND_MSG,
 	SEND_DONE
 };
+
 /*##############################################################################
 Client
 ##############################################################################*/
@@ -45,6 +46,7 @@ struct Client
 	Cgi						cgi;
 	std::string				path;
 	Server*					server;
+	Location*				location;
 	std::vector<Server>&	vec_server;
 
 	/*--------------------------------------------------------------------------
@@ -56,6 +58,7 @@ struct Client
 	void		recv_start_line();
 	void		recv_header();
 	void		set_location();
+	void		check_auth();
 	void		recv_body(size_t len);
 	void		recv_body_chunked();
 	void		proc_cgi();

@@ -36,9 +36,18 @@ void		HttpReq::set_headers(const std::string& line)
 	std::string							val;
 
 	ft::get_set_token(line, it_line, key, ": ");
+	ft::lowercase(key);
 	while (ft::strchr(": ", *it_line))
 		++it_line;
 	headers[key].assign(it_line, line.end());
+}
+
+//------------------------------------------------------------------------------
+
+void		HttpReq::get_location_name(std::string& location_name)
+{
+	std::string::const_iterator		it;
+	ft::get_chr_token(path, it, location_name, '\n', 20);
 }
 
 //------------------------------------------------------------------------------

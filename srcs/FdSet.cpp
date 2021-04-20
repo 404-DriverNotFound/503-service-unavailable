@@ -2,7 +2,9 @@
 #include <string.h>
 
 		FdSet::FdSet()
-{}
+{
+	zero();
+}
 
 		FdSet::~FdSet()
 {}
@@ -43,7 +45,7 @@ void	FdSet::del(uint64_t fd)
 
 void	FdSet::zero()
 {
-	memset(fds_bits, 0, 128);
+	memset(fds_bits, 0, sizeof(*this));
 }
 
 FdSet&	FdSet::operator=(FdSet& x)

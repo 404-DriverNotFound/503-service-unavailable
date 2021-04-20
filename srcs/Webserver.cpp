@@ -6,6 +6,7 @@
 Webserver
 ######################################*/
 Webserver::Webserver(int argc, char** argv, char** env)
+: select_timeout(5000000)
 {
 	if (argc > 2)
 	{
@@ -21,8 +22,7 @@ Webserver::Webserver(int argc, char** argv, char** env)
 }
 
 Webserver::~Webserver()
-{
-}
+{}
 //------------------------------------------------------------------------------
 
 void	Webserver::config_parser(std::deque<std::string>& token, const char* config_path)
@@ -88,7 +88,7 @@ void			Webserver::start_server()
 		to_be_checked_read = to_be_checked;
 		to_be_checked_write = to_be_checked;
 		to_be_checked_exception = to_be_checked;
-		result = select(max_connection, &to_be_checked_read, &to_be_checked_write, &to_be_checked_exception, &config.select_timeout);
+		result = select(max_connection, &to_be_checked_read, &to_be_checked_write, &to_be_checked_exception, &select_timeout);
 		if (result < 0)
 			throw SelectFailed();
 		if (result == 0)	// timeout
@@ -107,7 +107,7 @@ void			Webserver::check_new_connection()
 	{
 		if (to_be_checked_read.get(it->sock.fd) == 0)
 			continue;
-		clients.push_back(it->sock.fd);
+		clients.push_back(Client(it->sock.fd, servers));
 	}
 }
 
@@ -119,6 +119,8 @@ void			Webserver::manage_clients()
 	for (client_iterator it = clients.begin() ; it != end ; ++it)
 	{
 		it->client_process(to_be_checked_read, to_be_checked_write);
+		if (it->status == SEND_DONE)
+			clients.erase(it);
 	}
 }
 

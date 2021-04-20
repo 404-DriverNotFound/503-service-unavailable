@@ -19,7 +19,7 @@ struct HttpReq : public Http
 	--------------------------------------------------------------------------*/
 	void			set_start_line(const std::string& line);
 	void			set_headers(const std::string& line);
-
+	void			get_location_name(std::string& location_name);
 	/*--------------------------------------------------------------------------
 	Private Method
 	--------------------------------------------------------------------------*/

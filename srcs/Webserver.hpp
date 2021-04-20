@@ -6,8 +6,10 @@
 #include "Client.hpp"
 #include "Http.hpp"
 #include "Buffer.hpp"
+#include "Time.hpp"
 #include <sys/select.h>
 #include <vector>
+#include <list>
 /*#####################################
 Webserver
 ######################################*/
@@ -17,19 +19,19 @@ struct Webserver
 	typedef
 	-----------------------*/
 	typedef std::vector<Server>::iterator	server_iterator;
-	typedef std::vector<Client>::iterator	client_iterator;
+	typedef std::list<Client>::iterator		client_iterator;
 	
 	/*------------------------
 	Member
 	-------------------------*/
 	size_t					max_connection;
-
+	Time					select_timeout;
 	FdSet					to_be_checked;
 	FdSet					to_be_checked_read;
 	FdSet					to_be_checked_write;
 	FdSet					to_be_checked_exception;
 	std::vector<Server>		servers;
-	std::vector<Client>		clients;
+	std::list<Client>		clients;
 
 	Webserver(int argc, char** argv, char** env);
 	Webserver(const std::string& path_config);
@@ -51,10 +53,10 @@ struct Webserver
 	void			config_parser(std::deque<std::string>&, const char*);
 	void			server_create(std::deque<std::string>&);
 
-	public:	
 	/*------------------------------
 	Exception
 	------------------------------*/
+	public:	
 	class SelectFailed : public std::exception {
 		public: virtual const char*	what() const throw();	};
 	class InvalidServerBlock: public std::exception {

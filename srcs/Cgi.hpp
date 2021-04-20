@@ -20,6 +20,9 @@ struct Cgi
 	--------------------------------------------------------------------------*/
 	public:
 	int				pid;
+	int				status;
+	int				is_exit;
+	int				return_code;
 	int				fd_write[2];	// server ---> cgi
 	int				fd_read[2];		//    cgi ---> server
 	int&			fd_in;			// server's new stdin
@@ -37,5 +40,7 @@ struct Cgi
 	void			start_cgi();
 	void			set_extension();
 	char* const*	make_argv();
+	void			check_exit();
 	void			destroy_pipe();
+	void			terminate();
 };

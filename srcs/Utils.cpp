@@ -150,6 +150,8 @@ bool	ft::get_chr_token(const std::string &origin, std::string::const_iterator &i
 	return false;
 }
 
+//------------------------------------------------------------------------------
+
 void	ft::get_set_token(const std::string& origin, std::list<std::string>& tokens, const char* set)
 {
 	std::string::const_iterator			it = origin.begin();
@@ -167,6 +169,8 @@ void	ft::get_set_token(const std::string& origin, std::list<std::string>& tokens
 	tokens.push_back(std::string());
 	tokens.back().swap(token);
 }
+
+//------------------------------------------------------------------------------
 
 std::string		ft::which(const std::string& exe, char** env)
 {
@@ -202,6 +206,8 @@ std::string		ft::which(const std::string& exe, char** env)
 	return "";
 }
 
+//------------------------------------------------------------------------------
+
 std::string	ft::itoa(long n)
 {
 	char		digit[50];
@@ -228,6 +234,7 @@ std::string	ft::itoa(long n)
 	return result;
 }
 
+//------------------------------------------------------------------------------
 
 std::string	ft::get_last_modified(const char* path)
 {
@@ -240,6 +247,8 @@ std::string	ft::get_last_modified(const char* path)
 		return ft::date_to_str(ft::time_convert(stat_f.st_mtim.tv_sec));
 	#endif
 }
+
+//------------------------------------------------------------------------------
 
 ft::Date		ft::time_convert(long time_sec)
 {
@@ -291,6 +300,8 @@ ft::Date		ft::time_convert(long time_sec)
 	return d;
 }
 
+//------------------------------------------------------------------------------
+
 std::string		ft::date_to_str(const ft::Date& d)
 {
 	static std::string	day_name[] = 
@@ -321,6 +332,11 @@ std::string		ft::date_to_str(const ft::Date& d)
 	result.append(" GMT");
 	return result;
 }
+
+//------------------------------------------------------------------------------
+
+
+
 
 // int		main(int argc, char** argv, char** env)
 // {
