@@ -133,6 +133,13 @@ const char*	Webserver::InvalidServerBlock::what() const throw()
 
 //------------------------------------------------------------------------------
 
+const char*	Webserver::SelectFailed::what() const throw()
+{
+	return ("Select Failed");
+}
+
+//------------------------------------------------------------------------------
+
 void		Webserver::set_path_cgi_bin(char** env)
 {
 	Cgi::cgi_bin["php"] = ft::which("php", env);

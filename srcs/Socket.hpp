@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sujung <sujung@student.42.fr>              +#+  +:+       +#+        */
+/*   By: minckim <minckim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/19 14:12:58 by sujung           ###   ########.fr       */
+/*   Updated: 2021/04/21 18:56:25 by minckim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "Utils.hpp"
+
 /*##############################################################################
 Socket
 ##############################################################################*/
+
 struct Socket : public sockaddr
 {
 	/*--------------------------------------------------------------------------
@@ -25,7 +27,8 @@ struct Socket : public sockaddr
 	int			fd;
 	socklen_t	socklen;
 
-				Socket(uint16_t port, uint32_t ip);
+				Socket();
+				Socket(uint16_t port, uint32_t ip = INADDR_ANY);
 				Socket(int fd);
 				Socket(const Socket& x);
 	Socket&		operator=(const Socket& x);
@@ -33,7 +36,7 @@ struct Socket : public sockaddr
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
-	void		bind(uint16_t port, uint32_t ip);
+	void		bind(uint16_t port, uint32_t ip = INADDR_ANY);
 	void		accept(int serv_sock);
 	void		listen(size_t connections);
 

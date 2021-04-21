@@ -33,6 +33,7 @@ struct	Date
 function
 --------------------------------------------------------------------------*/
 void*	memset(void* dest, int c, size_t size);
+void*	memcpy(void *dest, const void *src, unsigned int n);
 size_t	strlen(const char* str);
 int		strncmp(const char* a, const char* b, size_t len);
 int		strcmp(const char* a, const char* b);

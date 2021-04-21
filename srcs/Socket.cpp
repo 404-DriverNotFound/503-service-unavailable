@@ -2,7 +2,12 @@
 
 //------------------------------------------------------------------------------
 
-			Socket::Socket(uint16_t port, uint32_t ip = INADDR_ANY)
+			Socket::Socket()
+{}
+
+//------------------------------------------------------------------------------
+
+			Socket::Socket(uint16_t port, uint32_t ip)
 {
 	bind(port, ip);
 }
@@ -16,6 +21,13 @@
 
 //------------------------------------------------------------------------------
 
+			Socket::Socket(const Socket& x)
+{
+	ft::memcpy(this, &x, sizeof(*this));
+}
+
+//------------------------------------------------------------------------------
+
 			Socket::~Socket()
 {
 	close(fd);
@@ -23,7 +35,7 @@
 
 //------------------------------------------------------------------------------
 
-void		Socket::bind(uint16_t port, uint32_t ip = INADDR_ANY)
+void		Socket::bind(uint16_t port, uint32_t ip)
 {
 	sockaddr_in&	tmp = reinterpret_cast<sockaddr_in&>\
 							(dynamic_cast<sockaddr&>(*this));

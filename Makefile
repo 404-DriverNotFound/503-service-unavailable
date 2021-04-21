@@ -21,6 +21,7 @@ LIST_SRCS = \
 	main\
 	Server\
 	Socket\
+	Time\
 	Utils\
 	Webserver
 

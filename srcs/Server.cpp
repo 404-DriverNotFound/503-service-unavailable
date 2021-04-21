@@ -7,6 +7,7 @@
 Server::Server(std::deque<std::string>& token)
 {
 	Server_setter(token);
+	sock.bind(port);
 }
 
 //------------------------------------------------------------------------------
