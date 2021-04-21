@@ -28,6 +28,7 @@ void		Client::client_process(FdSet& r, FdSet& w)
 		case PROC_MSG:
 			set_location();		// 포트, 호스트, 로케이션 설정, 메서드, 권한 확인
 			check_auth();
+			check_method();
 			proc_cgi();
 			status = RECV_BODY;
 		case RECV_BODY:
@@ -101,8 +102,11 @@ void		Client::set_location()
 	req.get_location_name(http_location_name);
 	server_iterator 	server_it = vec_server.begin();
 	server_iterator 	server_end = vec_server.end();
+	header_iterator		header_it;
 	while (server_it != server_end)
 	{
+		// if ((header_it = req.headers.find("host")) == req.headers.end())
+		// 	throw 401;
 		if (req.headers["host"] == server_it->server_name)
 		{
 			server = &(*server_it);
@@ -125,15 +129,36 @@ void		Client::set_location()
 
 void		Client::check_auth()
 {
+	if (location->auth.empty())
+		return ;
+	header_iterator		it_header = req.headers.find("authorization");
+	if (it_header == req.headers.end())
+		return ;
+	else
+		throw 401;	// not authorized
+	return ;
+}
 
+void		Client::check_method()
+{
+	if (location->method & (1 << req.method)) // ok
+		return ;
+	else
+		throw 405; // method not allowed
 }
 
 //------------------------------------------------------------------------------
 
 void	Client::proc_cgi()
 {
-	// cgi.init_cgi();
+	char**	meta_variable = make_meta_variable();
+	cgi.init(location->cgi.c_str(), meta_variable);
 	cgi.start_cgi();
+}
+
+char**	Client::make_meta_variable()
+{
+	char**		result = new char*[10];
 }
 
 //------------------------------------------------------------------------------

@@ -12,7 +12,7 @@ Cgi::map_path	Cgi::cgi_bin;
 
 //------------------------------------------------------------------------------
 
-void			Cgi::init(char* path, char** meta_variable)
+void			Cgi::init(const char* path, char** meta_variable)
 {
 	this->path = path;
 	this->meta_variable = meta_variable;
@@ -62,10 +62,11 @@ void			Cgi::set_extension()
 
 char* const*	Cgi::make_argv()
 {
-	char**	argv = new char*[2];
+	char**	argv = new char*[3];
 
 	argv[0] = const_cast<char*>(cgi_bin[extension].c_str());
-	argv[1] = 0;
+	argv[1] = const_cast<char*>(path.c_str());
+	argv[2] = 0;
 	return argv;
 }
 

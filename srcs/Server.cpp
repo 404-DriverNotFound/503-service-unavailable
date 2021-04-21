@@ -88,10 +88,6 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		{
 			timeout = static_cast<u_int16_t>(atoi(base + 7));
 		}
-		else if (!ft::strncmp(base, "auth", 4))
-		{
-			auth += base + 5;
-		}
 		else
 			throw Server::InvalidConfig();
 		if (flag)

@@ -47,31 +47,15 @@ void		HttpReq::set_headers(const std::string& line)
 void		HttpReq::get_location_name(std::string& location_name)
 {
 	std::string::const_iterator		it;
-	ft::get_chr_token(path, it, location_name, '\n', 20);
+	ft::get_chr_token(path, it, location_name, '/', 20);
 }
 
 //------------------------------------------------------------------------------
 
 void		HttpReq::set_method(const std::string& token)
 {
-	if (token == "CONNECT")
-		method = CONNECT;
-	else if (token == "DELETE")
-		method = DELETE;
-	else if (token == "GET")
-		method = GET;
-	else if (token == "HEAD")
-		method = HEAD;
-	else if (token == "OPTIONS")
-		method = OPTIONS;
-	else if (token == "PATCH")
-		method = PATCH;
-	else if (token == "POST")
-		method = POST;
-	else if (token == "PUT")
-		method = PUT;
-	else if (token == "TRACE")
-		method = TRACE;
-	else
-		throw HttpFormException();
+	std::map<std::string, uint16_t>::iterator it = Http::mapMethod.find(token);
+	if (it == Http::mapMethod.end())
+		throw 400;
+	method = it->second;
 }

@@ -2,6 +2,8 @@
 #include <string>
 #include <deque>
 #include <vector>
+#include <unistd.h>
+#include <fcntl.h>
 #include "DataClass.hpp"
 #include "Method.hpp"
 
@@ -16,6 +18,7 @@ struct Location : public ConfigSet
 	public:
 	std::string		location;
 	std::string		cgi;
+	std::string		auth;
 	static Method	methodSet[9];
 	
 	Location();
@@ -25,6 +28,10 @@ struct Location : public ConfigSet
 	public:
 	Location(std::deque<std::string>&);
 	~Location();
+	
+	class AuthFailed: public std::exception{
+		virtual const char* what() const throw();
+	};
 };
 
 std::ostream&	operator<<(std::ostream&, Location&);
