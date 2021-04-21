@@ -85,7 +85,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		}
 		else if (!ft::strncmp(base, "timeout", 7))
 		{
-				timeout = static_cast<u_int16_t>(atoi(base + 7));
+			timeout = static_cast<u_int16_t>(atoi(base + 7));
 		}
 		else if (!ft::strncmp(base, "auth", 4))
 		{

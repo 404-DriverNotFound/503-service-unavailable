@@ -14,6 +14,7 @@ server
 		index index.html index.php index.txt
 		method POST PUT GET
 		body_length 100
+		cgi script.php
 	location /def
 		root d_directory
 		error_page d_error.html

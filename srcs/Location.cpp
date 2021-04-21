@@ -29,6 +29,10 @@ Location::Location(std::deque<std::string>& token)
 		{
 			root += (base + 5);
 		}
+		if (!ft::strncmp(base, "cgi", 3))
+		{
+			root += (base + 3);
+		}
 		else if (!ft::strncmp(base, "error_page", 10))
 		{
 			std::string::const_iterator	it;

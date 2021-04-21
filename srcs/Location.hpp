@@ -15,6 +15,7 @@ struct Location : public ConfigSet
 	--------------------------------------------------------------------------*/
 	public:
 	std::string		location;
+	std::string		cgi;
 	static Method	methodSet[9];
 	
 	Location();
