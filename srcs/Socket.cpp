@@ -1,5 +1,5 @@
 #include "Socket.hpp"
-
+#include <stdio.h>
 //------------------------------------------------------------------------------
 
 			Socket::Socket()
@@ -39,16 +39,13 @@
 
 void		Socket::bind(uint16_t port, uint32_t ip)
 {
-	sockaddr_in&	tmp = reinterpret_cast<sockaddr_in&>\
-							(dynamic_cast<sockaddr&>(*this));
-	ft::memset(static_cast<sockaddr*>(this), 0, sizeof(*this));
+	ft::memset(&s_addr, 0, sizeof(s_addr));
 	if ((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 		throw socket_failed_exception();
-	socklen = sizeof(sockaddr_in);
-	tmp.sin_family = AF_INET;
-	tmp.sin_addr.s_addr = ft::hton(ip);
-	tmp.sin_port = ft::hton(port);
-	if (::bind(fd, static_cast<sockaddr*>(this), socklen))
+	s_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	s_addr.sin_family = AF_INET;
+	s_addr.sin_port = htons(port);
+	if (::bind(fd, (struct sockaddr *)&s_addr, sizeof(s_addr)))
 		throw bind_failed_exception();
 }
 
@@ -56,7 +53,7 @@ void		Socket::bind(uint16_t port, uint32_t ip)
 
 void		Socket::accept(int serv_sock)
 {
-	if ((fd = ::accept(serv_sock, this, &socklen)))
+	if ((fd = ::accept(serv_sock, reinterpret_cast<sockaddr*>(this), &socklen)))
 		throw accept_failed_exception();
 }
 
@@ -76,11 +73,16 @@ const char*	Socket::socket_failed_exception::what() const throw()
 { return "Socket failed"; }
 
 const char*	Socket::bind_failed_exception::what() const throw()
-{ return "bind failed"; }
+{	printf("errno: %d\n", errno);
+	perror("result : ");
+	return "bind failed"; }
 
 const char*	Socket::accept_failed_exception::what() const throw()
 { return "accept failed"; }
 
 const char*	Socket::listen_failed_exception::what() const throw()
-{ return "listen failed"; }
+{
+	printf("errno: %d\n", errno);
+	perror("result : ");
+	return "listen failed"; }
 

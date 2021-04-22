@@ -70,7 +70,6 @@ void	Webserver::server_create(std::deque<std::string>& token)
 		if (!token.empty() && !ft::strncmp(it.base(), "server", 6) && token[0].length() == 6)
 		{
 			token.pop_front();
-			// std::cout << "here\n";
 			servers.push_back(Server(token));
 		}
 		else
@@ -84,6 +83,10 @@ void			Webserver::start_server()
 {
 	int		result;
 
+	server_iterator	it = servers.begin();
+
+	for (;it != servers.end();++it)
+		(*it).sock->listen(5);
 	while (42)
 	{
 		to_be_checked_read = to_be_checked;
@@ -106,9 +109,9 @@ void			Webserver::check_new_connection()
 	server_iterator		end = servers.end();
 	for (server_iterator it = servers.begin() ; it != end ; ++it)
 	{
-		if (to_be_checked_read.get(it->sock.fd) == 0)
+		if (to_be_checked_read.get(it->sock->fd) == 0)
 			continue;
-		clients.push_back(Client(it->sock.fd, servers));
+		clients.push_back(Client(it->sock->fd, servers));
 	}
 }
 
