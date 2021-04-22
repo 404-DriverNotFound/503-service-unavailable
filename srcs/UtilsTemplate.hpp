@@ -1,5 +1,4 @@
 #pragma once
-
 namespace ft
 {
 
@@ -31,6 +30,7 @@ T			hton(T x)
 			| ((x & 0x00ff000000000000ull) >> 40) \
 			| ((x & 0xff00000000000000ull) >> 56);
 	}
+	return x;
 	#else
 	return x;
 	#endif

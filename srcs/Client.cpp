@@ -6,11 +6,14 @@
 : sock(fd), buffer(fd), status(RECV_START_LINE), vec_server(vec_server)
 {}
 
+			Client::Client(const Client& x)
+: sock(x.sock), buffer(x.buffer), vec_server(x.vec_server)
+{}
+
 //------------------------------------------------------------------------------
 
 void		Client::client_process(FdSet& r, FdSet& w)
 {
-	(void)w; // 아직 사용안햠
 	if (buffer.read_request && r.get(sock.fd))
 	{
 		read_buffer();
@@ -46,13 +49,18 @@ void		Client::client_process(FdSet& r, FdSet& w)
 		case MAKE_MSG:
 			make_msg();
 		case SEND_MSG:
-			send_msg();
+			send_msg(w);
 			if (status == SEND_MSG)
 				break;
 		default:
 			break;
 	}
 }
+
+//------------------------------------------------------------------------------
+
+		Client::~Client()
+{}
 
 //------------------------------------------------------------------------------
 
@@ -117,6 +125,7 @@ void		Client::set_location()
 				if (location_it->location == http_location_name)
 				{
 					location = &(*location_it);
+					replace_location();
 					return ;
 				}
 				++location_it;
@@ -125,6 +134,11 @@ void		Client::set_location()
 		++server_it;
 	}
 	throw 404;
+}
+
+void		Client::replace_location()
+{
+	path = server->root + location->root + ft::strchr(&req.url[0], '/');
 }
 
 void		Client::check_auth()
@@ -159,6 +173,8 @@ void	Client::proc_cgi()
 char**	Client::make_meta_variable()
 {
 	char**		result = new char*[10];
+	(void)result;
+	return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -215,12 +231,29 @@ void	Client::terminate_cgi()
 
 void	Client::make_msg()
 {
-
+	std::string	header;
+	switch (req.method)
+	{
+	case GET:
+		header += "HTTP/1.1 200 ";
+		header += HttpRes::status_code_map[200];
+		header += "\r\n";
+		header += "Content-Length: ";
+		header += ft::itoa(res.body.size());
+		header += "\r\n";
+		res.body.insert(res.body.begin(), header.begin(), header.end());
+		break;
+	
+	default:
+		break;
+	}
 }
 
 //------------------------------------------------------------------------------
 
-void	Client::send_msg()
+void	Client::send_msg(FdSet& w)
 {
-
+	std::vector<uint8_t>	body(res.body.begin(), res.body.end());
+	if (w.get(sock.fd))
+		write(sock.fd, &body[0], body.size());
 }

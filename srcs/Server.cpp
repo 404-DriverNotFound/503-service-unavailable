@@ -43,7 +43,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		}
 		else if (!ft::strncmp(base, "port", 4))
 		{
-			port = static_cast<u_int16_t>(atoi(base + 4));
+			port = static_cast<u_int16_t>(atoi(base + 5));
 		}
 		else if (!ft::strncmp(base, "error_page", 10))
 		{

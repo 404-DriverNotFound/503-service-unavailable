@@ -25,7 +25,10 @@ struct				Buffer
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
+					Buffer();
 					Buffer(int fd, size_t buffer_size = 0x100000);
+					Buffer(const Buffer& x);
+	Buffer&			operator=(const Buffer& x);
 	virtual			~Buffer();
 	void			get_token(std::string& token, int sep);
 	void			get_token_seq(std::string& token, char* seq);

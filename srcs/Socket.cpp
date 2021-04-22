@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------------
 
 			Socket::Socket()
+: fd(-1)
 {}
 
 //------------------------------------------------------------------------------
@@ -30,7 +31,8 @@
 
 			Socket::~Socket()
 {
-	close(fd);
+	if (fd >= 0)
+		close(fd);
 }
 
 //------------------------------------------------------------------------------
@@ -39,14 +41,14 @@ void		Socket::bind(uint16_t port, uint32_t ip)
 {
 	sockaddr_in&	tmp = reinterpret_cast<sockaddr_in&>\
 							(dynamic_cast<sockaddr&>(*this));
+	ft::memset(static_cast<sockaddr*>(this), 0, sizeof(*this));
 	if ((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 		throw socket_failed_exception();
-	ft::memset(this, 0, sizeof(*this));
 	socklen = sizeof(sockaddr_in);
 	tmp.sin_family = AF_INET;
 	tmp.sin_addr.s_addr = ft::hton(ip);
 	tmp.sin_port = ft::hton(port);
-	if (::bind(fd, this, socklen))
+	if (::bind(fd, static_cast<sockaddr*>(this), socklen))
 		throw bind_failed_exception();
 }
 

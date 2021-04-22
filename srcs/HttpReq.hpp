@@ -12,7 +12,8 @@ struct HttpReq : public Http
 	Member
 	--------------------------------------------------------------------------*/
 	uint16_t		method;
-	std::string		path;
+	std::string		url;
+	std::string		query;
 	
 	/*--------------------------------------------------------------------------
 	Method

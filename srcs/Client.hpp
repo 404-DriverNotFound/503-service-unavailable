@@ -49,7 +49,7 @@ struct Client
 	HttpReq					req;
 	HttpRes					res;
 	Cgi						cgi;
-	std::string				path;
+	std::string				path;	// 리소스 절대경로
 	Server*					server;
 	Location*				location;
 	std::vector<Server>&	vec_server;
@@ -58,6 +58,8 @@ struct Client
 	Method
 	--------------------------------------------------------------------------*/
 				Client(int fd, std::vector<Server>& vec_server);
+				Client(const Client& x);
+				~Client();
 	void		client_process(FdSet& r, FdSet& w);
 	void		read_buffer();
 	void		recv_start_line();
@@ -71,5 +73,7 @@ struct Client
 	char**		make_meta_variable();
 	void		terminate_cgi();
 	void		make_msg();
-	void		send_msg();
+	void		send_msg(FdSet& w);
+
+	void		replace_location();
 };	//Client
