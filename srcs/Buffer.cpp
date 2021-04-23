@@ -1,5 +1,9 @@
 #include "Buffer.hpp"
 
+Buffer::Buffer()
+: buffer(0)
+{}
+
 //------------------------------------------------------------------------------
 
 					Buffer::Buffer(int fd, size_t buffer_size)
@@ -13,9 +17,42 @@
 
 //------------------------------------------------------------------------------
 
+					Buffer::Buffer(const Buffer& x)
+:fd(x.fd),
+buffer_size(x.buffer_size),
+buffer(x.buffer),
+cursor(x.cursor),
+end(x.end),
+read_request(x.read_request),
+is_token_complete(x.is_token_complete),
+write_request(x.write_request),
+len(x.len)
+{}
+
+//------------------------------------------------------------------------------
+
+Buffer&				Buffer::operator=(const Buffer& x)
+{
+	if (&x == this)
+		return *this;
+	fd = x.fd;
+	buffer_size = x.buffer_size;
+	buffer = x.buffer;
+	cursor = x.cursor;
+	end = x.end;
+	read_request = x.read_request;
+	is_token_complete = x.is_token_complete;
+	write_request = x.write_request;
+	len = x.len;
+	return *this;
+}
+
+//------------------------------------------------------------------------------
+
 					Buffer::~Buffer()
 {
-	delete[] buffer;
+	if (buffer)
+		delete[] buffer;
 }
 
 //------------------------------------------------------------------------------

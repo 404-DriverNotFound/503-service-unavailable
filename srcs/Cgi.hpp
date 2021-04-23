@@ -36,7 +36,7 @@ struct Cgi
 	Method
 	--------------------------------------------------------------------------*/
 					Cgi();
-	void			init(char* path, char** meta_variable);
+	void			init(const char* path, char** meta_variable);
 	void			start_cgi();
 	void			set_extension();
 	char* const*	make_argv();

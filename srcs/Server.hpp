@@ -4,18 +4,16 @@
 #include "Socket.hpp"
 
 /*##############################################################################
-Http
+Server
 ##############################################################################*/
+
 struct Server : public ConfigSet
 {
 	/*--------------------------------------------------------------------------
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	Socket						sock;
-	std::string					server_name;
 	uint16_t					port;
-	std::string					auth;
 	std::vector<Location>		location;
 	Server();
 
@@ -30,7 +28,7 @@ struct Server : public ConfigSet
 	Private Method
 	--------------------------------------------------------------------------*/
 	private:
-	void	Server_setter(std::deque<std::string>&);
+	void		Server_setter(std::deque<std::string>&);
 
 	/*--------------------------------------------------------------------------
 	Exception

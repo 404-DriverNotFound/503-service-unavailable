@@ -29,9 +29,25 @@ Location::Location(std::deque<std::string>& token)
 		{
 			root += (base + 5);
 		}
-		if (!ft::strncmp(base, "cgi", 3))
+		else if (!ft::strncmp(base, "cgi", 3))
 		{
-			root += (base + 3);
+			cgi += (base + 4);
+		}
+		else if (!ft::strncmp(base, "auth", 4))
+		{
+			char	buffer[1001];
+			int		len;
+			int		fd_auth = open(base + 5, O_RDONLY);
+
+			if (fd_auth < 0)
+				throw AuthFailed();
+			while ((len = read(fd_auth, buffer, 1000)) > 0)
+			{
+				buffer[len] = 0;
+				auth.insert(auth.end(), buffer, buffer + len);
+			}
+			if (len < 0)
+				throw AuthFailed();
 		}
 		else if (!ft::strncmp(base, "error_page", 10))
 		{
@@ -112,4 +128,9 @@ std::ostream&	operator<<(std::ostream& os, Location& ref) {
 		<< "body_length: " << ref.body_length << std::endl;
 	os << "method: " << ref.method;
 	return os;
+}
+
+const char*		Location::AuthFailed::what() const throw()
+{
+	return "Auth Failed";
 }

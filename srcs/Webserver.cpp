@@ -83,7 +83,7 @@ void	Webserver::server_create(std::deque<std::string>& token)
 		{
 			token.pop_front();
 			Server 	temp(token);
-			servers.insert(make_pair(temp.server_name, temp));
+			servers.insert(make_pair(temp.name, temp));
 		}
 		else
 			throw Webserver::InvalidServerBlock();
@@ -121,6 +121,10 @@ void			Webserver::start_server()
 {
 	int		result;
 
+	server_iterator	it = servers.begin();
+
+	for (;it != servers.end();++it)
+		(*it).sock->listen(5);
 	while (42)
 	{
 		to_be_checked_read = to_be_checked;
@@ -143,9 +147,15 @@ void			Webserver::check_new_connection()
 	socket_iterator		end = sockets.end();
 	for (socket_iterator it = sockets.begin() ; it != end ; ++it)
 	{
+<<<<<<< HEAD
 		if (to_be_checked_read.get((*it)->fd) == 0)
 			continue;
 		clients.push_back(Client((*it)->fd), servers);
+=======
+		if (to_be_checked_read.get(it->sock->fd) == 0)
+			continue;
+		clients.push_back(Client(it->sock->fd, servers));
+>>>>>>> d5468caa492896680405b949d1e9538ea41cfdb3
 	}
 }
 

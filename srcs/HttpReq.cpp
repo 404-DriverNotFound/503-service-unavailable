@@ -13,15 +13,24 @@ void		HttpReq::set_start_line(const std::string& line)
 	std::string::const_iterator			it_line = line.begin();
 	std::string							token;
 
+	// method
 	if (!ft::get_chr_token(line, it_line, token, ' ') || token.empty())
-		throw HttpFormException();
+		throw 400;
 	set_method(token);
+	
+	//url
 	if (!ft::get_chr_token(line, it_line, token, ' ') || token.empty())
-		throw HttpFormException();
-	token.swap(path);
+		throw 400;
+	std::string::const_iterator			it_token = token.begin();
+	//	url
+	ft::get_chr_token(token, it_token, url, '?');
+	//	query
+	query.assign(const_cast<char*>(it_token.base()), token.end().base());
+
+	// scheme
 	ft::get_chr_token(line, it_line, token, ' ');
 	if (token.empty())
-		throw HttpFormException();
+		throw 400;
 	if (!token.empty() && *--token.end() == '\r')
 		token.erase(--token.end());
 	token.swap(protocol);
@@ -46,32 +55,18 @@ void		HttpReq::set_headers(const std::string& line)
 
 void		HttpReq::get_location_name(std::string& location_name)
 {
-	std::string::const_iterator		it;
-	ft::get_chr_token(path, it, location_name, '\n', 20);
+	std::string::const_iterator		it = url.begin();
+	std::string						token;
+
+	ft::get_chr_token(url, it, location_name, '/', 20);
 }
 
 //------------------------------------------------------------------------------
 
 void		HttpReq::set_method(const std::string& token)
 {
-	if (token == "CONNECT")
-		method = CONNECT;
-	else if (token == "DELETE")
-		method = DELETE;
-	else if (token == "GET")
-		method = GET;
-	else if (token == "HEAD")
-		method = HEAD;
-	else if (token == "OPTIONS")
-		method = OPTIONS;
-	else if (token == "PATCH")
-		method = PATCH;
-	else if (token == "POST")
-		method = POST;
-	else if (token == "PUT")
-		method = PUT;
-	else if (token == "TRACE")
-		method = TRACE;
-	else
-		throw HttpFormException();
+	std::map<std::string, uint16_t>::iterator it = Http::mapMethod.find(token);
+	if (it == Http::mapMethod.end())
+		throw 400;
+	method = it->second;
 }

@@ -35,6 +35,11 @@ Client
 struct Client
 {
 	/*--------------------------------------------------------------------------
+	Member types
+	--------------------------------------------------------------------------*/
+	typedef std::map<std::string, std::string>::iterator	header_iterator;
+	
+	/*--------------------------------------------------------------------------
 	Member
 	--------------------------------------------------------------------------*/
 	public:
@@ -66,10 +71,14 @@ struct Client
 	void		recv_header();
 	void		set_location();
 	void		check_auth();
+	void		check_method();
 	void		recv_body(size_t len);
 	void		recv_body_chunked();
 	void		proc_cgi();
+	char**		make_meta_variable();
 	void		terminate_cgi();
 	void		make_msg();
-	void		send_msg();
+	void		send_msg(FdSet& w);
+
+	void		replace_location();
 };	//Client

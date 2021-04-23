@@ -7,7 +7,6 @@
 Server::Server(std::deque<std::string>& token)
 {
 	Server_setter(token);
-	sock.bind(port);
 }
 
 //------------------------------------------------------------------------------
@@ -39,11 +38,11 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		}
 		else if (!ft::strncmp(base, "server_name", 11))
 		{
-			server_name += (base + 12);
+			name += (base + 12);
 		}
 		else if (!ft::strncmp(base, "port", 4))
 		{
-			port = static_cast<u_int16_t>(atoi(base + 4));
+			port = static_cast<u_int16_t>(atoi(base + 5));
 		}
 		else if (!ft::strncmp(base, "error_page", 10))
 		{
@@ -88,10 +87,6 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		{
 			timeout = static_cast<u_int16_t>(atoi(base + 7));
 		}
-		else if (!ft::strncmp(base, "auth", 4))
-		{
-			auth += base + 5;
-		}
 		else
 			throw Server::InvalidConfig();
 		if (flag)
@@ -111,7 +106,7 @@ const char*	Server::InvalidConfig::what() const throw()
 
 std::ostream&	operator<<(std::ostream& os, Server& ref) {
 	os << "root: " << ref.root << std::endl
-		<<"server_name: " << ref.server_name << std::endl
+		<<"server_name: " << ref.name << std::endl
 		<<"error_page: ";
 	std::set<std::string>::iterator	it;
 	it = ref.error_page.begin();
