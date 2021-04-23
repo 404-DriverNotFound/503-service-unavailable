@@ -29,7 +29,8 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		bool	flag = true;
 		if (!ft::strncmp(base, "location", 8))
 		{
-			location.push_back(Location(token));
+			Location	temp(token);
+			location.insert(std::make_pair(temp.name, temp));
 			flag = false;
 		}
 		else if (!ft::strncmp(base, "root", 4))
@@ -93,6 +94,8 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			token.pop_front();
 		base = token[0].begin().base();
 	}
+	Location	temp(*this);
+	location.insert(std::make_pair("default", temp));
 }
 
 /*--------------------------------------------------------------------------

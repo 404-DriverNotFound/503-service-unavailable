@@ -1,18 +1,12 @@
 #include "Client.hpp"
 
-std::vector<Server>	Client::vec_server;
-
 //------------------------------------------------------------------------------
 
-			Client::Client(int fd)
-: sock(fd), buffer(fd), status(RECV_START_LINE)
+			Client::Client(int fd, std::map<std::string, Server>& servers)
+: sock(fd), buffer(fd), status(RECV_START_LINE), servers(servers)
 {}
 
 			Client::~Client()
-{}
-
-			Client::Client(const Client& x)
-: sock(x.sock), buffer(x.buffer), vec_server(x.vec_server)
 {}
 
 //------------------------------------------------------------------------------
@@ -64,11 +58,6 @@ void		Client::client_process(FdSet& r, FdSet& w)
 
 //------------------------------------------------------------------------------
 
-		Client::~Client()
-{}
-
-//------------------------------------------------------------------------------
-
 void	Client::read_buffer()
 {	buffer.read_buffer();	}
 
@@ -108,29 +97,51 @@ void	Client::recv_header()
 
 void		Client::set_location()
 {
-	typedef std::map<Server>::iterator		server_iterator;
-	typedef std::map<Location>::iterator	location_iterator;
+	typedef std::map<std::string, std::string>::iterator	host_iterator;
+	typedef std::map<std::string, Server>::iterator		server_iterator;
+	typedef std::map<std::string, Location>::iterator	location_iterator;
 
-	std::string			host = req.headers["host"];
+	//호스트 헤더에서 호스트 추출
+	host_iterator		host_it = req.headers.find("host");
+	if (host_it == req.headers.end())
+		throw 400;	// 아마도
+	const std::string&		host = host_it->second;
+
+	// 로케이션 추출
 	std::string			http_location_name;
 	req.get_location_name(http_location_name);
 
-	server_iterator it_server = servers.find(host);
-	if (it_server == servers.end())
+	// 서버에서 호스트 검색
+	server_iterator		server_it = servers.find(host);
+	if (server_it == servers.end())
 		throw 404;
-	
+	server = &server_it->second;
+
+	// 로케이션
+	location_iterator	location_it = server->location.find(http_location_name);
+	if (location_it == server->location.end())
+	{
+		throw 404;
+	}
+	else
+	{
+		location = &location_it->second;
+	}
+
+	//------------------------------
 
 
-	server_iterator 	server_it = vec_server.begin();
-	server_iterator 	server_end = vec_server.end();
+
+	server_iterator 	server_it = servers.begin();
+	server_iterator 	server_end = servers.end();
 	header_iterator		header_it;
 	while (server_it != server_end)
 	{
 		// if ((header_it = req.headers.find("host")) == req.headers.end())
 		// 	throw 401;
-		if (req.headers["host"] == server_it->server_name)
+		if (req.headers["host"] == server_it->first)
 		{
-			server = &(*server_it);
+			server = &(*server_it).second;
 			location_iterator 	location_it = server->location.begin();
 			location_iterator 	location_end = server->location.end();
 			while (location_it != location_end)
