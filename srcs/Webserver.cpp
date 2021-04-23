@@ -16,13 +16,25 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	std::deque<std::string>	token(1);
 	config_parser(token, argv[1]);
 	server_create(token);
+	put_port_numbers();
 	set_path_cgi_bin(env);
 	set_status_code();
 	set_map_method();
 }
 
+//------------------------------------------------------------------------------
+
 Webserver::~Webserver()
-{}
+{
+	socket_iterator		it = sockets.begin();
+	socket_iterator		end = sockets.end();
+
+	while (it != end)
+	{
+		delete *it;
+	}
+}
+
 //------------------------------------------------------------------------------
 
 void	Webserver::config_parser(std::deque<std::string>& token, const char* config_path)
@@ -70,10 +82,36 @@ void	Webserver::server_create(std::deque<std::string>& token)
 		if (!token.empty() && !ft::strncmp(it.base(), "server", 6) && token[0].length() == 6)
 		{
 			token.pop_front();
-			servers.push_back(Server(token));
+			Server 	temp(token);
+			servers.insert(make_pair(temp.server_name, temp));
 		}
 		else
 			throw Webserver::InvalidServerBlock();
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void	Webserver::put_port_numbers()
+{
+	server_iterator		it = servers.begin();
+	server_iterator		end = servers.end();
+
+	while (it != end)
+	{
+		ports.insert(it->second.port);
+	}
+}
+
+void	Webserver::create_sockets()
+{
+	std::set<uint16_t>::const_iterator it = ports.begin();
+	std::set<uint16_t>::const_iterator end = ports.end();
+
+	while (it != end)
+	{
+		Socket*		tmp = new Socket(*it, INADDR_ANY);
+		sockets.push_back(tmp);
 	}
 }
 
@@ -102,12 +140,12 @@ void			Webserver::start_server()
 
 void			Webserver::check_new_connection()
 {
-	server_iterator		end = servers.end();
-	for (server_iterator it = servers.begin() ; it != end ; ++it)
+	socket_iterator		end = sockets.end();
+	for (socket_iterator it = sockets.begin() ; it != end ; ++it)
 	{
-		if (to_be_checked_read.get(it->sock.fd) == 0)
+		if (to_be_checked_read.get((*it)->fd) == 0)
 			continue;
-		clients.push_back(Client(it->sock.fd, servers));
+		clients.push_back(Client((*it)->fd), servers);
 	}
 }
 
@@ -223,7 +261,8 @@ void		Webserver::set_status_code()
 //------------------------------------------------------------------------------
 
 std::ostream&	operator<<(std::ostream& os, Webserver& ref) {
-	for (size_t idx=0;idx<ref.servers.size();idx++)
-		os << ref.servers[idx] << std::endl;
+	Webserver::server_iterator	it = ref.servers.begin();
+	for (;it!=ref.servers.end();++it)
+		os << it->second << std::endl;
 	return (os);
 }

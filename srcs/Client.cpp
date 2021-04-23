@@ -1,9 +1,14 @@
 #include "Client.hpp"
 
+std::vector<Server>	Client::vec_server;
+
 //------------------------------------------------------------------------------
 
-			Client::Client(int fd, std::vector<Server>& vec_server)
-: sock(fd), buffer(fd), status(RECV_START_LINE), vec_server(vec_server)
+			Client::Client(int fd)
+: sock(fd), buffer(fd), status(RECV_START_LINE)
+{}
+
+			Client::~Client()
 {}
 
 //------------------------------------------------------------------------------
@@ -94,11 +99,19 @@ void	Client::recv_header()
 
 void		Client::set_location()
 {
-	typedef std::vector<Server>::iterator		server_iterator;
-	typedef std::vector<Location>::iterator		location_iterator;
+	typedef std::map<Server>::iterator		server_iterator;
+	typedef std::map<Location>::iterator	location_iterator;
 
+	std::string			host = req.headers["host"];
 	std::string			http_location_name;
 	req.get_location_name(http_location_name);
+
+	server_iterator it_server = servers.find(host);
+	if (it_server == servers.end())
+		throw 404;
+	
+
+
 	server_iterator 	server_it = vec_server.begin();
 	server_iterator 	server_end = vec_server.end();
 	while (server_it != server_end)

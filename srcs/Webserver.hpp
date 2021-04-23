@@ -8,6 +8,7 @@
 #include "Buffer.hpp"
 #include "Time.hpp"
 #include <sys/select.h>
+#include <map>
 #include <vector>
 #include <list>
 /*#####################################
@@ -18,8 +19,9 @@ struct Webserver
 	/*-----------------------
 	typedef
 	-----------------------*/
-	typedef std::vector<Server>::iterator	server_iterator;
-	typedef std::list<Client>::iterator		client_iterator;
+	typedef std::map<std::string, Server>::iterator	server_iterator;
+	typedef std::vector<Socket*>::iterator			socket_iterator;
+	typedef std::list<Client>::iterator				client_iterator;
 	
 	/*------------------------
 	Member
@@ -30,7 +32,9 @@ struct Webserver
 	FdSet					to_be_checked_read;
 	FdSet					to_be_checked_write;
 	FdSet					to_be_checked_exception;
-	std::vector<Server>		servers;
+	std::set<uint16_t>		ports;
+	std::vector<Socket*>	sockets;
+	std::map<std::string, Server>		servers;
 	std::list<Client>		clients;
 
 	Webserver(int argc, char** argv, char** env);
@@ -45,6 +49,7 @@ struct Webserver
 	void			set_status_code();
 	void			set_path_cgi_bin(char** env);
 	void			set_map_method();
+	void			create_sockets();
 
 	/*----------------------
 	Private Method
@@ -52,6 +57,7 @@ struct Webserver
 	private:
 	void			config_parser(std::deque<std::string>&, const char*);
 	void			server_create(std::deque<std::string>&);
+	void			put_port_numbers();
 
 	/*------------------------------
 	Exception

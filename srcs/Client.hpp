@@ -1,6 +1,7 @@
 #pragma once
 struct Client;
 #include <sys/types.h>
+#include "Server.hpp"
 #include "Socket.hpp"
 #include "Buffer.hpp"
 #include "HttpReq.hpp"
@@ -37,22 +38,28 @@ struct Client
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	Socket					sock;
-	Buffer					buffer;
-	std::string				line;
-	e_status				status;
-	HttpReq					req;
-	HttpRes					res;
-	Cgi						cgi;
-	std::string				path;
-	Server*					server;
-	Location*				location;
-	std::vector<Server>&	vec_server;
+	Socket							sock;
+	Buffer							buffer;
+	std::string						line;
+	e_status						status;
+	HttpReq							req;
+	HttpRes							res;
+	Cgi								cgi;
+	std::string						path;
+	Server*							server;
+	Location*						location;
+	std::map<std::string, Server>&	servers;
 
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
-				Client(int fd, std::vector<Server>& vec_server);
+	private:
+				Client();
+				Client(const Client&);
+	Client&		operator=(const Client&);
+	public:
+				Client(int fd, std::map<std::string, Server>& servers);
+	virtual		~Client();
 	void		client_process(FdSet& r, FdSet& w);
 	void		read_buffer();
 	void		recv_start_line();
