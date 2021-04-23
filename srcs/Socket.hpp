@@ -3,21 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sujung <sujung@student.42seoul.kr>         +#+  +:+       +#+        */
+/*   By: elegie <elegie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/23 00:11:43 by sujung           ###   ########.fr       */
+/*   Updated: 2021/04/23 12:28:33 by elegie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #include "Utils.hpp"
 
 /*##############################################################################
 Socket
 ##############################################################################*/
+
+struct bind_type{};
 
 struct Socket
 {
@@ -28,16 +31,21 @@ struct Socket
 	sockaddr_in	s_addr;
 	socklen_t	socklen;
 
+	/*--------------------------------------------------------------------------
+	Canonical Form
+	--------------------------------------------------------------------------*/
+	private:
 				Socket();
-				Socket(uint16_t port, uint32_t ip = INADDR_ANY);
-				Socket(int fd);
 				Socket(const Socket& x);
 	Socket&		operator=(const Socket& x);
+	public:
+				Socket(int fd);							// accept
+				Socket(uint16_t port, uint32_t ip);		// bind
 	virtual		~Socket();
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
-	void		bind(uint16_t port, uint32_t ip = INADDR_ANY);
+	void		bind(uint16_t port, uint32_t ip);
 	void		accept(int serv_sock);
 	void		listen(size_t connections);
 

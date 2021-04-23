@@ -45,7 +45,7 @@ void		Socket::bind(uint16_t port, uint32_t ip)
 	s_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	s_addr.sin_family = AF_INET;
 	s_addr.sin_port = htons(port);
-	if (::bind(fd, (struct sockaddr *)&s_addr, sizeof(s_addr)))
+	if (::bind(fd, reinterpret_cast<sockaddr*>(&s_addr), sizeof(s_addr)))
 		throw bind_failed_exception();
 }
 
@@ -73,7 +73,8 @@ const char*	Socket::socket_failed_exception::what() const throw()
 { return "Socket failed"; }
 
 const char*	Socket::bind_failed_exception::what() const throw()
-{	printf("errno: %d\n", errno);
+{	
+	printf("errno: %d\n", errno);
 	perror("result : ");
 	return "bind failed"; }
 
