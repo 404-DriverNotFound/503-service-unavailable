@@ -26,16 +26,16 @@ struct Webserver
 	/*------------------------
 	Member
 	-------------------------*/
-	size_t					max_connection;
-	Time					select_timeout;
-	FdSet					to_be_checked;
-	FdSet					to_be_checked_read;
-	FdSet					to_be_checked_write;
-	FdSet					to_be_checked_exception;
-	std::set<uint16_t>		ports;
-	std::vector<Socket*>	sockets;
-	std::map<std::string, Server>		servers;
-	std::list<Client>		clients;
+	size_t							max_connection;
+	Time							select_timeout;
+	FdSet							to_be_checked;
+	FdSet							to_be_checked_read;
+	FdSet							to_be_checked_write;
+	FdSet							to_be_checked_exception;
+	std::set<uint16_t>				ports;
+	std::vector<Socket*>			sockets;
+	std::map<std::string, Server>	servers;
+	std::list<Client>				clients;
 
 	Webserver(int argc, char** argv, char** env);
 	Webserver(const std::string& path_config);
