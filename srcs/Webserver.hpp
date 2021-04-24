@@ -37,12 +37,15 @@ struct Webserver
 	std::map<std::string, Server>	servers;
 	std::list<Client>				clients;
 
-	Webserver(int argc, char** argv, char** env);
-	Webserver(const std::string& path_config);
-	~Webserver();
+	private:
+	Webserver(const Webserver& x);
+	Webserver&		operator=(const Webserver& x);
 	/*----------------------
 	Method
 	-----------------------*/
+	public:
+					Webserver(int argc, char** argv, char** env);
+					~Webserver();
 	void			start_server();				// 서버 시작
 	void			check_new_connection();
 	void			manage_clients();
