@@ -26,6 +26,7 @@ struct Location : public ConfigSet
 	Method
 	--------------------------------------------------------------------------*/
 	public:
+	Location(const ConfigSet&);
 	Location(std::deque<std::string>&);
 	~Location();
 	

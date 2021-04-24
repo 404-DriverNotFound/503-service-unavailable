@@ -2,6 +2,7 @@
 #include "Location.hpp"
 #include "DataClass.hpp"
 #include "Socket.hpp"
+#include <map>
 
 /*##############################################################################
 Server
@@ -13,13 +14,13 @@ struct Server : public ConfigSet
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	uint16_t					port;
-	std::vector<Location>		location;
-	Server();
+	uint16_t						port;
+	std::map<std::string, Location>	location;
 
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
+	Server();
 	public:
 				Server(std::deque<std::string>&);
 				~Server();

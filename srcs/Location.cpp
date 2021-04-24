@@ -13,6 +13,11 @@ Method Location::methodSet[9] = {
 	{"TRACE", 1 << TRACE}
 };
 
+Location::Location(const ConfigSet& ref)
+{
+	//TODO 대입과정
+}
+
 Location::Location(std::deque<std::string>& token)
 {
 	std::string	str = " \t";
