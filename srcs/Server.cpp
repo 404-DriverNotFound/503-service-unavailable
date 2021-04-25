@@ -1,6 +1,6 @@
 #include <iostream>
-#include "Server.hpp"
-#include "Utils.hpp"
+#include "../includes/Server.hpp"
+#include "../includes/Utils.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -12,8 +12,7 @@ Server::Server(std::deque<std::string>& token)
 //------------------------------------------------------------------------------
 
 Server::~Server()
-{
-}
+{}
 
 //------------------------------------------------------------------------------
 
@@ -30,7 +29,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		if (!ft::strncmp(base, "location", 8))
 		{
 			Location	temp(token);
-			location.insert(std::make_pair(temp.name, temp));
+			locations.insert(std::make_pair(temp.name, temp));
 			flag = false;
 		}
 		else if (!ft::strncmp(base, "root", 4))
@@ -95,7 +94,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		base = token[0].begin().base();
 	}
 	Location	temp(*this);
-	location.insert(std::make_pair("default", temp));
+	locations.insert(std::make_pair("/", temp));
 }
 
 /*--------------------------------------------------------------------------
@@ -131,7 +130,7 @@ std::ostream&	operator<<(std::ostream& os, Server& ref) {
 		os << "off";
 	os << std::endl
 		<< "auth: " << ref.auth << std::endl;
-	for (size_t idx=0;idx<ref.location.size();++idx)
-		os << ref.location[idx] << std::endl;
+	for (map<string, Location>::iterator it = ref.locations.begin() ; it != ref.locations.end() ; ++it)
+		os << it->second << std::endl;
 	return os;
 }

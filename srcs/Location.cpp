@@ -1,17 +1,8 @@
-#include "Location.hpp"
-#include "Utils.hpp"
+#include "../includes/Location.hpp"
+#include "../includes/Utils.hpp"
+#define DBG
+
 //------------------------------------------------------------------------------
-Method Location::methodSet[9] = {
-	{"CONNECT", 1 << CONNECT},
-	{"DELETE", 1 << DELETE},
-	{"GET", 1 << GET},
-	{"HEAD", 1 << HEAD},
-	{"OPTIONS", 1 << OPTIONS},
-	{"PATCH", 1 << PATCH},
-	{"POST", 1 << POST},
-	{"PUT", 1 << PUT},
-	{"TRACE", 1 << TRACE}
-};
 
 Location::Location(const ConfigSet& ref)
 {
@@ -42,8 +33,9 @@ Location::Location(std::deque<std::string>& token)
 		{
 			char	buffer[1001];
 			int		len;
-			int		fd_auth = open(base + 5, O_RDONLY);
-
+			int		fd_auth;
+			
+			fd_auth = open(base + 5, O_RDONLY);
 			if (fd_auth < 0)
 				throw AuthFailed();
 			while ((len = read(fd_auth, buffer, 1000)) > 0)
@@ -53,6 +45,8 @@ Location::Location(std::deque<std::string>& token)
 			}
 			if (len < 0)
 				throw AuthFailed();
+			auth_type = "Basic";
+			close(fd_auth);
 		}
 		else if (!ft::strncmp(base, "error_page", 10))
 		{
@@ -86,11 +80,10 @@ Location::Location(std::deque<std::string>& token)
 			it = token[0].begin() + 9;
 			while (ft::get_set_token(token[0], it, temp, seq))
 			{
-				for (int idx=0;idx<9;idx++)
-					if (temp == methodSet[idx].str) {
-						method |= methodSet[idx].flag;
-						break;
-					}
+				map<string, uint16_t>::iterator	it_method = Method::method_flags.find(temp);
+				if (it_method == Method::method_flags.end())
+					throw InvalidMethod();
+				method |= (1 << it_method->second);
 			}
 		}
 		else if (!ft::strncmp(base, "body_length", 11))
@@ -138,4 +131,9 @@ std::ostream&	operator<<(std::ostream& os, Location& ref) {
 const char*		Location::AuthFailed::what() const throw()
 {
 	return "Auth Failed";
+}
+
+const char*		Location::InvalidMethod::what() const throw()
+{
+	return "Invalid Method";
 }

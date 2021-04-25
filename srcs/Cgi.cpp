@@ -1,4 +1,4 @@
-#include "Cgi.hpp"
+#include "../includes/Cgi.hpp"
 // #include <cstdio>
 #include <iostream>
 
@@ -7,7 +7,18 @@ Cgi::map_path	Cgi::cgi_bin;
 //------------------------------------------------------------------------------
 
 				Cgi::Cgi()
-: fd_in(fd_read[0]), fd_out(fd_write[1]), path(0), meta_variable(0)
+: fd_in(fd_read[0]), fd_out(fd_write[1]), meta_variable(0)
+{}
+
+//------------------------------------------------------------------------------
+
+				Cgi::Cgi(const Cgi& x)
+: fd_in(fd_read[0]), fd_out(fd_write[1]), meta_variable(0)
+{}
+
+//------------------------------------------------------------------------------
+
+				Cgi::~Cgi()
 {}
 
 //------------------------------------------------------------------------------

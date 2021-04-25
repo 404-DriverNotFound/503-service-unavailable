@@ -1,37 +1,35 @@
 #pragma once
-struct Http;
-#include <unistd.h>
-#include <string>
-#include <map>
-#include <deque>
-#include "Method.hpp"
-#include "Url.hpp"
-#include "Path.hpp"
-#include "Utils.hpp"
-// #include "Client.hpp"
+struct HttpReq;
+#include "HttpRes.hpp"
+#include "Http.hpp"
 
 /*##############################################################################
-Http
+Http Request
 ##############################################################################*/
-struct Http
-{
-	/*--------------------------------------------------------------------------
-	typedef
-	--------------------------------------------------------------------------*/
-	typedef std::map<std::string, std::string>	header_map;
-	typedef header_map::iterator				header_iterator;
 
+using std::map;
+using std::string;
+using std::list;
+
+struct HttpReq : public Http
+{
 	/*--------------------------------------------------------------------------
 	Member
 	--------------------------------------------------------------------------*/
-	std::map<std::string, std::string>			headers;
-	std::deque<uint8_t>							body;
-	std::string									protocol;
-	static std::map<std::string, u_int16_t>		mapMethod;
+	uint16_t		method;
+	list<string>	path;
+	string			query;
+	
 	/*--------------------------------------------------------------------------
-	Exception
+	Method
 	--------------------------------------------------------------------------*/
-	public:
-	class HttpFormException : public std::exception{
-		const char* what() const throw();	};
-};	// Http
+	void			set_start_line(string& line);
+	void			set_header(string& line);
+	void			set_path(string& token);
+	void			get_location_name(string& location_name);
+	/*--------------------------------------------------------------------------
+	Private Method
+	--------------------------------------------------------------------------*/
+	private:
+	void			set_method(const string& token);
+};	// Http Request

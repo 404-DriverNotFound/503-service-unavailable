@@ -1,269 +1,50 @@
-#include "Http.hpp"
+#include "../includes/Http.hpp"
 
 /*##############################################################################
 Http
 ##############################################################################*/
 
-std::map<std::string, u_int16_t>	Http::mapMethod;
+std::map<std::string, u_int16_t>	Http::map_method;
+std::map<std::string, u_int16_t>	Http::map_header;
 
 const char*		Http::HttpFormException::what() const throw()
 {	return "HttpFormException";	}
 
-
-
+void	Http::init_map_methods()
+{
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("CONNECT", CONNECT));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("DELETE", DELETE));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("GET", GET));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("HEAD", HEAD));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("OPTIONS", OPTIONS));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("PATCH", PATCH));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("POST", POST));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("PUT", PUT));
+	Http::map_method.insert(std::make_pair<std::string, uint16_t>("TRACE", TRACE));
+}
 
 //------------------------------------------------------------------------------
 
-//startline test
-/*
-int		main()
+void		Http::init_map_headers()
 {
-	try
-	{
-		std::string		str("GET /paaath/p HTTP/1.1");
-		std::cout << str << "[normal test]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("POST /paaath/p HTTP/1.1");
-		std::cout << str << "[normal test]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("GET /paaath/p      HTTP/1.1");
-		std::cout << str << "[many blanks]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("GET /paaath/p HTTP/1.1     ");
-		std::cout << str << "[blanks followed by protocol]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("get /paaath/p HTTP/1.1     ");
-		std::cout << str << "[lowercase test]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("NO /paaath/p HTTP/1.1     ");
-		std::cout << str << "[wrong method]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("GET /paaath/p");
-		std::cout << str << "[no protocol]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("GET /paaath/p   ");
-		std::cout << str << "[no protocol and blank followed by path]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("GET");
-		std::cout << str << "[only method]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("GET   ");
-		std::cout << str << "[only method and blanks followed by method]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("SET   ");
-		std::cout << str << "[wrong method and blanks followed by method]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("  ");
-		std::cout << str << "[blanks]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-
-	try
-	{
-		std::string		str("");
-		std::cout << str << "[empty]" << std::endl;
-
-		HttpReq			a;
-		a.set_start_line(str);
-		std::cout << a.protocol << std::endl;
-		std::cout << a.method << std::endl;
-		std::cout << a.path << std::endl;
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
-	std::cout << std::endl;
-
-}
-*/
-
-/*
-//header test
-int			main()
-{
-	std::string					str("hel:    llooo: oo");
-	HttpReq			r;
-
-	r.set_headers(str);
-	std::cout << r.headers.begin()->first << std::endl;
-	std::cout << r.headers.begin()->second << std::endl;
+	Http::map_header["ACCEPT_CHARSET"]		 = ACCEPT_CHARSET;
+	Http::map_header["ACCEPT_LANGUAGE"]		 = ACCEPT_LANGUAGE;
+	Http::map_header["AUTHORIZATION"]		 = AUTHORIZATION;
+	Http::map_header["HOST"]				 = HOST;
+	Http::map_header["REFERER"]				 = REFERER;
+	Http::map_header["USER_AGENT"]			 = USER_AGENT;
+	Http::map_header["LAST_MODIFIED"]		 = LAST_MODIFIED;
+	Http::map_header["LOCATION"]			 = LOCATION;
+	Http::map_header["RETRY_AFTER"]			 = RETRY_AFTER;
+	Http::map_header["SERVER"]				 = SERVER;
+	Http::map_header["TRANSFER_ENCODING"]	 = TRANSFER_ENCODING;
+	Http::map_header["WWW_AUTHENTICATE"]	 = WWW_AUTHENTICATE;
+	Http::map_header["ALLOW"]				 = ALLOW;
+	Http::map_header["CONTNET_LENGTH"]		 = CONTNET_LENGTH;
+	Http::map_header["CONTENT_LOCATION"]	 = CONTENT_LOCATION;
+	Http::map_header["CONTENT_TYPE"]		 = CONTENT_TYPE;
+	Http::map_header["DATE"]				 = DATE;
+	Http::map_header["NUM_HEADERS"]			 = NUM_HEADERS;
 }
 
-*/
+//------------------------------------------------------------------------------

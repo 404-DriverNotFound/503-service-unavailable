@@ -6,7 +6,7 @@
 /*   By: elegie <elegie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/23 18:03:44 by elegie           ###   ########.fr       */
+/*   Updated: 2021/04/25 16:46:28 by elegie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@
 #include <errno.h>
 #include "Utils.hpp"
 
+using std::cout;
+using std::endl;
+
 /*##############################################################################
 Socket
 ##############################################################################*/
-
-struct bind_type{};
 
 struct Socket
 {
@@ -35,10 +36,10 @@ struct Socket
 	Canonical Form
 	--------------------------------------------------------------------------*/
 	private:
-	Socket&		operator=(const Socket& x);
 	public:
 				Socket();
-				// Socket(const Socket& x);
+				Socket(const Socket& x);
+	Socket&		operator=(const Socket& x);
 				Socket(int fd);							// accept
 				Socket(uint16_t port, uint32_t ip);		// bind
 	virtual		~Socket();

@@ -1,4 +1,4 @@
-#include "Utils.hpp"
+#include "../includes/Utils.hpp"
 
 //------------------------------------------------------------------------------
 
@@ -25,7 +25,6 @@ void*	ft::memcpy(void *dest, const void *src, unsigned int n)
 		*dest_tmp++ = *src_tmp++;
 	return (dest);
 }
-
 
 //------------------------------------------------------------------------------
 
@@ -81,29 +80,29 @@ char*	ft::strchr(const char* set, int c)
 
 //------------------------------------------------------------------------------
 
-void	ft::uppercase(std::string& str)
+void	ft::uppercase(string& str)
 {
-	std::string::iterator	end = str.end();
-	for (std::string::iterator it = str.begin() ; it != end ; ++it)
+	string::iterator	end = str.end();
+	for (string::iterator it = str.begin() ; it != end ; ++it)
 		if (islower(*it))
 			*it -= 32;
 }
 
 //------------------------------------------------------------------------------
 
-void	ft::lowercase(std::string& str)
+void	ft::lowercase(string& str)
 {
-	std::string::iterator	end = str.end();
-	for (std::string::iterator it = str.begin() ; it != end ; ++it)
+	string::iterator	end = str.end();
+	for (string::iterator it = str.begin() ; it != end ; ++it)
 		if (isupper(*it))
 			*it += 32;
 }
 
 //------------------------------------------------------------------------------
 
-bool	ft::get_seq_token(const std::string &origin, std::string::const_iterator &it, std::string &token, const char *seq, size_t reserve_size)
+bool	ft::get_seq_token(const string &origin, str_citerator &it, string &token, const char *seq, size_t reserve_size)
 {
-	std::string::const_iterator	end = origin.end();
+	str_citerator	end = origin.end();
 	int						seq_len;
 
 	seq_len = ft::strlen(seq);
@@ -124,10 +123,10 @@ bool	ft::get_seq_token(const std::string &origin, std::string::const_iterator &i
 
 //------------------------------------------------------------------------------
 
-int		ft::get_set_token(const std::string &origin, std::string::const_iterator &it, std::string &token, const char *set, size_t reserve_size)
+int		ft::get_set_token(const string &origin, str_citerator &it, string &token, const char *set, size_t reserve_size)
 {
 	char	*p;
-	std::string::const_iterator	end = origin.end();
+	str_citerator	end = origin.end();
 
 	token.clear();
 	token.reserve(reserve_size);
@@ -146,9 +145,9 @@ int		ft::get_set_token(const std::string &origin, std::string::const_iterator &i
 
 //------------------------------------------------------------------------------
 
-bool	ft::get_chr_token(const std::string &origin, std::string::const_iterator &it, std::string &token, char c, size_t reserve_size)
+bool	ft::get_chr_token(const string &origin, str_citerator &it, string &token, char c, size_t reserve_size)
 {
-	std::string::const_iterator	end = origin.end();
+	str_citerator	end = origin.end();
 
 	token.clear();
 	token.reserve(reserve_size);
@@ -169,10 +168,10 @@ bool	ft::get_chr_token(const std::string &origin, std::string::const_iterator &i
 
 //------------------------------------------------------------------------------
 
-void	ft::get_set_token(const std::string& origin, std::list<std::string>& tokens, const char* set)
+void	ft::get_set_token(const string& origin, std::list<string>& tokens, const char* set)
 {
-	std::string::const_iterator			it = origin.begin();
-	std::string							token;
+	str_citerator			it = origin.begin();
+	string							token;
 
 	while (ft::strchr(set, *it))
 		++it;
@@ -180,18 +179,18 @@ void	ft::get_set_token(const std::string& origin, std::list<std::string>& tokens
 	{
 		while (ft::strchr(set, *it))
 			++it;
-		tokens.push_back(std::string());
+		tokens.push_back(string());
 		tokens.back().swap(token);
 	}
-	tokens.push_back(std::string());
+	tokens.push_back(string());
 	tokens.back().swap(token);
 }
 
 //------------------------------------------------------------------------------
 
-std::string		ft::which(const std::string& exe, char** env)
+string		ft::which(const string& exe, char** env)
 {
-	std::string		path_env;
+	string		path_env;
 	dirent*			ent;
 	DIR*			dir;
 
@@ -204,9 +203,9 @@ std::string		ft::which(const std::string& exe, char** env)
 		}
 		++env;
 	}
-	std::list<std::string>	path_list;
+	std::list<string>	path_list;
 	get_set_token(path_env, path_list, ":");
-	for (std::list<std::string>::iterator it = path_list.begin() ; it != path_list.end() ; ++it)
+	for (std::list<string>::iterator it = path_list.begin() ; it != path_list.end() ; ++it)
 	{
 		if (!(dir = opendir(it->c_str())))
 			continue ;
@@ -215,22 +214,27 @@ std::string		ft::which(const std::string& exe, char** env)
 			if (exe == ent->d_name)
 			{
 				if (*--(it->end()) != '/')
-					return (std::string(*it) + "/" + exe);
+				{
+					closedir(dir);
+					return (string(*it) + "/" + exe);
+				}
+				closedir(dir);
 				return (it->c_str() + exe);
 			}
 		}
+		closedir(dir);
 	}
 	return "";
 }
 
 //------------------------------------------------------------------------------
 
-std::string	ft::itoa(long n)
+string	ft::itoa(long n)
 {
 	char		digit[50];
 	char*		cursor = digit;
 	int			sign = 1;
-	std::string	result;
+	string	result;
 
 	std::cout << '<' << n << '>' << std::endl;
 	*cursor = 0;
@@ -253,7 +257,7 @@ std::string	ft::itoa(long n)
 
 //------------------------------------------------------------------------------
 
-std::string	ft::get_last_modified(const char* path)
+string	ft::get_last_modified(const char* path)
 {
 	struct stat		stat_f;
 	
@@ -319,15 +323,15 @@ ft::Date		ft::time_convert(long time_sec)
 
 //------------------------------------------------------------------------------
 
-std::string		ft::date_to_str(const ft::Date& d)
+string		ft::date_to_str(const ft::Date& d)
 {
-	static std::string	day_name[] = 
+	static string	day_name[] = 
 		{"Wed", "Thu", "Fri", "Sat", "Sun", "Mon", "Tue"};
-	static std::string	month_name[] = 
+	static string	month_name[] = 
 		{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-	std::string		result;
-	std::string		tmp;
+	string		result;
+	string		tmp;
 
 	result.append(day_name[d.day_name]);
 	result.append(", ");
@@ -352,8 +356,14 @@ std::string		ft::date_to_str(const ft::Date& d)
 
 //------------------------------------------------------------------------------
 
+size_t		ft::file_size(const char* path)
+{
+	struct stat		stat_f;
 
-
+	if (stat(path, &stat_f) < 0)
+		throw 404;
+	return stat_f.st_size;
+}
 
 // int		main(int argc, char** argv, char** env)
 // {

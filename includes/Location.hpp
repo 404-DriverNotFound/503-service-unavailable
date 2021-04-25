@@ -18,8 +18,8 @@ struct Location : public ConfigSet
 	public:
 	std::string		location;
 	std::string		cgi;
+	std::string		auth_type;
 	std::string		auth;
-	static Method	methodSet[9];
 	
 	Location();
 	/*--------------------------------------------------------------------------
@@ -31,6 +31,9 @@ struct Location : public ConfigSet
 	~Location();
 	
 	class AuthFailed: public std::exception{
+		virtual const char* what() const throw();
+	};
+	class InvalidMethod: public std::exception{
 		virtual const char* what() const throw();
 	};
 };

@@ -20,6 +20,7 @@ LIST_SRCS = \
 	HttpRes\
 	Location\
 	main\
+	Method\
 	Server\
 	Socket\
 	Time\

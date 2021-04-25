@@ -1,47 +1,51 @@
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
-#include "Webserver.hpp"
+#include "../includes/Webserver.hpp"
+#define DBG
+
 /*#####################################
 Webserver
 ######################################*/
+
 Webserver::Webserver(int argc, char** argv, char** env)
-: select_timeout(5000000)
+: max_connection(100), select_timeout(5000000)
 {
 	if (argc > 2)
 	{
 		std::cout << "Usage: " << argv[0] << " [configfile]" << std::endl;
 		return ;
 	}
-	std::deque<std::string>	token(1);
+	set_path_cgi_bin(env);
+	HttpRes::init_status_code();
+	Http::init_map_headers();
+	Method::init_method_num();
+	Method::init_method_flags();
+	Method::init_method_strings();
+	deque<std::string>	token(1);
+	
+
 	config_parser(token, argv[1]);
 	server_create(token);
-	put_port_numbers();
-	set_path_cgi_bin(env);
-	set_status_code();
-	set_map_method();
+	create_sockets();
+
+	// cout << *this << endl;
+
+	start_server();
+	cout << "end" << endl;
 }
 
 //------------------------------------------------------------------------------
 
 Webserver::~Webserver()
-{
-	socket_iterator		it = sockets.begin();
-	socket_iterator		end = sockets.end();
-
-	while (it != end)
-	{
-		delete *it;
-	}
-}
+{}
 
 //------------------------------------------------------------------------------
 
-void	Webserver::config_parser(std::deque<std::string>& token, const char* config_path)
+void	Webserver::config_parser(deque<string>& token, const char* config_path)
 {
 	char						buf[30];
 	int							fd, n, idx, vdx = 0;
-
 
 	if (!config_path)
 	{
@@ -59,7 +63,7 @@ void	Webserver::config_parser(std::deque<std::string>& token, const char* config
 		{
 			if (buf[idx] == '\n')
 			{
-				token.push_back(std::string());
+				token.push_back(string());
 				++vdx;
 			}
 			else
@@ -71,9 +75,9 @@ void	Webserver::config_parser(std::deque<std::string>& token, const char* config
 
 //------------------------------------------------------------------------------
 
-void	Webserver::server_create(std::deque<std::string>& token)
+void	Webserver::server_create(deque<string>& token)
 {
-	std::string::iterator	it;
+	string::iterator	it;
 
 
 	while (!token.empty())
@@ -83,7 +87,10 @@ void	Webserver::server_create(std::deque<std::string>& token)
 		{
 			token.pop_front();
 			Server 	temp(token);
-			servers.insert(make_pair(temp.name, temp));
+			server_iterator	server_it = servers.find(temp.port);
+			if (server_it == servers.end())
+				servers[temp.port] = map<string, Server>();
+			servers[temp.port].insert(make_pair(temp.name, temp));
 		}
 		else
 			throw Webserver::InvalidServerBlock();
@@ -92,26 +99,23 @@ void	Webserver::server_create(std::deque<std::string>& token)
 
 //------------------------------------------------------------------------------
 
-void	Webserver::put_port_numbers()
-{
-	server_iterator		it = servers.begin();
-	server_iterator		end = servers.end();
-
-	while (it != end)
-	{
-		ports.insert(it->second.port);
-	}
-}
-
 void	Webserver::create_sockets()
 {
-	std::set<uint16_t>::const_iterator it = ports.begin();
-	std::set<uint16_t>::const_iterator end = ports.end();
+	server_iterator it = servers.begin();
+	server_iterator end = servers.end();
 
+	sockets.reserve(servers.size());
 	while (it != end)
 	{
-		Socket*		tmp = new Socket(*it, INADDR_ANY);
-		sockets.push_back(tmp);
+		sockets.push_back(Socket());
+		sockets.back().bind(it->first, INADDR_ANY);
+
+		#ifdef DBG
+		cout << "socket: " << sockets.back().fd << ":" << it->first << endl;
+		#endif
+		
+		o_set.set(sockets.back().fd);
+		++it;
 	}
 }
 
@@ -121,20 +125,45 @@ void			Webserver::start_server()
 {
 	int		result;
 
-	server_iterator	it = servers.begin();
+	socket_iterator	it = sockets.begin();
+	socket_iterator	end = sockets.end();
 
-	for (;it != servers.end();++it)
-		(*it).sock->listen(5);
+	#ifdef DBG
+	cout << __func__ << endl;
+	#endif
+
+	while (it != end)
+	{
+		it->listen(max_connection);
+		++it;
+	}
 	while (42)
 	{
-		to_be_checked_read = to_be_checked;
-		to_be_checked_write = to_be_checked;
-		to_be_checked_exception = to_be_checked;
-		result = select(max_connection, &to_be_checked_read, &to_be_checked_write, &to_be_checked_exception, &select_timeout);
+		cout << endl;
+		cout << endl;
+		usleep(200000);
+		r_set = o_set;
+		w_set = o_set;
+		e_set = o_set;
+		select_timeout.set_time(2000000);
+		result = select(max_connection, &r_set.bits, &w_set.bits, &e_set.bits, (&select_timeout));
+		#ifdef DBG
+		cout << "select loop..." << endl;
+		// cout << "max connection: " << max_connection << endl;
+		// cout << "o:" << endl;
+		// o_set.print_bit(20);
+		// cout << "r:" << endl;
+		// r_set.print_bit(20);
+		#endif
 		if (result < 0)
 			throw SelectFailed();
 		if (result == 0)	// timeout
+		{
+			#ifdef DBG
+			cout << "timeout" << endl;
+			#endif
 			continue;
+		}
 		check_new_connection();
 		manage_clients();
 	}
@@ -144,18 +173,41 @@ void			Webserver::start_server()
 
 void			Webserver::check_new_connection()
 {
+	socket_iterator		it = sockets.begin();
 	socket_iterator		end = sockets.end();
-	for (socket_iterator it = sockets.begin() ; it != end ; ++it)
+	while (it != end)
 	{
-<<<<<<< HEAD
-		if (to_be_checked_read.get((*it)->fd) == 0)
-			continue;
-		clients.push_back(Client((*it)->fd), servers);
-=======
-		if (to_be_checked_read.get(it->sock->fd) == 0)
-			continue;
-		clients.push_back(Client(it->sock->fd, servers));
->>>>>>> d5468caa492896680405b949d1e9538ea41cfdb3
+		if (r_set.get(it->fd))
+		{
+			#ifdef DBG
+			cout << "	new connection with " << it->fd << endl;
+			cout << "	port: " << ft::hton(it->s_addr.sin_port) << endl;
+			#endif
+
+			clients.push_back(servers[ft::hton(it->s_addr.sin_port)]);
+			
+			#ifdef DBG
+			cout << " push_back\n";
+			#endif
+
+			clients.back().init(it->fd);
+			
+			#ifdef DBG
+			cout << " init\n";
+			#endif
+			
+			o_set.set(clients.back().sock.fd);
+			fcntl(clients.back().sock.fd, O_NONBLOCK);
+			
+			#ifdef DBG
+			cout << " new client " << clients.back().sock.fd << endl;
+			#endif
+		}
+		if (e_set.get(it->fd))
+		{
+			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
+		}
+		++it;
 	}
 }
 
@@ -163,12 +215,25 @@ void			Webserver::check_new_connection()
 
 void			Webserver::manage_clients()
 {
+	#ifdef DBG
+	cout << __func__ << endl;
+	#endif
+
 	client_iterator		end = clients.end();
 	for (client_iterator it = clients.begin() ; it != end ; ++it)
 	{
-		it->client_process(to_be_checked_read, to_be_checked_write);
+		cout << "bf client process\n";
+		it->client_process(r_set, w_set);
+		cout << "af client process\n";
 		if (it->status == SEND_DONE)
+		{
+			o_set.del(it->sock.fd);
 			clients.erase(it);
+		}
+		if (e_set.get(it->sock.fd))
+		{
+			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
+		}
 	}
 }
 
@@ -196,83 +261,16 @@ void		Webserver::set_path_cgi_bin(char** env)
 
 //------------------------------------------------------------------------------
 
-void	Webserver::set_map_method()
-{
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("CONNECT", CONNECT));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("DELETE", DELETE));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("GET", GET));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("HEAD", HEAD));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("OPTIONS", OPTIONS));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("PATCH", PATCH));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("POST", POST));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("PUT", PUT));
-	Http::mapMethod.insert(std::make_pair<std::string, u_int16_t>("TRACE", TRACE));
-}
-//------------------------------------------------------------------------------
-
-void		Webserver::set_status_code()
-{
-	HttpRes::status_code_map[100] = "Continue";
-	HttpRes::status_code_map[101] = "Switching Protocols";
-	HttpRes::status_code_map[103] = "Early Hints";
-	HttpRes::status_code_map[200] = "OK";
-	HttpRes::status_code_map[201] = "Created";
-	HttpRes::status_code_map[202] = "Accepted";
-	HttpRes::status_code_map[203] = "Non-Authoritative Information";
-	HttpRes::status_code_map[204] = "No Content";
-	HttpRes::status_code_map[205] = "Reset Content";
-	HttpRes::status_code_map[206] = "Partial Content";
-	HttpRes::status_code_map[300] = "Multiple Choices";
-	HttpRes::status_code_map[301] = "Moved Permanently";
-	HttpRes::status_code_map[302] = "Found";
-	HttpRes::status_code_map[303] = "See Other";
-	HttpRes::status_code_map[304] = "Not Modified";
-	HttpRes::status_code_map[307] = "Temporary Redirect";
-	HttpRes::status_code_map[308] = "Permanent Redirect";
-	HttpRes::status_code_map[400] = "Bad Request";
-	HttpRes::status_code_map[401] = "Unauthorized";
-	HttpRes::status_code_map[402] = "Payment Required";
-	HttpRes::status_code_map[403] = "Forbidden";
-	HttpRes::status_code_map[404] = "Not Found";
-	HttpRes::status_code_map[405] = "Method Not Allowed";
-	HttpRes::status_code_map[406] = "Not Acceptable";
-	HttpRes::status_code_map[407] = "Proxy Authentication Required";
-	HttpRes::status_code_map[408] = "Request Timeout";
-	HttpRes::status_code_map[409] = "Conflict";
-	HttpRes::status_code_map[410] = "Gone";
-	HttpRes::status_code_map[411] = "Length Required";
-	HttpRes::status_code_map[412] = "Precondition Failed";
-	HttpRes::status_code_map[413] = "Payload Too Large";
-	HttpRes::status_code_map[414] = "URI Too Long";
-	HttpRes::status_code_map[415] = "Unsupported Media Type";
-	HttpRes::status_code_map[416] = "Range Not Satisfiable";
-	HttpRes::status_code_map[417] = "Expectation Failed";
-	HttpRes::status_code_map[418] = "I'm a teapot";
-	HttpRes::status_code_map[422] = "Unprocessable Entity";
-	HttpRes::status_code_map[425] = "Too Early";
-	HttpRes::status_code_map[426] = "Upgrade Required";
-	HttpRes::status_code_map[428] = "Precondition Required";
-	HttpRes::status_code_map[429] = "Too Many Requests";
-	HttpRes::status_code_map[431] = "Request Header Fields Too Large";
-	HttpRes::status_code_map[451] = "Unavailable For Legal Reasons";
-	HttpRes::status_code_map[500] = "Internal Server Error";
-	HttpRes::status_code_map[501] = "Not Implemented";
-	HttpRes::status_code_map[502] = "Bad Gateway";
-	HttpRes::status_code_map[503] = "Service Unavailable";
-	HttpRes::status_code_map[504] = "Gateway Timeout";
-	HttpRes::status_code_map[505] = "HTTP Version Not Supported";
-	HttpRes::status_code_map[506] = "Variant Also Negotiates";
-	HttpRes::status_code_map[507] = "Insufficient Storage";
-	HttpRes::status_code_map[508] = "Loop Detected";
-	HttpRes::status_code_map[510] = "Not Extended";
-	HttpRes::status_code_map[511] = "Network Authentication Required";
-}
-
-//------------------------------------------------------------------------------
-
 std::ostream&	operator<<(std::ostream& os, Webserver& ref) {
-	Webserver::server_iterator	it = ref.servers.begin();
-	for (;it!=ref.servers.end();++it)
-		os << it->second << std::endl;
+	Webserver::server_iterator		it = ref.servers.begin();
+	Webserver::server_iterator		end = ref.servers.end();
+	
+	for ( ; it != end ; ++it)
+	{
+		for (map<string, Server>::iterator  it_s = it->second.begin() ; it_s != it->second.end() ; ++it_s)
+		{
+			os << it_s->second;
+		}
+	}
 	return (os);
 }

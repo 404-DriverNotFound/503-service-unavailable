@@ -36,6 +36,9 @@ struct Cgi
 	Method
 	--------------------------------------------------------------------------*/
 					Cgi();
+					Cgi(const Cgi& x);
+	Cgi&			operator=(const Cgi& x);
+					~Cgi();
 	void			init(const char* path, char** meta_variable);
 	void			start_cgi();
 	void			set_extension();

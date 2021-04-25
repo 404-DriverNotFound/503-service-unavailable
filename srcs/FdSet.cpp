@@ -1,4 +1,4 @@
-#include "FdSet.hpp"
+#include "../includes/FdSet.hpp"
 #include <string.h>
 
 		FdSet::FdSet()
@@ -13,10 +13,10 @@
 bool	FdSet::get(uint64_t fd) const
 {
 	#ifdef __APPLE__
-	return fds_bits[fd >> 5] & (1u << (fd & 31));
+	return bits.fds_bits[fd >> 5] & (1u << (fd & 31));
 	#else
 	# ifdef __linux__
-	return fds_bits[fd >> 6] & (1ull << (fd & 63));
+	return bits.fds_bits[fd >> 6] & (1ull << (fd & 63));
 	# endif
 	#endif
 }
@@ -24,10 +24,10 @@ bool	FdSet::get(uint64_t fd) const
 void	FdSet::set(uint64_t fd)
 {
 	#ifdef __APPLE__
-	fds_bits[fd >> 5] |= (1u << (fd & 31));
+	bits.fds_bits[fd >> 5] |= (1u << (fd & 31));
 	#else
 	# ifdef __linux__
-	fds_bits[fd >> 6] |= (1ull << (fd & 63));
+	bits.fds_bits[fd >> 6] |= (1ull << (fd & 63));
 	# endif
 	#endif
 }
@@ -35,40 +35,38 @@ void	FdSet::set(uint64_t fd)
 void	FdSet::del(uint64_t fd)
 {
 	#ifdef __APPLE__
-	fds_bits[fd >> 5] ^= (1ull << (fd & 31));
+	bits.fds_bits[fd >> 5] ^= (1ull << (fd & 31));
 	#else
 	# ifdef __linux__
-	fds_bits[fd >> 6] ^= (1ull << (fd & 63));
+	bits.fds_bits[fd >> 6] ^= (1ull << (fd & 63));
 	# endif
 	#endif
 }
 
 void	FdSet::zero()
 {
-	memset(fds_bits, 0, sizeof(*this));
+	memset(&bits, 0, sizeof(fd_set));
 }
 
 FdSet&	FdSet::operator=(FdSet& x)
 {
 	if (&x == this)
 		return *this;
-	memcpy(fds_bits, x.fds_bits, sizeof(*this));
+	bits = x.bits;
 	return *this;
 }
 
-
-
-/*
-void	FdSet::print_bit() const
+void	FdSet::print_bit(int size = 1024) const
 {
-	for (int i = 0 ; i < sizeof(FdSet::fds_bits) * 8 ; ++i)
+	for (int i = 0 ; i < size ; ++i)
 	{
 		std::cout << get(i);
 		if (!((i + 1) & 127))
 			std::cout << std::endl;
 	}
+	std::cout << std::endl;
 }
-*/
+
 /*
 int		main(void)
 {
