@@ -222,6 +222,10 @@ void			Webserver::manage_clients()
 	client_iterator		end = clients.end();
 	for (client_iterator it = clients.begin() ; it != end ; ++it)
 	{
+		if (e_set.get(it->sock.fd))
+		{
+			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
+		}
 		cout << "bf client process\n";
 		it->client_process(r_set, w_set);
 		cout << "af client process\n";
@@ -229,10 +233,6 @@ void			Webserver::manage_clients()
 		{
 			o_set.del(it->sock.fd);
 			clients.erase(it);
-		}
-		if (e_set.get(it->sock.fd))
-		{
-			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
 	}
 }

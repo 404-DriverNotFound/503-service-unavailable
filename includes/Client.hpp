@@ -2,6 +2,7 @@
 struct Client;
 #include <sys/types.h>
 #include "Server.hpp"
+#include "Stream.hpp"
 #include "Socket.hpp"
 #include "Buffer.hpp"
 #include "HttpReq.hpp"
@@ -34,8 +35,6 @@ enum e_status_proc
 	MAKE_MSG,
 };
 
-
-
 /*##############################################################################
 Client
 ##############################################################################*/
@@ -53,7 +52,8 @@ struct Client
 	--------------------------------------------------------------------------*/
 	public:
 	Socket					sock;
-	Buffer					buffer;
+	Stream					stream_in;
+	Stream					stream_out;
 	string					line;
 	e_status				status;
 	e_status_proc			status_proc;
