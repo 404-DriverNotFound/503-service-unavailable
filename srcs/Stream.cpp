@@ -27,7 +27,7 @@ void		Stream::init(size_t capacity, int in, int out)
 	default_capacity = capacity;
 }
 //------------------------------------------------------------------------------
-size_t		Stream::read(size_t s)
+size_t		Stream::fill(size_t s)
 {
 	if (buffers.empty())
 	{
@@ -47,7 +47,7 @@ size_t		Stream::read(size_t s)
 	return len;
 }
 //------------------------------------------------------------------------------
-string		Stream::get(size_t s)
+string		Stream::read(size_t s)
 {
 	string				result;
 	uint8_t*			end;
@@ -69,7 +69,7 @@ string		Stream::get(size_t s)
 	return result;
 }
 //------------------------------------------------------------------------------
-size_t		Stream::get(size_t s, uint8_t* b)
+size_t		Stream::read(size_t s, uint8_t* b)
 {
 	size_t				len = 0;
 	uint8_t*			end;
@@ -92,7 +92,7 @@ size_t		Stream::get(size_t s, uint8_t* b)
 	return len;
 }
 //------------------------------------------------------------------------------
-size_t		Stream::write(size_t s)
+size_t		Stream::pass(size_t s)
 {
 	uint8_t*	end;
 	size_t		len = 0;

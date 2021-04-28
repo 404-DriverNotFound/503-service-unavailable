@@ -24,7 +24,6 @@
 void		Client::init(int fd)
 {
 	sock.accept(fd);
-	stream.init();
 	status = RECV_START_LINE;
 }
 

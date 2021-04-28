@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include "Utils.hpp"
+#include "Stream.hpp"
 
 /*##############################################################################
 Cgi
@@ -83,6 +84,7 @@ struct Cgi
 	std::string		extension;
 	char**			meta_variable;
 	static map_path	cgi_bin;
+	Stream			stream_out;		// cgi의 출력
 
 	/*--------------------------------------------------------------------------
 	Method

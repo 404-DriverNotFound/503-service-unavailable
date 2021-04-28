@@ -30,6 +30,7 @@ void			Cgi::init(const char* path, char** meta_variable)
 	set_extension();
 	pipe(fd_write);
 	pipe(fd_read);
+	stream_out.init(0x100000, fd_out);
 }
 
 //------------------------------------------------------------------------------

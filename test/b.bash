@@ -1,12 +1,12 @@
 #!/bin/bash
 
 export "AUTH_TYPE="
-export "CONTENT_LENGTH="
+export "CONTENT_LENGTH=4"
 export "CONTENT_TYPE="
-export "GATEWAY_INTERFACE="
+export "GATEWAY_INTERFACE=CGI/1.1"
 export "PATH_INFO=aaaaaa"
 export "PATH_TRANSLATED=./file.bla"
-export "QUERY_STRING="
+export "QUERY_STRING=./baba"
 export "REMOTE_ADDR="
 export "REMOTE_IDENT="
 export "REMOTE_USER="
@@ -18,4 +18,4 @@ export "SERVER_PORT="
 export "SERVER_PROTOCOL=HTTP/1.1"
 export "SERVER_SOFTWARE="
 
-./cgi_tester
+echo "abcde" | ./cgi_tester
