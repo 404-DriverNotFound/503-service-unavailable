@@ -229,7 +229,7 @@ void			Webserver::manage_clients()
 		cout << "bf client process\n";
 		it->client_process(r_set, w_set);
 		cout << "af client process\n";
-		if (it->status == SEND_DONE)
+		if (it->status == STATUS_DONE)
 		{
 			o_set.del(it->sock.fd);
 			clients.erase(it);

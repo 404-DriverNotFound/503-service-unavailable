@@ -112,11 +112,15 @@ size_t		Stream::pass(size_t s)
 bool		Stream::get_chr_token(string &token, const char c)
 {
 	uint8_t*	end;
-
+	if (token_factor)
+		token.clear();
 	while (42)
 	{
 		if (buffers.empty())
+		{
+			token_factor = false;
 			return false;
+		}
 		end = buffers.front().end;
 		while (it_buffer != end)
 		{
@@ -129,10 +133,14 @@ bool		Stream::get_chr_token(string &token, const char c)
 					{
 						delete_buffer();
 						if (buffers.empty())
+						{
+							token_factor = true;
 							return true;
+						}
 						end = buffers.front().end;
 					}
 				}
+				token_factor = true;
 				return true;
 			}
 			token.push_back(*it_buffer);
@@ -140,6 +148,41 @@ bool		Stream::get_chr_token(string &token, const char c)
 		}
 		delete_buffer();
 	}
+	token_factor = false;
+	return false;
+}
+//------------------------------------------------------------------------------
+bool		Stream::get_line(string &token)
+{
+	uint8_t*	end;
+	if (token_factor)
+		token.clear();
+	while (42)
+	{
+		if (buffers.empty())
+		{
+			token_factor = false;
+			return false;
+		}
+		end = buffers.front().end;
+		while (it_buffer != end)
+		{
+			if ('\n' == *it_buffer)
+			{
+				++it_buffer;
+				if (it_buffer == end)
+					delete_buffer();
+				if (*--token.end() == '\r')
+					token.erase(*--token.end());
+				token_factor = true;
+				return true;
+			}
+			token.push_back(*it_buffer);
+			++it_buffer;
+		}
+		delete_buffer();
+	}
+	token_factor = false;
 	return false;
 }
 //------------------------------------------------------------------------------

@@ -36,7 +36,7 @@ struct Stream
 	bool			get_chr_token(string &token, const char c);
 	void			get_set_token(list<string>& tokens, const char* set);
 	void			get_chr_token(list<string>& tokens, const char* set);
-
+	bool			get_line(string &token);
 	void			add_buffer(size_t s);
 	void			delete_buffer();
 };

@@ -24,23 +24,102 @@
 void		Client::init(int fd)
 {
 	sock.accept(fd);
-	status = RECV_START_LINE;
+	stream_in.init(10000000, sock.fd, sock.fd);
+	status = STATUS_START_LINE;
 }
 
 //------------------------------------------------------------------------------
 
-void		client_process(FdSet& r, FdSet& w)
+void		Client::client_process(FdSet& r, FdSet& w)
 {
 	if (r.get(sock.fd))
-		stream_in.fill(BUFFER_SIZE);
-	if (w.get(sock.fd))
-		stream_out.write(sock.fd);
-	
+	{
+		switch (status)
+		{
+		case STATUS_START_LINE:
+			stream_in.fill(8000);	// TODO: header size
+			break;
+		case STATUS_HEADER:
+			stream_in.fill(8000);	// TODO: header size
+			break;
+		case STATUS_METHOD:
+			stream_in.fill(1000000);
+		default:
+			break;
+		}
+	}
+	switch (status)
+	{
+		case STATUS_START_LINE:
+			if (stream_in.get_line(line))
+			{
+				req.set_start_line(line);
+				status = STATUS_HEADER;
+			}
+			if (status == STATUS_START_LINE)
+				return;
+		case STATUS_HEADER:
+			if (stream_in.get_line(line))
+			{
+				if (line == "\n")
+				{
+					status = STATUS_CHECK_MSG;
+				}
+				req.set_header(line);
+			}
+			else
+				return;
+			if (status == STATUS_HEADER)
+				return;
+		case STATUS_CHECK_MSG:
+			set_location();
+			check_auth();
+			check_method();
+			status = STATUS_METHOD;
+		case STATUS_METHOD:
+			process_method();
+			if (status == STATUS_METHOD)
+				return;
+		case STATUS_DONE:
+			break;
+	}
 }
 
+//------------------------------------------------------------------------------
 
+void		Client::set_location()
+{
+	// 서버
+	iterator_server	it_server = servers.find(req.headers[HOST]);
+	if (it_server == servers.end())
+		throw 404;
+	server = &it_server->second;
 
+	// 로케이션
+	iterator_location	it_location = server->locations.find(req.get_location_name());
+	if (it_location == server->locations.end())
+		throw 404;
+	location = &it_location->second;
+}
 
+void		Client::check_auth()
+{
+	// 인증을 요구하지 않으면
+	if (location->auth.empty())
+		return ;
+
+	string&					line_auth = req.headers[AUTHORIZATION];
+	string::const_iterator	it = line_auth.begin();
+	string					client_auth_type;
+	string					client_auth;
+
+	ft::get_chr_token(line_auth, it, client_auth_type, ' ');
+	if (location->auth_type != client_auth_type)
+		throw 401;	// TODO: bad request or unauthorized?
+	ft::get_chr_token(line_auth, it, client_auth, ' ');
+	if (location->auth != client_auth)
+		throw 401;	// TODO: bad request or unauthorized?
+}
 
 
 

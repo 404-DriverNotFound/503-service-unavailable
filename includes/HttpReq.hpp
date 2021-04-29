@@ -17,6 +17,7 @@ struct HttpReq : public Http
 	Member
 	--------------------------------------------------------------------------*/
 	uint16_t		method;
+	string			path_info;
 	list<string>	path;
 	string			query;
 	
@@ -26,7 +27,7 @@ struct HttpReq : public Http
 	void			set_start_line(string& line);
 	void			set_header(string& line);
 	void			set_path(string& token);
-	void			get_location_name(string& location_name);
+	string			get_location_name();
 	/*--------------------------------------------------------------------------
 	Private Method
 	--------------------------------------------------------------------------*/

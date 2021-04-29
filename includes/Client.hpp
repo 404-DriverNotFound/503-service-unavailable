@@ -18,12 +18,11 @@ using std::map;
 
 enum e_status
 {
-	RECV_START_LINE,
-	RECV_HEADER,
-	CHECK_MSG,
-	PROC_MSG,
-	SEND_MSG,
-	SEND_DONE,
+	STATUS_START_LINE,
+	STATUS_HEADER,
+	STATUS_CHECK_MSG,
+	STATUS_METHOD,
+	STATUS_DONE,
 };
 
 enum e_status_proc
@@ -110,16 +109,26 @@ HEAD:
 	if CGI (O):
 		CGI실행
 		빈 줄 나올 때까지 CGI.stream_out.getline()
-			stream_out << 헤더를 파싱
 	파일 사이즈 확인 -> Content-Length 결정
 	stream_out << 헤더 작성(시작줄, 헤더)
+	if CGI (O):
+		stream_out << 헤더를 파싱
 	상태 = 메시지 전달
 ----------------------------------------------------------------------
 POST:
-	stream_out << 헤더 작성(시작줄, 헤더)
 	if CGI (O)
 		CGI실행
-
+		chunked일 경우
+			본문에서 길이 얻기
+			길이가 완벽하면
+				길이만큼 CGI에 본문 전달
+			완벽하지 않으면
+				남은 길이를 저장
+		chunked 아닐 경우
+			남은 콘텐츠 길이만큼 CGI에 본문 입력
+		빈 줄 나올 때까지 CGI.stream_out.getline()
+			stream_out << 헤더를 파싱	
+	stream_out << 헤더 작성(시작줄, 헤더)
 
 PUT:
 	리소스 쓰기
@@ -179,6 +188,13 @@ struct Client
 	void		set_location();
 	void		check_auth();
 	void		check_method();
+
+
+	void		process_method();
+
+
+
+
 
 	void		process_msg();
 	void		process_get();

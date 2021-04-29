@@ -13,8 +13,6 @@ void		HttpReq::set_start_line(string& line)
 	string::const_iterator			it_line = line.begin();
 	string							token;
 
-	if (!line.empty() && *--line.end() == '\r')
-		line.erase(--line.end());
 	// method
 	if (!ft::get_chr_token(line, it_line, token, ' ') || token.empty())
 		throw 400;
@@ -22,17 +20,14 @@ void		HttpReq::set_start_line(string& line)
 	set_method(token);
 	
 	//path
-	if (!ft::get_chr_token(line, it_line, token, ' ') || token.empty())
+	if (!ft::get_chr_token(line, it_line, path_info, ' ') || path_info.empty())
 		throw 400;
-	set_path(token);
+	set_path(path_info);
 
 	// scheme
-	ft::get_chr_token(line, it_line, token, ' ');
-	if (token.empty())
+	ft::get_chr_token(line, it_line, protocol, ' ');
+	if (protocol.empty())
 		throw 400;
-	if (!token.empty() && *--token.end() == '\r')
-		token.erase(--token.end());
-	token.swap(protocol);
 }
 
 //------------------------------------------------------------------------------
@@ -69,12 +64,10 @@ void		HttpReq::set_method(const string& token)
 
 void		HttpReq::set_header(string& line)
 {
-	string::const_iterator			it_line = line.begin();
-	string							key;
-	string							val;
+	string::const_iterator	it_line = line.begin();
+	string					key;
+	string					val;
 
-	if (!line.empty() && *--line.end() == '\r')
-		line.erase(--line.end());
 	ft::get_set_token(line, it_line, key, ": ");
 	ft::uppercase(key);
 	while (ft::strchr(": ", *it_line))
@@ -87,13 +80,14 @@ void		HttpReq::set_header(string& line)
 
 //------------------------------------------------------------------------------
 
-void		HttpReq::get_location_name(string& location_name)
+string		HttpReq::get_location_name()
 {
 	if (path.size() == 1)
-		location_name = "/";
+		return string("/");
 	else
-		location_name = path.front();
+		return string("/") + path.front();
 }
+
 
 
 //startline test
