@@ -19,6 +19,7 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	set_path_cgi_bin(env);
 	HttpRes::init_status_code();
 	Http::init_map_headers();
+	Http::init_map_methods();
 	Method::init_method_num();
 	Method::init_method_flags();
 	Method::init_method_strings();
@@ -30,8 +31,16 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	create_sockets();
 
 	// cout << *this << endl;
-
-	start_server();
+	// cout << *this << endl;
+	try
+	{
+		start_server();
+	}
+	catch(int a)
+	{
+		std::cerr << "code : " << a << '\n';
+	}
+	
 	cout << "end" << endl;
 }
 
@@ -187,20 +196,20 @@ void			Webserver::check_new_connection()
 			clients.push_back(servers[ft::hton(it->s_addr.sin_port)]);
 			
 			#ifdef DBG
-			cout << " push_back\n";
+			cout << "	push_back\n";
 			#endif
 
 			clients.back().init(it->fd);
 			
 			#ifdef DBG
-			cout << " init\n";
+			cout << "	init\n";
 			#endif
 			
 			o_set.set(clients.back().sock.fd);
 			fcntl(clients.back().sock.fd, O_NONBLOCK);
 			
 			#ifdef DBG
-			cout << " new client " << clients.back().sock.fd << endl;
+			cout << "	new client " << clients.back().sock.fd << endl;
 			#endif
 		}
 		if (e_set.get(it->fd))

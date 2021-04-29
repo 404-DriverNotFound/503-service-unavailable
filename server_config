@@ -1,5 +1,5 @@
 server
-	root /test/directory
+	root ./root
 	server_name localhost
 	port 9190
 	error_page error.html

@@ -11,7 +11,6 @@ ASAN = -fsanitize=address
 #	FILE NAMES
 #-------------------------------------------------------------------------------
 LIST_SRCS = \
-	Buffer\
 	Cgi\
 	Client\
 	FdSet\
@@ -23,6 +22,7 @@ LIST_SRCS = \
 	Method\
 	Server\
 	Socket\
+	Stream\
 	Time\
 	Utils\
 	Webserver

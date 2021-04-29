@@ -93,8 +93,8 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 			token.pop_front();
 		base = token[0].begin().base();
 	}
-	Location	temp(*this);
-	locations.insert(std::make_pair("/", temp));
+	// Location	temp(*this);
+	// locations.insert(std::make_pair("/", temp));
 }
 
 /*--------------------------------------------------------------------------

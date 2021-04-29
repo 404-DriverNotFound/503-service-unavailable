@@ -4,7 +4,6 @@ struct Client;
 #include "Server.hpp"
 #include "Stream.hpp"
 #include "Socket.hpp"
-#include "Buffer.hpp"
 #include "HttpReq.hpp"
 #include "HttpRes.hpp"
 #include "Cgi.hpp"
@@ -22,16 +21,18 @@ enum e_status
 	STATUS_HEADER,
 	STATUS_CHECK_MSG,
 	STATUS_METHOD,
+	STATUS_SEND_MSG,
+	// STATUS_SEND_CGI,
 	STATUS_DONE,
 };
 
 enum e_status_proc
 {
-	PROC_CGI,
-	END_CGI,
-	RECV_BODY,
-	RECV_BODY_CHUNKED,
-	MAKE_MSG,
+	// PROC_CGI,
+	// END_CGI,
+	// RECV_BODY,
+	// RECV_BODY_CHUNKED,
+	// MAKE_MSG,
 };
 
 /*##############################################################################
@@ -162,7 +163,6 @@ struct Client
 	HttpReq					req;				// 요청메시지
 	HttpRes					res;				// 응답메시지
 	Cgi						cgi;				// CGI
-	string					path_info;			// 리소스의 경로
 	string					path_translated;	// 실제 경로
 	Server*					server;				// 참조할 서버
 	Location*				location;			// 로케이션
@@ -185,7 +185,9 @@ struct Client
 	void		recv_start_line();
 	void		recv_header();
 
+	void		set_server();
 	void		set_location();
+	void		translate_path();
 	void		check_auth();
 	void		check_method();
 

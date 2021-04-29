@@ -74,7 +74,8 @@ void		HttpReq::set_header(string& line)
 		++it_line;
 	map<string, uint16_t>::iterator	it_header = map_header.find(key);
 	if (it_header == map_header.end())
-		throw 400;
+		return;
+		// throw 400;
 	headers[it_header->second] = it_line.base();
 }
 

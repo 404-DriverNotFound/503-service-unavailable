@@ -25,6 +25,7 @@ void		Stream::init(size_t capacity, int in, int out)
 	fd_in = in;
 	fd_out = out;
 	default_capacity = capacity;
+	token_factor = false;
 }
 //------------------------------------------------------------------------------
 size_t		Stream::fill(size_t s)
@@ -45,6 +46,49 @@ size_t		Stream::fill(size_t s)
 	tmp.end += len;
 	tmp.remain -= len;
 	return len;
+}
+//------------------------------------------------------------------------------
+void		Stream::write(const string& str)
+{
+	if (buffers.empty())
+	{
+		add_buffer(str.size());
+		it_buffer = buffers.front().start;
+	}
+	string::const_iterator	it = str.begin();
+	string::const_iterator	it_end = str.end();
+	uint8_t*				end = buffers.back().end;
+	size_t					remain;
+	
+	if (buffers.back().remain > str.size())
+	{
+		// 쭉복사
+		buffers.back().remain -= it_end - it;
+		while (it != it_end)
+		{
+			*end++ = *it;
+			++it;
+		}
+	}
+	else
+	{
+		// remain만큼만 복사
+		it_end = it + buffers.back().remain;
+		while (it != it_end)
+		{
+			*end++ = *it;
+			++it;
+		}
+		// 새로 할당해서 나머지 복사
+		add_buffer(str.end() - it_end);
+		end = buffers.back().end;
+		it_end = str.end();
+		while (it != it_end)
+		{
+			*end++ = *it;
+			++it;
+		}
+	}
 }
 //------------------------------------------------------------------------------
 string		Stream::read(size_t s)
@@ -94,7 +138,9 @@ size_t		Stream::read(size_t s, uint8_t* b)
 //------------------------------------------------------------------------------
 size_t		Stream::pass(size_t s)
 {
-	uint8_t*	end;
+	if (buffers.empty())
+		return 0;
+	uint8_t*	end = buffers.front().end;
 	size_t		len = 0;
 	
 	if (buffers.empty())
@@ -106,6 +152,18 @@ size_t		Stream::pass(size_t s)
 	}
 	else
 		len = ::write(fd_out, it_buffer, s);
+	return len;
+}
+//------------------------------------------------------------------------------
+size_t		Stream::pass()
+{
+	uint8_t*	end = buffers.front().end;
+	size_t		len = 0;
+	
+	if (buffers.empty())
+		return 0;
+	len = ::write(fd_out, it_buffer, end - it_buffer);
+	delete_buffer();
 	return len;
 }
 //------------------------------------------------------------------------------
@@ -173,7 +231,7 @@ bool		Stream::get_line(string &token)
 				if (it_buffer == end)
 					delete_buffer();
 				if (*--token.end() == '\r')
-					token.erase(*--token.end());
+					token.erase(--token.end());
 				token_factor = true;
 				return true;
 			}
@@ -204,6 +262,61 @@ void		Stream::delete_buffer()
 		it_buffer = buffers.front().start;
 }
 //------------------------------------------------------------------------------
+Stream&		Stream::operator<<(const string& str)
+{
+	write(str);
+	return *this;
+}
+
+/* 
+#include <fcntl.h>
+#include <unistd.h>
+
+int			main()
+{
+	int		fd = open("bohemian", O_RDONLY);
+	Stream	s;
+	string	tok;
+
+	s.init(5, fd);
+	s.fill(10);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(10);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	s.fill(5);
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+	cout << s.get_line(tok) << "|"
+	<< tok << endl;
+
+} */
+
+
 
 /* 
 #include <fcntl.h>
