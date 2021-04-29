@@ -34,10 +34,12 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		bool	flag = true;
 		if (!ft::strncmp(base, "location", 8))
 		{
+			string		location_name = base + 9;
 			Location	temp(token);
+			temp.name = location_name;
 			std::cout << "loacation name:::" << temp.name << std::endl;
 			locations.insert(std::make_pair(temp.name, temp));
-			// std::cout << "location size : " << locations.size() << std::endl;
+			std::cout << "location size : " << locations.size() << std::endl;
 			flag = false;
 		}
 		else if (!ft::strncmp(base, "root", 4))

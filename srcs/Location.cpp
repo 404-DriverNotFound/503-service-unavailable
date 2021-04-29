@@ -89,6 +89,8 @@ Location::Location(std::deque<std::string>& token)
 				if (it_method == Method::method_flags.end())
 					throw InvalidMethod();
 				method |= (1 << it_method->second);
+				cout << "method::::::::::" << it_method->second << endl;
+				cout << "method::::::::::" << Method::method_strings[it_method->second] << endl;
 			}
 		}
 		else if (!ft::strncmp(base, "body_length", 11))

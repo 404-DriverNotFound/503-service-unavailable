@@ -107,7 +107,7 @@ void		Client::set_server()
 	iterator_server	it_server = servers.find(host);
 	if (it_server == servers.end())
 	{
-		cout << "server\n";
+		cout << "server: " << host << endl;
 		throw 404;
 	}
 	server = &it_server->second;
@@ -163,8 +163,13 @@ void		Client::check_auth()
 
 void		Client::check_method()
 {
-	if (!(location->method & 1 << req.method))
+	cout << req.method << endl;
+	cout << location->method << endl;
+	if (!(location->method & (1 << req.method)))
+	{
+		cout << "byebye\n";
 		throw 405; // Method not allowed
+	}
 }
 
 //------------------------------------------------------------------------------
