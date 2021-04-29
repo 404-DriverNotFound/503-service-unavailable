@@ -25,6 +25,7 @@ void		Client::init(int fd)
 {
 	sock.accept(fd);
 	stream_in.init(10000000, sock.fd, sock.fd);
+	stream_out.init(10000000, sock.fd, sock.fd);
 	status = STATUS_START_LINE;
 }
 
@@ -67,13 +68,14 @@ void		Client::client_process(FdSet& r, FdSet& w)
 				cout << line << endl;
 				req.set_header(line);
 			}
-			if (line == "\n")
+			if (line == "\n" || line.empty())
 				status = STATUS_CHECK_MSG;
 			else
 				return;
 			if (status == STATUS_HEADER)
 				return;
 		case STATUS_CHECK_MSG:
+			set_server();
 			set_location();
 			// check_auth();
 			check_method();
@@ -99,9 +101,15 @@ void		Client::client_process(FdSet& r, FdSet& w)
 void		Client::set_server()
 {
 	// 서버
-	iterator_server	it_server = servers.find(req.headers[HOST]);
+	string				host;
+	string::const_iterator	it = req.headers[HOST].begin();
+	ft::get_chr_token(req.headers[HOST], it, host, ':');
+	iterator_server	it_server = servers.find(host);
 	if (it_server == servers.end())
+	{
+		cout << "server\n";
 		throw 404;
+	}
 	server = &it_server->second;
 }
 
@@ -110,7 +118,11 @@ void		Client::set_location()
 	// 로케이션
 	iterator_location	it_location = server->locations.find(req.get_location_name());
 	if (it_location == server->locations.end())
+	{
+		cout << req.get_location_name() << endl;
+		cout << "location\n";
 		throw 404;
+	}
 	location = &it_location->second;
 }
 
@@ -189,6 +201,8 @@ void		Client::process_method()
 
 void		Client::process_get()
 {
+
+	cout << "GETTTTTTTTTT\n";
 	size_t	filesize = ft::file_size(path_translated.c_str());
 
 	// msg.reserve(8000 + filesize);

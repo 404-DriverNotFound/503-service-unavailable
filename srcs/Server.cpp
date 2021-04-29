@@ -29,7 +29,9 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		if (!ft::strncmp(base, "location", 8))
 		{
 			Location	temp(token);
+			std::cout << temp.name << std::endl;
 			locations.insert(std::make_pair(temp.name, temp));
+			// std::cout << "location size : " << locations.size() << std::endl;
 			flag = false;
 		}
 		else if (!ft::strncmp(base, "root", 4))
@@ -107,30 +109,30 @@ const char*	Server::InvalidConfig::what() const throw()
 } 
 
 std::ostream&	operator<<(std::ostream& os, Server& ref) {
-	os << "root: " << ref.root << std::endl
-		<<"server_name: " << ref.name << std::endl
-		<<"error_page: ";
+	os << "	root: " << ref.root << std::endl
+		<<"	server_name: " << ref.name << std::endl
+		<<"	error_page: ";
 	std::set<std::string>::iterator	it;
 	it = ref.error_page.begin();
 	for (;it != ref.error_page.end();++it)
 		os << *it << " ";
 	os << std::endl
-		<< "port: " << ref.port << std::endl
-		<< "index: ";
+		<< "	port: " << ref.port << std::endl
+		<< "	index: ";
 	it = ref.index.begin();
 	for (; it != ref.index.end();++it)
 		os << *it << " ";
 	os << std::endl
-		<< "head_length: " << ref.head_length << std::endl
-		<< "body_length: " << ref.body_length << std::endl
-		<< "autoindex: ";
+		<< "	head_length: " << ref.head_length << std::endl
+		<< "	body_length: " << ref.body_length << std::endl
+		<< "	autoindex: ";
 	if (ref.autoindex)
 		os << "on";
 	else
 		os << "off";
 	os << std::endl
-		<< "auth: " << ref.auth << std::endl;
+		<< "	auth: " << ref.auth << std::endl;
 	for (map<string, Location>::iterator it = ref.locations.begin() ; it != ref.locations.end() ; ++it)
-		os << it->second << std::endl;
+		os << it->first << " : " << it->second << std::endl;
 	return os;
 }

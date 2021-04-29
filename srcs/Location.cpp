@@ -6,7 +6,7 @@
 
 Location::Location(const ConfigSet& ref)
 {
-	//TODO 대입과정
+	//TODO
 }
 
 Location::Location(std::deque<std::string>& token)
@@ -109,22 +109,22 @@ Location::~Location()
 }
 
 std::ostream&	operator<<(std::ostream& os, Location& ref) {
-	os <<"location " << ref.location << std::endl
-		<< "root: " << ref.root << std::endl
-		<<"error_page: ";
+	os <<"		location " << ref.location << std::endl
+		<< "		root: " << ref.root << std::endl
+		<<"		error_page: ";
 	std::set<std::string>::iterator	it;
 
 	it = ref.error_page.begin();
 	for (;it != ref.error_page.end();++it)
 		os << *it << " ";
 	os << std::endl
-		<< "index: ";
+		<< "		index: ";
 	it = ref.index.begin();
 	for (; it != ref.index.end();++it)
 		os << *it << " ";
 	os << std::endl
-		<< "body_length: " << ref.body_length << std::endl;
-	os << "method: " << ref.method;
+		<< "		body_length: " << ref.body_length << std::endl;
+	os << "		method: " << ref.method;
 	return os;
 }
 

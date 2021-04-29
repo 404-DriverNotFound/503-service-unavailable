@@ -86,7 +86,10 @@ string		HttpReq::get_location_name()
 	if (path.size() == 1)
 		return string("/");
 	else
+	{
+		cout << "path size: " << path.size() << "\n";
 		return string("/") + path.front();
+	}
 }
 
 
