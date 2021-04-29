@@ -148,6 +148,7 @@ void			Webserver::start_server()
 	while (42)
 	{
 		cout << endl;
+		cout << "################################################################################" << endl;
 		cout << endl;
 		usleep(200000);
 		r_set = o_set;
@@ -156,12 +157,11 @@ void			Webserver::start_server()
 		select_timeout.set_time(2000000);
 		result = select(max_connection, &r_set.bits, &w_set.bits, &e_set.bits, (&select_timeout));
 		#ifdef DBG
-		cout << "select loop..." << endl;
-		// cout << "max connection: " << max_connection << endl;
-		// cout << "o:" << endl;
-		// o_set.print_bit(20);
-		// cout << "r:" << endl;
-		// r_set.print_bit(20);
+		cout << "select loop" << endl;
+		cout << "o:" << endl;
+		o_set.print_bit(20);
+		cout << "r:" << endl;
+		r_set.print_bit(20);
 		#endif
 		if (result < 0)
 			throw SelectFailed();
@@ -183,32 +183,34 @@ void			Webserver::check_new_connection()
 {
 	socket_iterator		it = sockets.begin();
 	socket_iterator		end = sockets.end();
+	cout << '\n' <<  __func__ << "\n======================================"<< endl;
 	while (it != end)
 	{
 		if (r_set.get(it->fd))
 		{
 			#ifdef DBG
-			cout << "	new connection with " << it->fd << endl;
-			cout << "	port: " << ft::hton(it->s_addr.sin_port) << endl;
+			cout << "- new connection with " << it->fd << endl;
+			cout << "- port: " << ft::hton(it->s_addr.sin_port) << endl;
 			#endif
 
 			clients.push_back(servers[ft::hton(it->s_addr.sin_port)]);
 			
 			#ifdef DBG
-			cout << "	push_back\n";
+			cout << "- push_back\n";
 			#endif
 
 			clients.back().init(it->fd);
 			
 			#ifdef DBG
-			cout << "	init\n";
+			cout << "- init\n";
 			#endif
 			
 			o_set.set(clients.back().sock.fd);
 			fcntl(clients.back().sock.fd, O_NONBLOCK);
 			
 			#ifdef DBG
-			cout << "	new client " << clients.back().sock.fd << endl;
+			cout << "- new client " << clients.back().sock.fd << endl;
+			cout << endl;
 			#endif
 		}
 		if (e_set.get(it->fd))
@@ -224,23 +226,25 @@ void			Webserver::check_new_connection()
 void			Webserver::manage_clients()
 {
 	#ifdef DBG
-	cout << __func__ << endl;
+	cout << '\n' << __func__ << "\n======================================"<< endl;
 	#endif
 
-	client_iterator		end = clients.end();
-	for (client_iterator it = clients.begin() ; it != end ; ++it)
+	for (client_iterator it = clients.begin() ; it != clients.end() ; ++it)
 	{
 		if (e_set.get(it->sock.fd))
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
-		cout << "bf client process\n";
+		cout << "----------------\n";
+		cout << "== Socket: " << it->sock.fd << " ==" << endl;
+		cout << "----------------\n";
 		it->client_process(r_set, w_set);
-		cout << "af client process\n";
 		if (it->status == STATUS_DONE)
 		{
+			cout << "- delete " << it->sock.fd << endl;
+			cout << "- erase " << it->sock.fd << endl;
 			o_set.del(it->sock.fd);
-			clients.erase(it);
+			it = clients.erase(it);
 		}
 	}
 }

@@ -55,39 +55,40 @@ void		Stream::write(const string& str)
 		add_buffer(str.size());
 		it_buffer = buffers.front().start;
 	}
-	string::const_iterator	it = str.begin();
-	string::const_iterator	it_end = str.end();
+	string::const_iterator	it_string = str.begin();
+	string::const_iterator	it_string_end = str.end();
 	uint8_t*				end = buffers.back().end;
-	size_t					remain;
 	
-	if (buffers.back().remain > str.size())
+	if (buffers.back().remain >= str.size())
 	{
 		// 쭉복사
-		buffers.back().remain -= it_end - it;
-		while (it != it_end)
+		buffers.back().remain -= str.size();
+		while (it_string != it_string_end)
 		{
-			*end++ = *it;
-			++it;
+			*end++ = *it_string;
+			++it_string;
 		}
+		buffers.back().end = end;
 	}
 	else
 	{
 		// remain만큼만 복사
-		it_end = it + buffers.back().remain;
-		while (it != it_end)
+		it_string_end = it_string + buffers.back().remain;
+		while (it_string != it_string_end)
 		{
-			*end++ = *it;
-			++it;
+			*end++ = *it_string;
+			++it_string;
 		}
 		// 새로 할당해서 나머지 복사
-		add_buffer(str.end() - it_end);
+		add_buffer(str.end() - it_string_end);
 		end = buffers.back().end;
-		it_end = str.end();
-		while (it != it_end)
+		it_string_end = str.end();
+		while (it_string != it_string_end)
 		{
-			*end++ = *it;
-			++it;
+			*end++ = *it_string;
+			++it_string;
 		}
+		buffers.back().end = end;
 	}
 }
 //------------------------------------------------------------------------------
@@ -267,6 +268,21 @@ Stream&		Stream::operator<<(const string& str)
 	write(str);
 	return *this;
 }
+
+/* 
+#include <fcntl.h>
+#include <unistd.h>
+int		main()
+{
+	Stream	s;
+
+	s.init(5, 1, 1);
+	s << string("hello\n");
+	s << string("how are you\n");
+	s.pass();
+	s.pass();
+}
+ */
 
 /* 
 #include <fcntl.h>

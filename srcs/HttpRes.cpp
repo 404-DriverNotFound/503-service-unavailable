@@ -15,6 +15,7 @@ string		HttpRes::get_startline()
 	startline += ft::itoa(status_code);
 	startline += " ";
 	startline += status_code_map[status_code];
+	startline += "\r\n";
 	return startline;
 }
 

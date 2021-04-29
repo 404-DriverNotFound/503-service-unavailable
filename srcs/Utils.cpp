@@ -236,7 +236,7 @@ string	ft::itoa(long n)
 	int			sign = 1;
 	string	result;
 
-	std::cout << '<' << n << '>' << std::endl;
+	// std::cout << '<' << n << '>' << std::endl;
 	*cursor = 0;
 	if (static_cast<unsigned long>(n) == 0x8000000000000000l)
 		return "-9223372036854775808";

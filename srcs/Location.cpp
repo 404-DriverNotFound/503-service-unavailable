@@ -19,6 +19,7 @@ Location::Location(std::deque<std::string>& token)
 	std::string	str = " \t";
 	char	*base, *seq = str.begin().base();
 
+	method = 0;
 	base = token[0].begin().base();
 	location += base + 10;
 	token.pop_front();
@@ -81,16 +82,18 @@ Location::Location(std::deque<std::string>& token)
 		{
 			std::string::const_iterator	it;
 			std::string					temp;
+			bool						is_remain;
 
 			it = token[0].begin() + 9;
-			while (ft::get_set_token(token[0], it, temp, seq))
+			while (42)
 			{
+				is_remain = ft::get_set_token(token[0], it, temp, seq);
 				map<string, uint16_t>::iterator	it_method = Method::method_flags.find(temp);
 				if (it_method == Method::method_flags.end())
 					throw InvalidMethod();
-				method |= (1 << it_method->second);
-				cout << "method::::::::::" << it_method->second << endl;
-				cout << "method::::::::::" << Method::method_strings[it_method->second] << endl;
+				method |= it_method->second;
+				if (!is_remain)
+					break;
 			}
 		}
 		else if (!ft::strncmp(base, "body_length", 11))

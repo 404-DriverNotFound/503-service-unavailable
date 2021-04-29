@@ -51,12 +51,13 @@ void		Client::client_process(FdSet& r, FdSet& w)
 	}
 	// write(1, stream_in.buffers.front().start, stream_in.buffers.front().end - stream_in.buffers.front().start);
 	// write(1, "test\n", 5);
+	cout << "::Request::\n" << line << endl;
 	switch (status)
 	{
 		case STATUS_START_LINE:
 			if (stream_in.get_line(line))
 			{
-				cout << "line : " << line << endl;
+				cout << line << endl;
 				req.set_start_line(line);
 				status = STATUS_HEADER;
 			}
@@ -75,20 +76,24 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			if (status == STATUS_HEADER)
 				return;
 		case STATUS_CHECK_MSG:
+			cout << "::Processing::\n" << line << endl << endl;
 			set_server();
 			set_location();
 			// check_auth();
 			check_method();
+			translate_path();
 			status = STATUS_METHOD;
 		case STATUS_METHOD:
 			process_method();
 			if (status == STATUS_METHOD)
 				return;
 		case STATUS_SEND_MSG:
+			cout << "::Sending msg::\n";
 			stream_out.pass();
 			if (stream_out.buffers.empty())
 				status = STATUS_DONE;
 		case STATUS_DONE:
+			cout << "::Sending msg DONE::\n";
 			// if (stream_in.buffers.empty())
 			// 	reset();
 			close(sock.fd);
@@ -107,7 +112,7 @@ void		Client::set_server()
 	iterator_server	it_server = servers.find(host);
 	if (it_server == servers.end())
 	{
-		cout << "server: " << host << endl;
+		cout << "server not found: " << host << endl;
 		throw 404;
 	}
 	server = &it_server->second;
@@ -119,8 +124,7 @@ void		Client::set_location()
 	iterator_location	it_location = server->locations.find(req.get_location_name());
 	if (it_location == server->locations.end())
 	{
-		cout << req.get_location_name() << endl;
-		cout << "location\n";
+		cout << "location not found: " << req.get_location_name() << endl;
 		throw 404;
 	}
 	location = &it_location->second;
@@ -163,11 +167,10 @@ void		Client::check_auth()
 
 void		Client::check_method()
 {
-	cout << req.method << endl;
-	cout << location->method << endl;
+	// cout << req.method << endl;
+	// cout << location->method << endl;
 	if (!(location->method & (1 << req.method)))
 	{
-		cout << "byebye\n";
 		throw 405; // Method not allowed
 	}
 }
@@ -207,7 +210,7 @@ void		Client::process_method()
 void		Client::process_get()
 {
 
-	cout << "GETTTTTTTTTT\n";
+	cout << "- Method: GET\n";
 	size_t	filesize = ft::file_size(path_translated.c_str());
 
 	// msg.reserve(8000 + filesize);
@@ -215,16 +218,24 @@ void		Client::process_get()
 	stream_out << res.get_startline();
 	stream_out << res.get_content_length(filesize);
 	stream_out << res.get_server();
+	cout << "- path: " << path_translated << endl;
 	stream_out << "\r\n";
+
+	*stream_out.buffers.front().end = 0;
 
 	int		fd_get = open(path_translated.c_str(), O_RDONLY);
 	if (fd_get < 0)
 		throw 404; // not found
 
 	stream_out.fd_in = fd_get;
-	stream_out.read(filesize);
-	status = STATUS_SEND_MSG;
+	stream_out.fill(filesize);
 	close(fd_get);
+	cout << "::Response::\n\n";
+	::write(1, stream_out.buffers.front().start, 
+		stream_out.buffers.front().end - stream_out.buffers.front().start);
+	cout << "\n---------------------------------------------------";
+	cout << endl;
+	status = STATUS_SEND_MSG;
 }
 
 

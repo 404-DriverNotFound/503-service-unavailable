@@ -6,7 +6,7 @@
 /*   By: elegie <elegie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/25 16:46:28 by elegie           ###   ########.fr       */
+/*   Updated: 2021/04/30 00:45:47 by elegie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,15 @@ struct Socket
 	Exception
 	--------------------------------------------------------------------------*/
 	class socket_failed_exception : public std::exception{
-		virtual const char*	what() const throw();	};
+		virtual const char*	what() const throw();	
+	};
 	class bind_failed_exception : public std::exception{
-		virtual const char*	what() const throw();	};
+		virtual const char*	what() const throw();	
+	};
 	class accept_failed_exception : public std::exception{
-		virtual const char*	what() const throw();	};
+		virtual const char*	what() const throw();	
+	};
 	class listen_failed_exception : public std::exception{
-		virtual const char*	what() const throw();	};
+		virtual const char*	what() const throw();	
+	};
 };
