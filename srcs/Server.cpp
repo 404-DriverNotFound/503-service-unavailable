@@ -9,6 +9,12 @@ Server::Server(std::deque<std::string>& token)
 	Server_setter(token);
 }
 
+Server::Server(const Server& x)
+: ConfigSet(x),
+port(x.port),
+locations(x.locations)
+{}
+
 //------------------------------------------------------------------------------
 
 Server::~Server()
@@ -29,7 +35,7 @@ void	Server::Server_setter(std::deque<std::string>&	token)
 		if (!ft::strncmp(base, "location", 8))
 		{
 			Location	temp(token);
-			std::cout << temp.name << std::endl;
+			std::cout << "loacation name:::" << temp.name << std::endl;
 			locations.insert(std::make_pair(temp.name, temp));
 			// std::cout << "location size : " << locations.size() << std::endl;
 			flag = false;

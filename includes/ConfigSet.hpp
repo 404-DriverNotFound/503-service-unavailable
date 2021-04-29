@@ -19,4 +19,9 @@ struct ConfigSet
 	uint64_t							body_length;
 	bool								autoindex;
 	uint64_t							timeout;
+
+	ConfigSet();
+	ConfigSet(const ConfigSet& x);
+	~ConfigSet();
+	ConfigSet&		operator=(const ConfigSet& x);
 };

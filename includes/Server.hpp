@@ -1,6 +1,6 @@
 #pragma once
 #include "Location.hpp"
-#include "DataClass.hpp"
+#include "ConfigSet.hpp"
 #include "Socket.hpp"
 #include <map>
 
@@ -26,6 +26,7 @@ struct Server : public ConfigSet
 	Server();
 	public:
 				Server(std::deque<std::string>&);
+				Server(const Server& x);
 				~Server();
 
 	/*--------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 #include <vector>
 #include <unistd.h>
 #include <fcntl.h>
-#include "DataClass.hpp"
+#include "ConfigSet.hpp"
 #include "Method.hpp"
 
 /*##############################################################################
@@ -26,7 +26,7 @@ struct Location : public ConfigSet
 	Method
 	--------------------------------------------------------------------------*/
 	public:
-	Location(const ConfigSet&);
+	Location(const Location&);
 	Location(std::deque<std::string>&);
 	~Location();
 	

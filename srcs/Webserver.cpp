@@ -30,11 +30,10 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	server_create(token);
 	create_sockets();
 
-	// cout << *this << endl;
-	// cout << *this << endl;
+	cout << *this << endl;
 	try
 	{
-		start_server();
+		// start_server();
 	}
 	catch(int a)
 	{

@@ -13,6 +13,7 @@ ASAN = -fsanitize=address
 LIST_SRCS = \
 	Cgi\
 	Client\
+	ConfigSet\
 	FdSet\
 	Http\
 	HttpReq\

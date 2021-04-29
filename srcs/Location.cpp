@@ -4,7 +4,12 @@
 
 //------------------------------------------------------------------------------
 
-Location::Location(const ConfigSet& ref)
+Location::Location(const Location& ref)
+: ConfigSet(ref), 
+location(ref.location),
+cgi(ref.cgi),
+auth_type(ref.auth_type),
+auth(ref.auth)
 {
 	//TODO
 }
