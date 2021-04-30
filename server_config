@@ -8,55 +8,21 @@ server
 	body_length 1000000
 	autoindex on
 	timeout 10
-	location /abc
-		root /a_directory
+	location /
+		method GET
+	location /put_test
+		root /
+		index index.html index.php index.txt
+		method PUT
+		cgi script.php
+	location /post_body
+		root /
 		index index.html index.php index.txt
 		method POST PUT GET
+		cgi script.php
+	location /directory
+		root /YoupiBanane
+		index youpi.bad_extension
+		method GET
 		body_length 100
 		cgi script.php
-	location /def
-		root /d_directory
-		error_page d_error.html
-		auth authtest1
-server
-	root /test/directory
-	server_name localhost
-	port 9191
-	error_page error.html
-	index index.html
-	head_length 8000
-	body_length 1000000
-	autoindex on
-	timeout 10
-	location /abc
-		root /a_directory
-		index index.html index.php index.txt
-		method POST PUT GET
-		body_length 100
-		cgi script.php
-		auth authtest0
-	location /def
-		root /d_directory
-		error_page d_error.html
-		auth authtest1
-server
-	root /test/directory
-	server_name localhost
-	port 9192
-	error_page error.html
-	index index.html
-	head_length 8000
-	body_length 1000000
-	autoindex on
-	timeout 10
-	location /abc
-		root /a_directory
-		index index.html index.php index.txt
-		method POST PUT GET
-		body_length 100
-		cgi script.php
-		auth authtest0
-	location /def
-		root /d_directory
-		error_page d_error.html
-		auth authtest1
