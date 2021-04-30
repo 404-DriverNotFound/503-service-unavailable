@@ -100,4 +100,5 @@ struct Cgi
 	void			check_exit();
 	void			destroy_pipe();
 	void			terminate();
+	static void		set_path_cgi_bin(char** env);
 };

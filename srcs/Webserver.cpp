@@ -16,7 +16,7 @@ Webserver::Webserver(int argc, char** argv, char** env)
 		std::cout << "Usage: " << argv[0] << " [configfile]" << std::endl;
 		return ;
 	}
-	set_path_cgi_bin(env);
+	Cgi::set_path_cgi_bin(env);
 	HttpRes::init_status_code();
 	Http::init_map_headers();
 	Http::init_map_methods();
@@ -261,14 +261,6 @@ const char*	Webserver::InvalidServerBlock::what() const throw()
 const char*	Webserver::SelectFailed::what() const throw()
 {
 	return ("Select Failed");
-}
-
-//------------------------------------------------------------------------------
-
-void		Webserver::set_path_cgi_bin(char** env)
-{
-	Cgi::cgi_bin["php"] = ft::which("php", env);
-	Cgi::cgi_bin["py"] = ft::which("python3", env);
 }
 
 //------------------------------------------------------------------------------

@@ -7,6 +7,7 @@
 #include "Http.hpp"
 #include "Buffer.hpp"
 #include "Time.hpp"
+#include "Cgi.hpp"
 #include <sys/select.h>
 #include <map>
 #include <vector>

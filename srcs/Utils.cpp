@@ -257,6 +257,14 @@ string	ft::itoa(long n)
 
 //------------------------------------------------------------------------------
 
+long	ft::atoi_hex(const string& s)
+{
+	//TODO
+	return 0;
+}
+
+//------------------------------------------------------------------------------
+
 string	ft::get_last_modified(const char* path)
 {
 	struct stat		stat_f;
@@ -363,6 +371,19 @@ size_t		ft::file_size(const char* path)
 	if (stat(path, &stat_f) < 0)
 		throw 404;
 	return stat_f.st_size;
+}
+
+string		ft::addr_to_str(uint32_t addr)
+{
+	string	result;
+	result += ft::itoa((addr >> 24) & 0xff);
+	result += '.';
+	result += ft::itoa((addr >> 16) & 0xff);
+	result += '.';
+	result += ft::itoa((addr >>  8) & 0xff);
+	result += '.';
+	result += ft::itoa((addr      ) & 0xff);
+	return result;
 }
 
 // int		main(int argc, char** argv, char** env)

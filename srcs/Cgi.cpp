@@ -94,6 +94,15 @@ void			Cgi::terminate()
 	destroy_pipe();
 }
 
+
+void			Cgi::set_path_cgi_bin(char** env)
+{
+	Cgi::cgi_bin["php"] = ft::which("php", env);
+	Cgi::cgi_bin["py"] = ft::which("python3", env);
+	Cgi::cgi_bin["bla"] = "./test/cgi_tester";
+}
+
+
 /*
 int			main(void)
 {

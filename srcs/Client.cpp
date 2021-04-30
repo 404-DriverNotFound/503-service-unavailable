@@ -98,7 +98,11 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			#endif
 			stream_out.pass();
 			if (stream_out.buffers.empty())
-				status = STATUS_DONE;
+			{
+				cgi.stream_out.pass();
+				if (cgi.stream_out.buffers.empty())
+					status = STATUS_DONE;
+			}
 		case STATUS_DONE:
 			#ifdef DBG
 			cout << "::Sending msg DONE::\n";
@@ -305,13 +309,35 @@ SERVER_SOFTWARE
 */
 char**		Client::make_meta_variable()
 {
-	char**	meta_var = new char*[17];
-	string	meta_var_str[16];
+	char**	meta_var = new char*[18];
+	string	meta_var_str[17];
 	for (int i = 0 ; i < 16 ; i++)
 	{
 		meta_var_str[i].reserve(200);
 	}
-	meta_var_str[0] = "AUTH_TYPE"
+	meta_var_str[0] = string("AUTH_TYPE="			).append(location->auth_type);
+	meta_var_str[1] = string("CONTENT_LENGTH="		).append("");
+	meta_var_str[2] = string("CONTENT_TYPE="		).append("");
+	meta_var_str[3] = string("GATEWAY_INTERFACE="	).append("CGI/1.1");
+	meta_var_str[4] = string("PATH_INFO="			).append(req.path_info);
+	meta_var_str[5] = string("PATH_TRANSLATED="		).append(path_translated);
+	meta_var_str[6] = string("QUERY_STRING="		).append(req.query);
+	meta_var_str[7] = string("REMOTE_ADDR="			).append(ft::addr_to_str(ft::hton(sock.s_addr.sin_addr.s_addr)));
+	meta_var_str[8] = string("REMOTE_IDENT="		).append(req.headers[AUTHORIZATION]);
+	meta_var_str[9] = string("REMOTE_USER="			).append("");
+	meta_var_str[10] = string("REQUEST_METHOD="		).append(Method::method_strings[req.method]);
+	meta_var_str[11] = string("REQUEST_URI="		).append(req.path_info);
+	meta_var_str[12] = string("SCRIPT_NAME="		).append(path_translated);
+	meta_var_str[13] = string("SERVER_NAME="		).append(server->name);
+	meta_var_str[14] = string("SERVER_PORT="		).append(ft::itoa(server->port));
+	meta_var_str[15] = string("SERVER_PROTOCOL="	).append(req.protocol);
+	meta_var_str[16] = string("SERVER_SOFTWARE="	).append("Webserver42/1.0.0");
+	for (int i = 0 ; i < 16 ; i++)
+	{
+		meta_var[i] = strdup(meta_var_str[i].c_str());
+	}
+	meta_var[17] = 0;
+	return meta_var;
 }
 
 void		Client::process_post()
@@ -324,8 +350,57 @@ void		Client::process_post()
 	string	extention = get_extention(path_translated);
 	char**	meta_variable = make_meta_variable();
 	cgi.init(path_translated.c_str(), meta_variable);
+	cgi.start_cgi();
+	cgi.fd_in = sock.fd;
+	cgi.stream_out.fd_in = cgi.fd_out;
 
-	
+	if (req.headers[TRANSFER_ENCODING] == "chuncked")
+		status_proc = STATUS_RECV_CHUNKED_BODY;
+	else
+		status_proc = STATUS_RECV_BODY;
+
+	int		result;
+	size_t	body_size;
+	while (status_proc == STATUS_RECV_CHUNKED_BODY)
+	{
+		if (stream_in.pass_remain)
+		{
+			stream_in.pass(stream_in.pass_remain);
+			if (stream_in.pass_remain)
+				break;
+		}
+		result = stream_in.get_chr_token(line, '\n');
+		if (result == true)
+		{
+			body_size = ft::atoi_hex(line);
+			if (body_size == 0)
+				status_proc = STATUS_RECV_DONE;
+			stream_in.pass();
+		}
+	}
+
+	if (status_proc == STATUS_RECV_BODY)
+	{
+		if (stream_in.pass_remain)
+		{
+			stream_in.pass(stream_in.pass_remain);
+		}
+		else
+		{
+			body_size = ft::atoi_hex(req.headers[CONTNET_LENGTH]);
+			stream_in.pass(body_size);
+		}
+		if (stream_in.pass_remain == 0)
+			status_proc = STATUS_RECV_DONE;
+	}
+
+	while (cgi.stream_out.fill(64000));
+
+
+
+
+
+
 	#ifdef DBG
 	cout << "::Response::\n\n";
 	::write(1, stream_out.buffers.front().start, 

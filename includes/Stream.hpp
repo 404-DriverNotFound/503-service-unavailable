@@ -22,6 +22,7 @@ struct Stream
 	uint8_t*		it_buffer;
 	size_t			default_capacity;
 	int				token_factor;
+	size_t			pass_remain;
 
 					Stream();
 					Stream(const Stream& x);
