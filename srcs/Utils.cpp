@@ -259,8 +259,16 @@ string	ft::itoa(long n)
 
 long	ft::atoi_hex(const string& s)
 {
-	//TODO
-	return 0;
+	string::const_iterator	it;
+	long	temp = 0;
+
+	it = s.begin();
+	for (;it != s.end(); ++it)
+	{
+		temp *= 16;
+		temp += *it - '0';
+	}
+	return temp;
 }
 
 //------------------------------------------------------------------------------
