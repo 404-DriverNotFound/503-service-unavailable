@@ -22,6 +22,7 @@ Stream&		Stream::operator=(const Stream& x)
 //------------------------------------------------------------------------------
 void		Stream::init(size_t capacity, int in, int out)
 {
+	pass_remain = 0;
 	fd_in = in;
 	fd_out = out;
 	default_capacity = capacity;
@@ -145,7 +146,10 @@ size_t		Stream::pass(size_t s)
 	size_t		len = 0;
 	
 	if (buffers.empty())
+	{
+		pass_remain = s;
 		return 0;
+	}
 	if (s > end - it_buffer)
 	{
 		len = ::write(fd_out, it_buffer, end - it_buffer);
@@ -153,6 +157,7 @@ size_t		Stream::pass(size_t s)
 	}
 	else
 		len = ::write(fd_out, it_buffer, s);
+	pass_remain = s - len;
 	return len;
 }
 //------------------------------------------------------------------------------
