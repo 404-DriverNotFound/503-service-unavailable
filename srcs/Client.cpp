@@ -1,4 +1,5 @@
 #include "../includes/Client.hpp"
+#define DBG
 
 //------------------------------------------------------------------------------
 
@@ -49,9 +50,11 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			break;
 		}
 	}
-	// write(1, stream_in.buffers.front().start, stream_in.buffers.front().end - stream_in.buffers.front().start);
-	// write(1, "test\n", 5);
+
+	#ifdef DBG
 	cout << "::Request::\n" << line << endl;
+	#endif
+
 	switch (status)
 	{
 		case STATUS_START_LINE:
@@ -76,10 +79,12 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			if (status == STATUS_HEADER)
 				return;
 		case STATUS_CHECK_MSG:
+			#ifdef DBG
 			cout << "::Processing::\n" << line << endl << endl;
+			#endif
 			set_server();
 			set_location();
-			// check_auth();
+			check_auth();
 			check_method();
 			translate_path();
 			status = STATUS_METHOD;
@@ -88,12 +93,16 @@ void		Client::client_process(FdSet& r, FdSet& w)
 			if (status == STATUS_METHOD)
 				return;
 		case STATUS_SEND_MSG:
+			#ifdef DBG
 			cout << "::Sending msg::\n";
+			#endif
 			stream_out.pass();
 			if (stream_out.buffers.empty())
 				status = STATUS_DONE;
 		case STATUS_DONE:
+			#ifdef DBG
 			cout << "::Sending msg DONE::\n";
+			#endif
 			// if (stream_in.buffers.empty())
 			// 	reset();
 			close(sock.fd);
@@ -203,25 +212,29 @@ void		Client::process_method()
 		break;
 	}
 }
+//------------------------------------------------------------------------------
 
-
-
-
-void		Client::process_get()
+size_t		Client::process_head_base()
 {
-
-	cout << "- Method: GET\n";
 	size_t	filesize = ft::file_size(path_translated.c_str());
 
-	// msg.reserve(8000 + filesize);
 	res.status_code = 200;
 	stream_out << res.get_startline();
 	stream_out << res.get_content_length(filesize);
 	stream_out << res.get_server();
-	cout << "- path: " << path_translated << endl;
 	stream_out << "\r\n";
+	return filesize;
+}
+//------------------------------------------------------------------------------
 
-	*stream_out.buffers.front().end = 0;
+void		Client::process_get()
+{
+	#ifdef DBG
+	cout << "- Method: GET\n";
+	cout << "- path: " << path_translated << endl;
+	#endif
+
+	size_t	filesize = process_head_base();
 
 	int		fd_get = open(path_translated.c_str(), O_RDONLY);
 	if (fd_get < 0)
@@ -230,17 +243,99 @@ void		Client::process_get()
 	stream_out.fd_in = fd_get;
 	stream_out.fill(filesize);
 	close(fd_get);
+	
+	#ifdef DBG
 	cout << "::Response::\n\n";
 	::write(1, stream_out.buffers.front().start, 
 		stream_out.buffers.front().end - stream_out.buffers.front().start);
 	cout << "\n---------------------------------------------------";
 	cout << endl;
+	#endif
 	status = STATUS_SEND_MSG;
 }
+//------------------------------------------------------------------------------
 
+void		Client::process_head()
+{
+	#ifdef DBG
+	cout << "- Method: HEAD\n";
+	cout << "- path: " << path_translated << endl;
+	#endif
 
+	process_head_base();
+	
+	#ifdef DBG
+	cout << "::Response::\n\n";
+	::write(1, stream_out.buffers.front().start, 
+		stream_out.buffers.front().end - stream_out.buffers.front().start);
+	cout << "\n---------------------------------------------------";
+	cout << endl;
+	#endif
+	
+	status = STATUS_SEND_MSG;
+}
+//------------------------------------------------------------------------------
 
+string		get_extention(const string& p)
+{
+	ssize_t		idx = p.rfind('.');
+	if (idx != -1)
+		return &p[idx];
+	else
+		return "";
+}
+/*
+AUTH_TYPE
+CONTENT_LENGTH
+CONTENT_TYPE
+GATEWAY_INTERFACE
+PATH_INFO
+PATH_TRANSLATED
+QUERY_STRING
+REMOTE_ADDR
+REMOTE_IDENT
+REMOTE_USER
+REQUEST_METHOD
+REQUEST_URI
+SCRIPT_NAME
+SERVER_NAME
+SERVER_PORT
+SERVER_PROTOCOL
+SERVER_SOFTWARE
+*/
+char**		Client::make_meta_variable()
+{
+	char**	meta_var = new char*[17];
+	string	meta_var_str[16];
+	for (int i = 0 ; i < 16 ; i++)
+	{
+		meta_var_str[i].reserve(200);
+	}
+	meta_var_str[0] = "AUTH_TYPE"
+}
 
+void		Client::process_post()
+{
+	#ifdef DBG
+	cout << "- Method: POST\n";
+	cout << "- path: " << path_translated << endl;
+	#endif
+
+	string	extention = get_extention(path_translated);
+	char**	meta_variable = make_meta_variable();
+	cgi.init(path_translated.c_str(), meta_variable);
+
+	
+	#ifdef DBG
+	cout << "::Response::\n\n";
+	::write(1, stream_out.buffers.front().start, 
+		stream_out.buffers.front().end - stream_out.buffers.front().start);
+	cout << "\n---------------------------------------------------";
+	cout << endl;
+	#endif
+	
+	status = STATUS_SEND_MSG;
+}
 
 
 

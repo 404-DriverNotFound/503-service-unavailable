@@ -200,6 +200,8 @@ struct Client
 
 	void		process_msg();
 	void		process_get();
+	void		process_head();
+	size_t		process_head_base();
 	void		process_put();
 	void		process_post();
 	void		process_options();
