@@ -165,6 +165,7 @@ struct Client
 	HttpReq					req;				// 요청메시지
 	HttpRes					res;				// 응답메시지
 	Cgi						cgi;				// CGI
+	string					location_name;		// 로케이션 이름
 	string					path_translated;	// 실제 경로
 	Server*					server;				// 참조할 서버
 	Location*				location;			// 로케이션

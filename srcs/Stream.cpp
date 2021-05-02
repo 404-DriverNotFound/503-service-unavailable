@@ -9,10 +9,7 @@
 //------------------------------------------------------------------------------
 			Stream::~Stream()
 {
-	while (!buffers.empty())
-	{
-		delete_buffer();
-	}
+	clear();
 }
 //------------------------------------------------------------------------------
 Stream&		Stream::operator=(const Stream& x)
@@ -272,6 +269,15 @@ Stream&		Stream::operator<<(const string& str)
 {
 	write(str);
 	return *this;
+}
+//------------------------------------------------------------------------------
+void		Stream::clear()
+{
+	while (!buffers.empty())
+	{
+		delete[] buffers.front().start;
+		buffers.pop_front();
+	}
 }
 
 /* 

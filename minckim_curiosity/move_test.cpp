@@ -33,23 +33,23 @@ class	sample
 		return *this;
 	}
 
-	sample&		operator=(sample&& x)
-	{
-		if (&x == this)
-			return *this;
-		delete a;
-		a = x.a;
-		x.a = 0;
-		std::cout << a << "  move allocator" << std::endl;
-		return *this;		
-	}
+	// sample&		operator=(sample&& x)
+	// {
+	// 	if (&x == this)
+	// 		return *this;
+	// 	delete a;
+	// 	a = x.a;
+	// 	x.a = 0;
+	// 	std::cout << a << "  move allocator" << std::endl;
+	// 	return *this;		
+	// }
 
-	sample(sample&& x)
-	: a(x.a)
-	{
-		x.a = 0;
-		std::cout << "  move constructor" << std::endl;
-	}
+	// sample(sample&& x)
+	// : a(x.a)
+	// {
+	// 	x.a = 0;
+	// 	std::cout << "  move constructor" << std::endl;
+	// }
 };
 
 sample		foo()
@@ -60,18 +60,20 @@ sample		foo()
 	return s;
 }
 
-sample		bar(sample&& x)
-{
-	sample&	s = x;
-	std::cout << *s.a << std::endl;
-	return s;
-}
+// sample		bar(sample&& x)
+// {
+// 	sample&	s = x;
+// 	std::cout << *s.a << std::endl;
+// 	return s;
+// }
 
 int		main()
 {
 	{
 		sample s = foo();
-		std::cout << s.a << std::endl;	
+		std::cout << s.a << std::endl;
+		s = foo();
+		std::cout << s.a << std::endl;
 	}
 	std::cout << std::endl;
 	{
@@ -82,9 +84,9 @@ int		main()
 	{
 		sample s(foo());
 	}
-	std::cout << std::endl;
-	{
-		bar(3);
-	}
+	// std::cout << std::endl;
+	// {
+	// 	bar(3);
+	// }
 
 }

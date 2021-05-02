@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 
 Server::Server(std::deque<std::string>& token)
+: ConfigSet(), port(0)
 {
 	Server_setter(token);
 }
@@ -22,87 +23,169 @@ Server::~Server()
 
 //------------------------------------------------------------------------------
 
-void	Server::Server_setter(std::deque<std::string>&	token)
+void	Server::Server_setter(std::deque<std::string>&	lines)
 {
-	std::string	str = " \t";
-	char	*base, *seq = str.begin().base();
 
-	base = token[0].begin().base();
-	while (!token.empty() && !ft::strncmp(base, "\t", 1))
+	while (!lines.empty())
 	{
-		++base;
-		bool	flag = true;
-		if (!ft::strncmp(base, "location", 8))
-		{
-			string		location_name = base + 9;
-			Location	temp(token);
-			temp.name = location_name;
-			locations.insert(std::make_pair(temp.name, temp));
-			flag = false;
-		}
-		else if (!ft::strncmp(base, "root", 4))
-		{
-			root += (base + 5);
-		}
-		else if (!ft::strncmp(base, "server_name", 11))
-		{
-			name += (base + 12);
-		}
-		else if (!ft::strncmp(base, "port", 4))
-		{
-			port = static_cast<u_int16_t>(atoi(base + 5));
-		}
-		else if (!ft::strncmp(base, "error_page", 10))
-		{
-			std::string::const_iterator	it;
-			std::string					temp;
+		// cout << lines.front() << endl;
 
-			it = token[0].begin() + 12;
-			while (ft::get_set_token(token[0], it, temp, seq))
-			{
-				error_page.insert(temp);
-			}
-			error_page.insert(temp);
-		}
-		else if (!ft::strncmp(base, "index", 5))
+		int		indent = ft::count_chr(lines.front(), '\t');
+		lines.front().erase(lines.front().begin(), lines.front().begin() + indent);
+		list<string>	tokens = ft::get_set_token(lines.front(), " ");
+		string&			key = tokens.front();
+		if (key == "server")
 		{
-			std::string::const_iterator	it;
-			std::string					temp;
+			break;
+		}
+		if (tokens.size() < 2)
+			throw ConfigSet::InvalidConfig();
+		string&			val = *++tokens.begin();
 
-			it = token[0].begin() + 7;
-			while (ft::get_set_token(token[0], it, temp, seq))
+		if (key == "location")
+		{
+			string		name = val;
+			lines.pop_front();
+			Location	tmp(lines);
+			locations.insert(std::make_pair(name, tmp));
+			string		location_root = root + locations[name].root;
+			locations[name].root = location_root;
+			if (lines.empty())
+				break;
+			continue;
+		}
+		else if (key == "root")
+		{
+			root = val;
+		}
+		else if (key == "server_name")
+		{
+			name = val;
+		}
+		else if (key == "port")
+		{
+			port = ft::atoi(val);
+		}
+		else if (key == "error_page")
+		{
+			for (list<string>::iterator it = ++tokens.begin() ; it != tokens.end() ; ++it)
 			{
-				index.insert(temp);
+				error_page.insert(*it);
 			}
-			index.insert(temp);
 		}
-		else if (!ft::strncmp(base, "head_length", 11))
+		else if (key == "index")
 		{
-			head_length = static_cast<u_int32_t>(atoi(base + 12));
+			for (list<string>::iterator it = ++tokens.begin() ; it != tokens.end() ; ++it)
+			{
+				index.insert(*it);
+			}
 		}
-		else if (!ft::strncmp(base, "body_length", 11))
+		else if (key == "head_length")
 		{
-			body_length = static_cast<u_int64_t>(atoi(base + 12));
+			head_length = ft::atoi(val);
 		}
-		else if (!ft::strncmp(base, "autoindex", 8))
+		else if (key == "body_length")
 		{
-			if (!ft::strncmp(base + 9, " on", 0))
+			body_length = ft::atoi(val);
+		}
+		else if (key == "autoindex")
+		{
+			if (val == "on")
 				autoindex = true;
-			else
+			else if (val == "off")
 				autoindex = false;
+			else
+				throw ConfigSet::InvalidConfig();
 		}
-		else if (!ft::strncmp(base, "timeout", 7))
+		else if (key == "timeout")
 		{
-			timeout = static_cast<u_int16_t>(atoi(base + 7));
+			timeout = ft::atoi(val);
 		}
 		else
-			throw Server::InvalidConfig();
-		if (flag)
-			token.pop_front();
-		base = token[0].begin().base();
+		{
+			throw ConfigSet::InvalidConfig();
+		}
+		lines.pop_front();
 	}
-	// Location	temp(*this);
-	// locations.insert(std::make_pair("/", temp));
+
+
+	// std::string	str = " \t";
+	// char	*base, *seq = str.begin().base();
+
+	// base = token[0].begin().base();
+	// while (!token.empty() && !ft::strncmp(base, "\t", 1))
+	// {
+	// 	++base;
+	// 	bool	flag = true;
+	// 	if (!ft::strncmp(base, "location", 8))
+	// 	{
+	// 		string		location_name = base + 9;
+	// 		Location	temp(token);
+	// 		temp.name = location_name;
+	// 		locations.insert(std::make_pair(temp.name, temp));
+	// 		flag = false;
+	// 	}
+	// 	else if (!ft::strncmp(base, "root", 4))
+	// 	{
+	// 		root += (base + 5);
+	// 	}
+	// 	else if (!ft::strncmp(base, "server_name", 11))
+	// 	{
+	// 		name += (base + 12);
+	// 	}
+	// 	else if (!ft::strncmp(base, "port", 4))
+	// 	{
+	// 		port = static_cast<u_int16_t>(atoi(base + 5));
+	// 	}
+	// 	else if (!ft::strncmp(base, "error_page", 10))
+	// 	{
+	// 		std::string::const_iterator	it;
+	// 		std::string					temp;
+
+	// 		it = token[0].begin() + 12;
+	// 		while (ft::get_set_token(token[0], it, temp, seq))
+	// 		{
+	// 			error_page.insert(temp);
+	// 		}
+	// 		error_page.insert(temp);
+	// 	}
+	// 	else if (!ft::strncmp(base, "index", 5))
+	// 	{
+	// 		std::string::const_iterator	it;
+	// 		std::string					temp;
+
+	// 		it = token[0].begin() + 7;
+	// 		while (ft::get_set_token(token[0], it, temp, seq))
+	// 		{
+	// 			index.insert(temp);
+	// 		}
+	// 		index.insert(temp);
+	// 	}
+	// 	else if (!ft::strncmp(base, "head_length", 11))
+	// 	{
+	// 		head_length = static_cast<u_int32_t>(atoi(base + 12));
+	// 	}
+	// 	else if (!ft::strncmp(base, "body_length", 11))
+	// 	{
+	// 		body_length = static_cast<u_int64_t>(atoi(base + 12));
+	// 	}
+	// 	else if (!ft::strncmp(base, "autoindex", 8))
+	// 	{
+	// 		if (!ft::strncmp(base + 9, " on", 0))
+	// 			autoindex = true;
+	// 		else
+	// 			autoindex = false;
+	// 	}
+	// 	else if (!ft::strncmp(base, "timeout", 7))
+	// 	{
+	// 		timeout = static_cast<u_int16_t>(atoi(base + 7));
+	// 	}
+	// 	else
+	// 		throw Server::InvalidConfig();
+	// 	if (flag)
+	// 		token.pop_front();
+	// 	base = token[0].begin().base();
+	// }
 }
 
 /*--------------------------------------------------------------------------
@@ -135,9 +218,7 @@ std::ostream&	operator<<(std::ostream& os, Server& ref) {
 	if (ref.autoindex)
 		os << "on";
 	else
-		os << "off";
-	os << std::endl
-		<< "	auth: " << ref.auth << std::endl;
+		os << "off" << std::endl;
 	for (map<string, Location>::iterator it = ref.locations.begin() ; it != ref.locations.end() ; ++it)
 		os << it->first << " : " << it->second << std::endl;
 	return os;

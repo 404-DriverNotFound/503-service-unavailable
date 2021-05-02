@@ -38,10 +38,10 @@ Socket&		Socket::operator=(const Socket& x)
 
 			Socket::~Socket()
 {
-	if (fd >= 0)
-	{
-		close(fd);
-	}
+	// if (fd >= 0)
+	// {
+	// 	close(fd);
+	// }
 }
 
 //------------------------------------------------------------------------------

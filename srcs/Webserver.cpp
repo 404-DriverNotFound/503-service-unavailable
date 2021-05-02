@@ -83,22 +83,29 @@ void	Webserver::config_parser(deque<string>& token, const char* config_path)
 
 //------------------------------------------------------------------------------
 
-void	Webserver::server_create(deque<string>& token)
+void	Webserver::server_create(deque<string>& lines)
 {
-	string::iterator	it;
-
-
-	while (!token.empty())
+	while (!lines.empty())
 	{
-		it = token[0].begin();
-		if (!token.empty() && !ft::strncmp(it.base(), "server", 6) && token[0].length() == 6)
+		int		indent = ft::count_chr(lines.front(), '\t');
+		lines.front().erase(lines.front().begin(), lines.front().begin() + indent);
+		list<string>	tokens = ft::get_set_token(lines.front(), " ");
+
+		if (tokens.empty())
 		{
-			token.pop_front();
-			Server 	temp(token);
-			server_iterator	server_it = servers.find(temp.port);
+			tokens.pop_front();
+			continue;
+		}
+		if (tokens.front() == "server")
+		{
+			lines.pop_front();
+			Server	tmp(lines);
+			server_iterator	server_it = servers.find(tmp.port);
 			if (server_it == servers.end())
-				servers[temp.port] = map<string, Server>();
-			servers[temp.port].insert(make_pair(temp.name, temp));
+				servers[tmp.port] = map<string, Server>();
+			servers[tmp.port].insert(make_pair(tmp.name, tmp));
+			if (lines.empty())
+				break;
 		}
 		else
 			throw Webserver::InvalidServerBlock();
@@ -164,7 +171,10 @@ void			Webserver::start_server()
 		r_set.print_bit(20);
 		#endif
 		if (result < 0)
+		{
+			perror("result < 0 : ");
 			throw SelectFailed();
+		}
 		if (result == 0)	// timeout
 		{
 			#ifdef DBG
@@ -215,6 +225,7 @@ void			Webserver::check_new_connection()
 		}
 		if (e_set.get(it->fd))
 		{
+			cout << "Selet Error!" << endl;
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
 		++it;

@@ -188,6 +188,28 @@ void	ft::get_set_token(const string& origin, std::list<string>& tokens, const ch
 
 //------------------------------------------------------------------------------
 
+list<string>	ft::get_set_token(const string& origin, const char* set)
+{
+	list<string>			tokens;
+	str_citerator			it = origin.begin();
+	string					token;
+
+	while (ft::strchr(set, *it))
+		++it;
+	while (ft::get_set_token(origin, it, token, set))
+	{
+		while (ft::strchr(set, *it))
+			++it;
+		tokens.push_back(string());
+		tokens.back().swap(token);
+	}
+	tokens.push_back(string());
+	tokens.back().swap(token);
+	return tokens;
+}
+
+//------------------------------------------------------------------------------
+
 string		ft::which(const string& exe, char** env)
 {
 	string		path_env;
@@ -227,6 +249,27 @@ string		ft::which(const string& exe, char** env)
 	return "";
 }
 
+string		ft::find(const string& path_dir, set<string> files)
+{
+	DIR*		dir;
+	dirent*		ent;
+
+	if (!(dir = opendir(path_dir.c_str())))
+		return string("");
+	while ((ent = readdir(dir)))
+	{
+		if (files.find(ent->d_name) != files.end())
+		{
+			string	result(ent->d_name);
+			closedir(dir);
+			return result;
+		}
+	}
+	closedir(dir);
+	return string("");
+}
+
+
 //------------------------------------------------------------------------------
 
 string	ft::itoa(long n)
@@ -257,6 +300,28 @@ string	ft::itoa(long n)
 
 //------------------------------------------------------------------------------
 
+long	ft::atoi(const string& s)
+{
+	string::const_iterator	it;
+	int		sign;
+	long	temp = 0;
+
+	it = s.begin();
+	if (*it == '-')
+	{
+		sign = -1;
+		++it;
+	}
+	for (;it != s.end(); ++it)
+	{
+		temp *= 10;
+		temp += *it - '0';
+	}
+	return temp;
+}
+
+//------------------------------------------------------------------------------
+
 long	ft::atoi_hex(const string& s)
 {
 	string::const_iterator	it;
@@ -269,6 +334,17 @@ long	ft::atoi_hex(const string& s)
 		temp += *it - '0';
 	}
 	return temp;
+}
+
+//------------------------------------------------------------------------------
+
+char*	ft::strdup(char* dest, const char* src)
+{
+	dest = new char[ft::strlen(src) + 1];
+	while (*src)
+		*dest++ = *src++;
+	*dest = 0;
+	return dest;
 }
 
 //------------------------------------------------------------------------------
@@ -372,12 +448,15 @@ string		ft::date_to_str(const ft::Date& d)
 
 //------------------------------------------------------------------------------
 
-size_t		ft::file_size(const char* path)
+ssize_t		ft::file_size(const char* path)
 {
 	struct stat		stat_f;
 
 	if (stat(path, &stat_f) < 0)
-		throw 404;
+	{
+		cout << "wrong_path: " << path << endl;
+		return -1;
+	}
 	return stat_f.st_size;
 }
 
@@ -394,6 +473,17 @@ string		ft::addr_to_str(uint32_t addr)
 	return result;
 }
 
+int			ft::count_chr(string& str, char c)
+{
+	string::iterator	it = str.begin();
+	string::iterator	end = str.end();
+	while (*it == c && it != end)
+		++it;
+	if (it == end)
+		return -1;
+	else
+		return it - str.begin();
+}
 // int		main(int argc, char** argv, char** env)
 // {
 // 	timeval		t;

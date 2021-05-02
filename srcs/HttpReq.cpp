@@ -36,6 +36,8 @@ void		HttpReq::set_path(string& token)
 {
 	string::const_iterator			it_token = token.begin();
 
+	if (token.empty())
+		return ;
 	if (ft::strncmp("http://", token.c_str(), 7) == 0)
 	{
 		it_token += 7;
@@ -83,11 +85,12 @@ void		HttpReq::set_header(string& line)
 
 string		HttpReq::get_location_name()
 {
-	if (path.size() == 1)
+	if (path.size() < 2 && *--path_info.end() != '/')
+	{
 		return string("/");
+	}
 	else
 	{
-		// cout << "path size: " << path.size() << "\n";
 		return string("/") + path.front();
 	}
 }

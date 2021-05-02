@@ -13,7 +13,7 @@ server
 		index index.html index.php index.txt
 		method POST PUT GET
 		body_length 100
-		cgi script.php
+		cgi_extension bla py php
 	location /def
 		root /d_directory
 		error_page d_error.html
@@ -33,7 +33,7 @@ server
 		index index.html index.php index.txt
 		method POST PUT GET
 		body_length 100
-		cgi script.php
+		cgi_extension bla py php
 		auth authtest0
 	location /def
 		root /d_directory
@@ -54,7 +54,7 @@ server
 		index index.html index.php index.txt
 		method POST PUT GET
 		body_length 100
-		cgi script.php
+		cgi_extension bla py php
 		auth authtest0
 	location /def
 		root /d_directory

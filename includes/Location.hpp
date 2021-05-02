@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <deque>
+#include <set>
 #include <vector>
 #include <unistd.h>
 #include <fcntl.h>
@@ -13,6 +14,7 @@ Location
 
 using std::string;
 using std::list;
+using std::set;
 
 struct Location : public ConfigSet
 {
@@ -20,16 +22,15 @@ struct Location : public ConfigSet
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	std::string		location;
-	std::string		cgi;
-	std::string		auth_type;
-	std::string		auth;
+	set<string>	cgi_extension;
+	string		auth_type;
+	string		auth;
 	
-	Location();
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
 	public:
+	Location();
 	Location(const Location&);
 	Location(std::deque<std::string>&);
 	~Location();

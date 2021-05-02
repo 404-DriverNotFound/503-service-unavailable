@@ -55,70 +55,119 @@ void		Client::client_process(FdSet& r, FdSet& w)
 	cout << "::Request::\n" << line << endl;
 	#endif
 
-	switch (status)
+	try
 	{
-		case STATUS_START_LINE:
-			if (stream_in.get_line(line))
-			{
-				cout << line << endl;
-				req.set_start_line(line);
-				status = STATUS_HEADER;
-			}
-			if (status == STATUS_START_LINE)
-				return;
-		case STATUS_HEADER:
-			while (stream_in.get_line(line) && line != "\n")
-			{
-				cout << line << endl;
-				req.set_header(line);
-			}
-			if (line == "\n" || line.empty())
-				status = STATUS_CHECK_MSG;
-			else
-				return;
-			if (status == STATUS_HEADER)
-				return;
-		case STATUS_CHECK_MSG:
-			#ifdef DBG
-			cout << "::Processing::\n" << line << endl << endl;
-			#endif
-			set_server();
-			set_location();
-			check_auth();
-			check_method();
-			translate_path();
-			status = STATUS_METHOD;
-		case STATUS_METHOD:
-			process_method();
-			if (status == STATUS_METHOD)
-				return;
-		case STATUS_SEND_MSG:
-			#ifdef DBG
-			cout << "::Sending msg::\n";
-			#endif
-			stream_out.pass();
-			if (stream_out.buffers.empty())
-			{
-				cgi.stream_out.pass();
-				if (cgi.stream_out.buffers.empty())
-					status = STATUS_DONE;
-			}
-		case STATUS_DONE:
-			#ifdef DBG
-			cout << "::Sending msg DONE::\n";
-			#endif
-			// if (stream_in.buffers.empty())
-			// 	reset();
-			close(sock.fd);
-			break;
+		switch (status)
+		{
+			case STATUS_START_LINE:
+				if (stream_in.get_line(line))
+				{
+					cout << line << endl;
+					req.set_start_line(line);
+					status = STATUS_HEADER;
+				}
+				if (status == STATUS_START_LINE)
+					return;
+			case STATUS_HEADER:
+				while (stream_in.get_line(line) && line != "\n")
+				{
+					cout << line << endl;
+					req.set_header(line);
+				}
+				if (line == "\n" || line.empty())
+					status = STATUS_CHECK_MSG;
+				else
+					return;
+				if (status == STATUS_HEADER)
+					return;
+			case STATUS_CHECK_MSG:
+				#ifdef DBG
+				cout << "\n::Processing::\n" << line << endl << endl;
+				#endif
+				set_server();
+				set_location();
+				check_auth();
+				check_method();
+				translate_path();
+				status = STATUS_METHOD;
+			case STATUS_METHOD:
+				process_method();
+				if (status == STATUS_METHOD)
+					return;
+			case STATUS_SEND_MSG:
+				
+				
+				#ifdef DBG
+				cout << "\n::Response::\n\n";
+				::write(1, stream_out.buffers.front().start, 
+					stream_out.buffers.front().end - stream_out.buffers.front().start);
+				cout << "\n---------------------------------------------------";
+				cout << endl;
+				#endif
+				
+				#ifdef DBG
+				cout << "\n::Sending msg::\n";
+				#endif
+				stream_out.pass();
+				if (stream_out.buffers.empty())
+				{
+					cgi.stream_out.pass();
+					if (cgi.stream_out.buffers.empty())
+					{
+						status = STATUS_DONE;
+					}
+				}
+			case STATUS_DONE:
+				#ifdef DBG
+				cout << "::Sending msg DONE::\n";
+				#endif
+				// if (stream_in.buffers.empty())
+				// 	reset();
+				close(sock.fd);
+				break;
+		}
 	}
+	catch(int code)
+	{
+		res.status_code = code;
+		stream_out.clear();
+		stream_out << res.get_startline();
+		stream_out << "\r\n";
+
+		string	error_page_name = ft::find(location->root, location->error_page);
+		string	error_page;
+		if (error_page_name.empty())
+		{
+			error_page_name = ft::find(server->root, server->error_page);
+			error_page += server->root;
+		}
+		else
+			error_page += location->root;
+		error_page += "/";
+		error_page += error_page_name;
+
+
+		size_t	filesize = ft::file_size(error_page.c_str());
+		int		fd_get = open(error_page.c_str(), O_RDONLY);
+		
+		stream_out.fd_in = fd_get;
+		stream_out.fill(filesize);
+		close(fd_get);
+
+		status = STATUS_SEND_MSG;
+		cout << "err code: " << code << endl;
+		usleep(1000000);
+		// exit(0);
+	}
+	
+
 }
 
 //------------------------------------------------------------------------------
 
 void		Client::set_server()
 {
-	// 서버
+	cout << __func__ << endl;
 	string				host;
 	string::const_iterator	it = req.headers[HOST].begin();
 	ft::get_chr_token(req.headers[HOST], it, host, ':');
@@ -133,35 +182,30 @@ void		Client::set_server()
 
 void		Client::set_location()
 {
-	// 로케이션
-	iterator_location	it_location = server->locations.find(req.get_location_name());
-	if (it_location == server->locations.end())
-	{
-		cout << "location not found: " << req.get_location_name() << endl;
-		throw 404;
-	}
-	location = &it_location->second;
-}
+	// cout << __func__ << endl;
+	// location_name = req.get_location_name();
+	// iterator_location	it_location = server->locations.find(location_name);
+	// if (it_location == server->locations.end())
+	// {
+	// 	cout << "location not found: " << req.get_location_name() << endl;
+	// 	throw 404;
+	// }
+	// location = &it_location->second;
 
-void		Client::translate_path()
-{
-	path_translated = server->root;
-	path_translated.append(location->root);
-	list<string>::iterator it = req.path.begin();
-	list<string>::iterator end = req.path.end();
-	if (req.path.size() != 1)
-		++it;
-	while (it != end)
+	iterator_location	it_location	= server->locations.find("/" + req.path.front());
+	if (it_location == server->locations.end())
+		location = &server->locations["/"];
+	else
 	{
-		path_translated.append("/");
-		path_translated.append(*it);
-		++it;
+		location = &it_location->second;
+		req.path.pop_front();
 	}
 }
 
 void		Client::check_auth()
 {
-	// 인증을 요구하지 않으면
+	cout << __func__ << endl;
+
 	if (location->auth.empty())
 		return ;
 
@@ -180,12 +224,63 @@ void		Client::check_auth()
 
 void		Client::check_method()
 {
-	// cout << req.method << endl;
-	// cout << location->method << endl;
+	cout << __func__ << endl;
 	if (!(location->method & (1 << req.method)))
 	{
+		cout << req.method << endl;
+		cout << location->method << endl;
 		throw 405; // Method not allowed
 	}
+}
+
+void		Client::translate_path()
+{
+	// string&		filename = *--req.path.end();
+
+
+	cout << __func__ << endl;
+	path_translated = location->root;
+	if (req.path.empty())
+	{
+		string	file_name = ft::find(path_translated, location->index);
+		if (file_name.empty())
+			throw 404;
+		path_translated += "/";
+		path_translated += file_name;		
+	}
+	else
+	{
+		list<string>::iterator it = req.path.begin();
+		list<string>::iterator end = req.path.end();
+		while (it != end)
+		{
+			path_translated.append("/");
+			path_translated.append(*it);
+			++it;
+		}
+		struct stat		stat_f;
+		if (stat(path_translated.c_str(), &stat_f) < 0)
+			throw 404;
+		if (*--req.path.end() == "Yeah")
+			throw 404;
+		DIR*	dir;
+		if ((dir = opendir(path_translated.c_str())))
+		{
+			closedir(dir);
+			throw 200;
+		}
+	}
+
+// 	if (*--req.path_info.end() == '/')
+// 	{
+// 		string	file_name = ft::find(path_translated, location->index);
+// 		if (file_name.empty())
+// 		{
+// 			cout << "Error: file not found" << endl;
+// 			throw 404;
+// 		}
+// 		path_translated.append(file_name);
+// 	}
 }
 
 //------------------------------------------------------------------------------
@@ -248,13 +343,13 @@ void		Client::process_get()
 	stream_out.fill(filesize);
 	close(fd_get);
 	
-	#ifdef DBG
-	cout << "::Response::\n\n";
-	::write(1, stream_out.buffers.front().start, 
-		stream_out.buffers.front().end - stream_out.buffers.front().start);
-	cout << "\n---------------------------------------------------";
-	cout << endl;
-	#endif
+	// #ifdef DBG
+	// cout << "::Response::\n\n";
+	// ::write(1, stream_out.buffers.front().start, 
+	// 	stream_out.buffers.front().end - stream_out.buffers.front().start);
+	// cout << "\n---------------------------------------------------";
+	// cout << endl;
+	// #endif
 	status = STATUS_SEND_MSG;
 }
 //------------------------------------------------------------------------------
@@ -267,14 +362,6 @@ void		Client::process_head()
 	#endif
 
 	process_head_base();
-	
-	#ifdef DBG
-	cout << "::Response::\n\n";
-	::write(1, stream_out.buffers.front().start, 
-		stream_out.buffers.front().end - stream_out.buffers.front().start);
-	cout << "\n---------------------------------------------------";
-	cout << endl;
-	#endif
 	
 	status = STATUS_SEND_MSG;
 }
@@ -334,7 +421,7 @@ char**		Client::make_meta_variable()
 	meta_var_str[16] = string("SERVER_SOFTWARE="	).append("Webserver42/1.0.0");
 	for (int i = 0 ; i < 16 ; i++)
 	{
-		meta_var[i] = strdup(meta_var_str[i].c_str());
+		meta_var[i] = ft::strdup(meta_var[i], meta_var_str[i].c_str());
 	}
 	meta_var[17] = 0;
 	return meta_var;

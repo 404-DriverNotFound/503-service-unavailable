@@ -45,4 +45,5 @@ struct Stream
 	void			delete_buffer();
 	Stream&			operator<<(const string& str);
 	Stream&			operator>>(string& str);
+	void			clear();
 };

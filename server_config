@@ -10,19 +10,20 @@ server
 	timeout 10
 	location /
 		method GET
+		index index.html index.php index.txt
 	location /put_test
 		root /
 		index index.html index.php index.txt
 		method PUT
-		cgi script.php
+		cgi_extension php bla
 	location /post_body
 		root /
 		index index.html index.php index.txt
 		method POST PUT GET
-		cgi script.php
+		cgi_extension php bla
 	location /directory
 		root /YoupiBanane
 		index youpi.bad_extension
 		method GET
 		body_length 100
-		cgi script.php
+		cgi_extension php bla
