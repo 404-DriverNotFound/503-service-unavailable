@@ -164,11 +164,11 @@ void			Webserver::start_server()
 		select_timeout.set_time(2000000);
 		result = select(max_connection, &r_set.bits, &w_set.bits, &e_set.bits, (&select_timeout));
 		#ifdef DBG
-		cout << "select loop" << endl;
-		cout << "o:" << endl;
-		o_set.print_bit(20);
-		cout << "r:" << endl;
-		r_set.print_bit(20);
+		// cout << "select loop" << endl;
+		// cout << "o: ";
+		// o_set.print_bit(20);
+		// cout << "r: ";
+		// r_set.print_bit(20);
 		#endif
 		if (result < 0)
 		{
@@ -198,22 +198,22 @@ void			Webserver::check_new_connection()
 	{
 		if (r_set.get(it->fd))
 		{
-			#ifdef DBG
-			cout << "- new connection with " << it->fd << endl;
-			cout << "- port: " << ft::hton(it->s_addr.sin_port) << endl;
-			#endif
+			// #ifdef DBG
+			// cout << "- new connection with " << it->fd << endl;
+			// cout << "- port: " << ft::hton(it->s_addr.sin_port) << endl;
+			// #endif
 
 			clients.push_back(servers[ft::hton(it->s_addr.sin_port)]);
 			
-			#ifdef DBG
-			cout << "- push_back\n";
-			#endif
+			// #ifdef DBG
+			// cout << "- push_back\n";
+			// #endif
 
 			clients.back().init(it->fd);
 			
-			#ifdef DBG
-			cout << "- init\n";
-			#endif
+			// #ifdef DBG
+			// cout << "- init\n";
+			// #endif
 			
 			o_set.set(clients.back().sock.fd);
 			fcntl(clients.back().sock.fd, O_NONBLOCK);
@@ -253,7 +253,6 @@ void			Webserver::manage_clients()
 		if (it->status == STATUS_DONE)
 		{
 			cout << "- delete " << it->sock.fd << endl;
-			cout << "- erase " << it->sock.fd << endl;
 			o_set.del(it->sock.fd);
 			it = clients.erase(it);
 		}

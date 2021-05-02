@@ -48,8 +48,14 @@ void	Server::Server_setter(std::deque<std::string>&	lines)
 			lines.pop_front();
 			Location	tmp(lines);
 			locations.insert(std::make_pair(name, tmp));
-			string		location_root = root + locations[name].root;
-			locations[name].root = location_root;
+			if (locations[name].root == "/")
+				locations[name].root = root;
+			else
+			{
+				string		location_root;
+				location_root = root + locations[name].root;
+				locations[name].root = location_root;
+			}
 			if (lines.empty())
 				break;
 			continue;

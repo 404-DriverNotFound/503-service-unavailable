@@ -46,4 +46,5 @@ struct Stream
 	Stream&			operator<<(const string& str);
 	Stream&			operator>>(string& str);
 	void			clear();
+	size_t			size();
 };

@@ -26,10 +26,8 @@ Cgi
  *     -----------------------------------
  *     read:                  write:
  *      fd_read[0] <---------- fd_read[1]
- *       == fd_in
  *     write:                 read:
  *      fd_write[1] ----------> fd_write[0]
- *       == fd_out
  * 
  * - path = 실행할 스크립트의 경로 (init의 인자)
  * - extention = init에서 생성
@@ -78,8 +76,6 @@ struct Cgi
 	int				return_code;
 	int				fd_write[2];	// server ---> cgi
 	int				fd_read[2];		//    cgi ---> server
-	int&			fd_in;			// server's new stdin
-	int&			fd_out;			// server's new stdout
 	std::string		path;
 	std::string		extension;
 	char**			meta_variable;
@@ -93,7 +89,7 @@ struct Cgi
 					Cgi(const Cgi& x);
 	Cgi&			operator=(const Cgi& x);
 					~Cgi();
-	void			init(const char* path, char** meta_variable);
+	void			init(const char* path, char** meta_variable, int& sock_stream_in, int sock_fd);
 	void			start_cgi();
 	void			set_extension();
 	char* const*	make_argv();

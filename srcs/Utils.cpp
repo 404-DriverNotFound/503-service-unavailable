@@ -331,7 +331,7 @@ long	ft::atoi_hex(const string& s)
 	for (;it != s.end(); ++it)
 	{
 		temp *= 16;
-		temp += *it - '0';
+		temp += *it - (('0' <= *it && *it <= '9') ? '0' : (('a' <= *it && *it <= 'f') ? ('a' - 10) : ('A' - 10)));
 	}
 	return temp;
 }
@@ -484,9 +484,19 @@ int			ft::count_chr(string& str, char c)
 	else
 		return it - str.begin();
 }
+
+bool		ft::is_dir(const char* path)
+{
+	struct stat	stat_f;
+	stat(path, &stat_f);
+	return stat_f.st_mode & S_IFDIR;
+}
+
 // int		main(int argc, char** argv, char** env)
 // {
-// 	timeval		t;
-// 	gettimeofday(&t, 0);
-// 	std::cout << ft::date_to_str(ft::time_convert(t.tv_sec)) << std::endl;
+// 	// timeval		t;
+// 	// gettimeofday(&t, 0);
+// 	// std::cout << ft::date_to_str(ft::time_convert(t.tv_sec)) << std::endl;
+
+// 	cout << ft::atoi_hex("3e8") << endl;
 // }

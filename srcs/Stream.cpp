@@ -139,23 +139,60 @@ size_t		Stream::pass(size_t s)
 {
 	if (buffers.empty())
 		return 0;
+
 	uint8_t*	end = buffers.front().end;
 	size_t		len = 0;
-	
-	if (buffers.empty())
+	cout << "enter pass" << len << endl;
+	while (s && !buffers.empty())
 	{
-		pass_remain = s;
-		return 0;
+		end = buffers.front().end;
+		
+		if (buffers.empty())
+		{
+			pass_remain = s;
+			cout << "empty buffer" << len << endl;
+			return 0;
+		}
+		if (s > end - it_buffer)
+		{
+			cout << "write1 bf" << len << endl;
+			len = ::write(fd_out, it_buffer, end - it_buffer);
+			cout << "write1 af" << len << endl;
+			delete_buffer();
+		}
+		else
+		{
+			cout << "write2 bf" << len << endl;
+			len = ::write(fd_out, it_buffer, s);
+			cout << "write2 af" << len << endl;
+		}
+		pass_remain = s - len;
+		s -= len;
 	}
-	if (s > end - it_buffer)
-	{
-		len = ::write(fd_out, it_buffer, end - it_buffer);
-		delete_buffer();
-	}
-	else
-		len = ::write(fd_out, it_buffer, s);
-	pass_remain = s - len;
+	cout << "out of pass" << len << endl;
 	return len;
+
+
+
+	// if (buffers.empty())
+	// 	return 0;
+	// uint8_t*	end = buffers.front().end;
+	// size_t		len = 0;
+	
+	// if (buffers.empty())
+	// {
+	// 	pass_remain = s;
+	// 	return 0;
+	// }
+	// if (s > end - it_buffer)
+	// {
+	// 	len = ::write(fd_out, it_buffer, end - it_buffer);
+	// 	delete_buffer();
+	// }
+	// else
+	// 	len = ::write(fd_out, it_buffer, s);
+	// pass_remain = s - len;
+	// return len;
 }
 //------------------------------------------------------------------------------
 size_t		Stream::pass()
@@ -234,7 +271,9 @@ bool		Stream::get_line(string &token)
 				if (it_buffer == end)
 					delete_buffer();
 				if (*--token.end() == '\r')
+				{
 					token.erase(--token.end());
+				}
 				token_factor = true;
 				return true;
 			}
@@ -279,6 +318,23 @@ void		Stream::clear()
 		buffers.pop_front();
 	}
 }
+size_t		Stream::size()
+{
+	list<Buffer>::iterator	it = buffers.begin();
+	list<Buffer>::iterator	end = buffers.end();
+	size_t					len = 0;
+	if (it == end)
+		return len;
+	len += it->end - it_buffer;
+	++it;
+	while (it != end)
+	{
+		len += it->end - it->start;
+		++it;
+	}
+	return len;
+}
+
 
 /* 
 #include <fcntl.h>
@@ -295,54 +351,32 @@ int		main()
 }
  */
 
-/* 
-#include <fcntl.h>
-#include <unistd.h>
 
-int			main()
-{
-	int		fd = open("bohemian", O_RDONLY);
-	Stream	s;
-	string	tok;
+// #include <fcntl.h>
+// #include <unistd.h>
 
-	s.init(5, fd);
-	s.fill(10);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(10);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	s.fill(5);
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
-	cout << s.get_line(tok) << "|"
-	<< tok << endl;
+// int			main()
+// {
+// 	int		fd = open("bohemian", O_RDONLY);
+// 	Stream	s;
+// 	string	tok;
 
-} */
+// 	s.init(5, fd);
+// 	s.fill(5);
+// 	s.fill(5);
+// 	s.fill(5);
+// 	s.fill(5);
+// 	s.fill(5);
+// 	s.fill(5);
+// 	s.fill(5);
+// 	s.fill(5);
 
+// 	s.pass(20);
+// 	usleep(1000000);
+// 	s.pass(20);
+// 	usleep(1000000);
+// 	s.pass(20);
+// }
 
 
 /* 

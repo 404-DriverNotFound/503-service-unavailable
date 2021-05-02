@@ -28,6 +28,7 @@ enum e_status
 
 enum e_status_proc
 {
+	STATUS_INIT,
 	// PROC_CGI,
 	// END_CGI,
 	STATUS_RECV_CHUNKED_BODY,
@@ -35,6 +36,13 @@ enum e_status_proc
 	STATUS_RECV_DONE
 	// RECV_BODY_CHUNKED,
 	// MAKE_MSG,
+};
+
+enum e_status_recv
+{
+	STATUS_LEN,
+	STATUS_BODY,
+	STATUS_NL,
 };
 
 /*##############################################################################
@@ -162,11 +170,13 @@ struct Client
 	string					line;				// 스트림으로부터 추출한 토큰이 완벽하지 않을 경우를 위한 저장소
 	e_status				status;				// 현재 처리 상태
 	e_status_proc			status_proc;		// 구체적인 처리 상태
+	e_status_recv			status_recv;
 	HttpReq					req;				// 요청메시지
 	HttpRes					res;				// 응답메시지
 	Cgi						cgi;				// CGI
 	string					location_name;		// 로케이션 이름
 	string					path_translated;	// 실제 경로
+	char**					meta_variables;
 	Server*					server;				// 참조할 서버
 	Location*				location;			// 로케이션
 	map<string, Server>&	servers;			// 로케이션과 서버를 결정하기 위해 참조할 서버 목록(포트에 종속된 서버 목록)

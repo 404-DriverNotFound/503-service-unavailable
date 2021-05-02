@@ -18,4 +18,4 @@ export "SERVER_PORT="
 export "SERVER_PROTOCOL=HTTP/1.1"
 export "SERVER_SOFTWARE="
 
-echo "abcde" | ./cgi_tester
+echo "abcde" | ./ubuntu_cgi_tester

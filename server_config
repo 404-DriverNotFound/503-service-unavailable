@@ -24,6 +24,6 @@ server
 	location /directory
 		root /YoupiBanane
 		index youpi.bad_extension
-		method GET
+		method GET POST
 		body_length 100
 		cgi_extension php bla

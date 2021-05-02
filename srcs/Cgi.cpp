@@ -7,13 +7,13 @@ Cgi::map_path	Cgi::cgi_bin;
 //------------------------------------------------------------------------------
 
 				Cgi::Cgi()
-: fd_in(fd_read[0]), fd_out(fd_write[1]), meta_variable(0)
+: meta_variable(0)
 {}
 
 //------------------------------------------------------------------------------
 
 				Cgi::Cgi(const Cgi& x)
-: fd_in(fd_read[0]), fd_out(fd_write[1]), meta_variable(0)
+: meta_variable(0)
 {}
 
 //------------------------------------------------------------------------------
@@ -23,14 +23,15 @@ Cgi::map_path	Cgi::cgi_bin;
 
 //------------------------------------------------------------------------------
 
-void			Cgi::init(const char* path, char** meta_variable)
+void			Cgi::init(const char* path, char** meta_variable, int& sock_stream_in, int sock_fd)
 {
 	this->path = path;
 	this->meta_variable = meta_variable;
 	set_extension();
 	pipe(fd_write);
 	pipe(fd_read);
-	stream_out.init(0x100000, fd_out);
+	sock_stream_in = fd_write[1];
+	stream_out.init(0x100000, fd_read[0], sock_fd);
 }
 
 //------------------------------------------------------------------------------

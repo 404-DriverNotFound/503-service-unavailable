@@ -25,9 +25,10 @@
 void		Client::init(int fd)
 {
 	sock.accept(fd);
-	stream_in.init(10000000, sock.fd, sock.fd);
-	stream_out.init(10000000, sock.fd, sock.fd);
+	stream_in.init(1000000, sock.fd, sock.fd);
+	stream_out.init(1000000, sock.fd, sock.fd);
 	status = STATUS_START_LINE;
+	status_proc = STATUS_INIT;
 }
 
 //------------------------------------------------------------------------------
@@ -69,13 +70,16 @@ void		Client::client_process(FdSet& r, FdSet& w)
 				if (status == STATUS_START_LINE)
 					return;
 			case STATUS_HEADER:
-				while (stream_in.get_line(line) && line != "\n")
+				while (stream_in.get_line(line) && !line.empty())
 				{
 					cout << line << endl;
 					req.set_header(line);
 				}
-				if (line == "\n" || line.empty())
+				if (line.empty())
+				{
 					status = STATUS_CHECK_MSG;
+					cout << "---===Header end===-----\n";
+				}
 				else
 					return;
 				if (status == STATUS_HEADER)
@@ -95,8 +99,7 @@ void		Client::client_process(FdSet& r, FdSet& w)
 				if (status == STATUS_METHOD)
 					return;
 			case STATUS_SEND_MSG:
-				
-				
+
 				#ifdef DBG
 				cout << "\n::Response::\n\n";
 				::write(1, stream_out.buffers.front().start, 
@@ -129,10 +132,6 @@ void		Client::client_process(FdSet& r, FdSet& w)
 	}
 	catch(int code)
 	{
-		res.status_code = code;
-		stream_out.clear();
-		stream_out << res.get_startline();
-		stream_out << "\r\n";
 
 		string	error_page_name = ft::find(location->root, location->error_page);
 		string	error_page;
@@ -149,6 +148,12 @@ void		Client::client_process(FdSet& r, FdSet& w)
 
 		size_t	filesize = ft::file_size(error_page.c_str());
 		int		fd_get = open(error_page.c_str(), O_RDONLY);
+
+		res.status_code = code;
+		stream_out.clear();
+		stream_out << res.get_startline();
+		stream_out << res.get_content_length(filesize);
+		stream_out << "\r\n";
 		
 		stream_out.fd_in = fd_get;
 		stream_out.fill(filesize);
@@ -156,8 +161,9 @@ void		Client::client_process(FdSet& r, FdSet& w)
 
 		status = STATUS_SEND_MSG;
 		cout << "err code: " << code << endl;
-		usleep(1000000);
+		// usleep(1000000);
 		// exit(0);
+		client_process(r, w);
 	}
 	
 
@@ -182,24 +188,17 @@ void		Client::set_server()
 
 void		Client::set_location()
 {
-	// cout << __func__ << endl;
-	// location_name = req.get_location_name();
-	// iterator_location	it_location = server->locations.find(location_name);
-	// if (it_location == server->locations.end())
-	// {
-	// 	cout << "location not found: " << req.get_location_name() << endl;
-	// 	throw 404;
-	// }
-	// location = &it_location->second;
-
 	iterator_location	it_location	= server->locations.find("/" + req.path.front());
 	if (it_location == server->locations.end())
-		location = &server->locations["/"];
+	{
+		if ((it_location = server->locations.find("/")) == server->locations.end())
+			throw 404;
+	}
 	else
 	{
-		location = &it_location->second;
 		req.path.pop_front();
 	}
+	location = &it_location->second;
 }
 
 void		Client::check_auth()
@@ -235,72 +234,41 @@ void		Client::check_method()
 
 void		Client::translate_path()
 {
-	// string&		filename = *--req.path.end();
-
-
 	cout << __func__ << endl;
 	path_translated = location->root;
-	if (req.path.empty())
-	{
-		string	file_name = ft::find(path_translated, location->index);
-		if (file_name.empty())
-			throw 404;
-		path_translated += "/";
-		path_translated += file_name;		
-	}
-	else
-	{
-		list<string>::iterator it = req.path.begin();
-		list<string>::iterator end = req.path.end();
-		while (it != end)
-		{
-			path_translated.append("/");
-			path_translated.append(*it);
-			++it;
-		}
-		struct stat		stat_f;
-		if (stat(path_translated.c_str(), &stat_f) < 0)
-			throw 404;
-		if (*--req.path.end() == "Yeah")
-			throw 404;
-		DIR*	dir;
-		if ((dir = opendir(path_translated.c_str())))
-		{
-			closedir(dir);
-			throw 200;
-		}
-	}
+	list<string>::iterator 	it = req.path.begin();
+	list<string>::iterator 	end = req.path.end();
 
-// 	if (*--req.path_info.end() == '/')
-// 	{
-// 		string	file_name = ft::find(path_translated, location->index);
-// 		if (file_name.empty())
-// 		{
-// 			cout << "Error: file not found" << endl;
-// 			throw 404;
-// 		}
-// 		path_translated.append(file_name);
-// 	}
+	while (it != end)
+	{
+		path_translated.append("/");
+		path_translated.append(*it);
+		++it;
+	}
 }
 
 //------------------------------------------------------------------------------
 
-
 void		Client::process_method()
 {
+	// for (int i = 0; i < 17 ; i++)
+	// {
+	// 	cout << req.headers[i] << endl;
+	// }
+
 	switch (req.method)
 	{
 	case GET:
 		process_get();
 		break;
 	case HEAD:
-		/* code */
+		process_head();
 		break;
 	case POST:
-		/* code */
+		process_post();
 		break;
 	case PUT:
-		/* code */
+		process_put();
 		break;
 	case DELETE:
 		/* code */
@@ -315,7 +283,22 @@ void		Client::process_method()
 
 size_t		Client::process_head_base()
 {
+	if (ft::is_dir(path_translated.c_str()))
+	{
+		string	file_name = ft::find(path_translated.c_str(), location->index);
+		if (file_name.empty())
+			throw 404;
+		path_translated.append("/");
+		path_translated.append(file_name);
+	}
+
+	#ifdef DBG
+	cout << "- path: " << path_translated << endl;
+	#endif
+
 	size_t	filesize = ft::file_size(path_translated.c_str());
+	if (filesize < 0)
+		throw 404;
 
 	res.status_code = 200;
 	stream_out << res.get_startline();
@@ -330,7 +313,6 @@ void		Client::process_get()
 {
 	#ifdef DBG
 	cout << "- Method: GET\n";
-	cout << "- path: " << path_translated << endl;
 	#endif
 
 	size_t	filesize = process_head_base();
@@ -342,14 +324,6 @@ void		Client::process_get()
 	stream_out.fd_in = fd_get;
 	stream_out.fill(filesize);
 	close(fd_get);
-	
-	// #ifdef DBG
-	// cout << "::Response::\n\n";
-	// ::write(1, stream_out.buffers.front().start, 
-	// 	stream_out.buffers.front().end - stream_out.buffers.front().start);
-	// cout << "\n---------------------------------------------------";
-	// cout << endl;
-	// #endif
 	status = STATUS_SEND_MSG;
 }
 //------------------------------------------------------------------------------
@@ -374,6 +348,14 @@ string		get_extention(const string& p)
 		return &p[idx];
 	else
 		return "";
+}
+
+bool		is_cgi(const string& extension)
+{
+	map<string, string>::iterator	it = Cgi::cgi_bin.find(extension);
+	if (it == Cgi::cgi_bin.end())
+		return false;
+	return true;
 }
 /*
 AUTH_TYPE
@@ -403,8 +385,8 @@ char**		Client::make_meta_variable()
 		meta_var_str[i].reserve(200);
 	}
 	meta_var_str[0] = string("AUTH_TYPE="			).append(location->auth_type);
-	meta_var_str[1] = string("CONTENT_LENGTH="		).append("");
-	meta_var_str[2] = string("CONTENT_TYPE="		).append("");
+	meta_var_str[1] = string("CONTENT_LENGTH="		).append(req.headers[CONTNET_LENGTH]);
+	meta_var_str[2] = string("CONTENT_TYPE="		).append(req.headers[CONTNET_LENGTH]);
 	meta_var_str[3] = string("GATEWAY_INTERFACE="	).append("CGI/1.1");
 	meta_var_str[4] = string("PATH_INFO="			).append(req.path_info);
 	meta_var_str[5] = string("PATH_TRANSLATED="		).append(path_translated);
@@ -427,77 +409,311 @@ char**		Client::make_meta_variable()
 	return meta_var;
 }
 
+
+#include <stdio.h>
+void		Client::process_put()
+{
+	
+	switch (status_proc)
+	{
+		case STATUS_INIT:
+		{
+			#ifdef DBG
+			cout << "- Method: PUT\n";
+			cout << "- path: " << path_translated << endl;
+			#endif
+
+			if (ft::is_dir(path_translated.c_str()))
+			{
+				cout << "this is directory\n";
+				throw 404;
+			}
+			int		fd = open(path_translated.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0644);
+			if (fd < 0)
+			{
+				cout << "something wrong\n";
+				perror("");
+				throw 500 ;
+			}
+			stream_in.fd_out = fd;
+
+			res.status_code = 201;
+			stream_out << res.get_startline();
+			stream_out << res.get_server();
+			stream_out << "\r\n";
+
+			if (req.headers[TRANSFER_ENCODING] == "chunked")
+			{
+				cout << "- transfer: chunked" << endl;
+				status_proc = STATUS_RECV_CHUNKED_BODY;
+				status_recv = STATUS_LEN;
+			}
+			else
+			{
+				cout << "- transfer: full" << endl;
+				status_proc = STATUS_RECV_BODY;
+				stream_in.pass_remain = ft::atoi_hex(req.headers[CONTNET_LENGTH]);
+			}
+			process_put();
+			break;
+		}
+		case STATUS_RECV_BODY:
+		{
+			stream_in.pass(stream_in.pass_remain);
+			if (stream_in.pass_remain == 0)
+			{
+				close(stream_in.fd_out);
+				// status_proc = STATUS_RECV_DONE;
+			}
+			break;
+		}
+		case STATUS_RECV_CHUNKED_BODY:
+		{
+			while (42)
+			{
+				switch (status_recv)
+				{
+					case STATUS_LEN:
+						if (!stream_in.get_line(line))
+							return ;
+
+
+						stream_in.pass_remain = ft::atoi_hex(line);
+						cout << "- chunked size: " << line << ", " << stream_in.pass_remain << endl;
+						if (stream_in.pass_remain == 0)
+						{
+							// status_proc = STATUS_RECV_DONE;
+							cout << "recv end\n";
+							status = STATUS_SEND_MSG;
+							close(stream_in.fd_out);
+							return ;
+						}
+						else
+						{
+							status_recv = STATUS_BODY;
+						}
+						break ;
+					case STATUS_BODY:
+						cout << "- bd " << stream_in.pass_remain << ", " << stream_in.size() << endl;
+						stream_in.pass(stream_in.pass_remain);
+						if (!stream_in.pass_remain)
+							status_recv = STATUS_NL;
+						else
+							return ;
+						break ;
+					case STATUS_NL:
+						cout << "- nl\n";
+						if (stream_in.get_line(line))
+							status_recv = STATUS_LEN;
+						else
+							return ;
+						break ;
+				}
+			}
+		}
+		case STATUS_RECV_DONE:
+			break;
+	}
+}
+
+
+
+
 void		Client::process_post()
 {
-	#ifdef DBG
-	cout << "- Method: POST\n";
-	cout << "- path: " << path_translated << endl;
-	#endif
-
-	string	extention = get_extention(path_translated);
-	char**	meta_variable = make_meta_variable();
-	cgi.init(path_translated.c_str(), meta_variable);
-	cgi.start_cgi();
-	cgi.fd_in = sock.fd;
-	cgi.stream_out.fd_in = cgi.fd_out;
-
-	if (req.headers[TRANSFER_ENCODING] == "chuncked")
-		status_proc = STATUS_RECV_CHUNKED_BODY;
-	else
-		status_proc = STATUS_RECV_BODY;
-
-	int		result;
-	size_t	body_size;
-	while (status_proc == STATUS_RECV_CHUNKED_BODY)
-	{
-		if (stream_in.pass_remain)
-		{
-			stream_in.pass(stream_in.pass_remain);
-			if (stream_in.pass_remain)
-				break;
-		}
-		result = stream_in.get_chr_token(line, '\n');
-		if (result == true)
-		{
-			body_size = ft::atoi_hex(line);
-			if (body_size == 0)
-				status_proc = STATUS_RECV_DONE;
-			stream_in.pass();
-		}
-	}
-
-	if (status_proc == STATUS_RECV_BODY)
-	{
-		if (stream_in.pass_remain)
-		{
-			stream_in.pass(stream_in.pass_remain);
-		}
-		else
-		{
-			body_size = ft::atoi_hex(req.headers[CONTNET_LENGTH]);
-			stream_in.pass(body_size);
-		}
-		if (stream_in.pass_remain == 0)
-			status_proc = STATUS_RECV_DONE;
-	}
-
-	while (cgi.stream_out.fill(64000));
-
-
-
-
-
-
-	#ifdef DBG
-	cout << "::Response::\n\n";
-	::write(1, stream_out.buffers.front().start, 
-		stream_out.buffers.front().end - stream_out.buffers.front().start);
-	cout << "\n---------------------------------------------------";
-	cout << endl;
-	#endif
 	
-	status = STATUS_SEND_MSG;
+	switch (status_proc)
+	{
+		case STATUS_INIT:
+		{
+			#ifdef DBG
+			cout << "- Method: POST\n";
+			cout << "- path: " << path_translated << endl;
+			#endif
+
+			if (ft::is_dir(path_translated.c_str()))
+			{
+				cout << "this is directory\n";
+				throw 404;
+			}
+
+			meta_variables = make_meta_variable();
+			cgi.init(path_translated.c_str(), meta_variables, stream_in.fd_out, sock.fd);
+			cgi.start_cgi();
+			delete[] meta_variables;
+
+			if (req.headers[TRANSFER_ENCODING] == "chunked")
+			{
+				cout << "- transfer: chunked" << endl;
+				status_proc = STATUS_RECV_CHUNKED_BODY;
+				status_recv = STATUS_LEN;
+			}
+			else
+			{
+				cout << "- transfer: full" << endl;
+				status_proc = STATUS_RECV_BODY;
+				stream_in.pass_remain = ft::atoi_hex(req.headers[CONTNET_LENGTH]);
+			}
+			process_post();
+			break;
+		}
+		case STATUS_RECV_BODY:
+		{
+			stream_in.pass(stream_in.pass_remain);
+			if (stream_in.pass_remain == 0)
+			{
+				close(stream_in.fd_out);
+				// status_proc = STATUS_RECV_DONE;
+			}
+			break;
+		}
+		case STATUS_RECV_CHUNKED_BODY:
+		{
+			while (42)
+			{
+				switch (status_recv)
+				{
+					case STATUS_LEN:
+						if (!stream_in.get_line(line))
+							return ;
+
+						stream_in.pass_remain = ft::atoi_hex(line);
+						cout << "- chunked size: " << line << ", " << stream_in.pass_remain << endl;
+						if (stream_in.pass_remain == 0)
+						{
+							// status_proc = STATUS_RECV_DONE;
+							cout << "recv end\n";
+							status = STATUS_SEND_MSG;
+							close(stream_in.fd_out);
+							return ;
+						}
+						else
+						{
+							status_recv = STATUS_BODY;
+						}
+						break ;
+					case STATUS_BODY:
+						cout << "- bd " << stream_in.pass_remain << ", " << stream_in.size() << endl;
+						stream_in.pass(stream_in.pass_remain);
+						cout << "- pass!\n";
+						if (!stream_in.pass_remain)
+							status_recv = STATUS_NL;
+						else
+							return ;
+						break ;
+					case STATUS_NL:
+						cout << "- nl\n";
+						if (stream_in.get_line(line))
+							status_recv = STATUS_LEN;
+						else
+							return ;
+						break ;
+				}
+			}
+		}
+		case STATUS_RECV_DONE:
+
+			while (42)
+			{
+				cgi.stream_out.get_line(line);
+				if (line.empty())
+					break ;
+				req.set_header(line);
+			}
+			res.status_code = ft::atoi(req.headers[STATUS]);
+			stream_out << res.get_startline();
+			stream_out << res.get_server();
+			stream_out << res.get_content_length(cgi.stream_out.size());
+			stream_out << "\r\n";
+			status = STATUS_SEND_MSG;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// void		Client::process_post()
+// {
+// 	#ifdef DBG
+// 	cout << "- Method: POST\n";
+// 	cout << "- path: " << path_translated << endl;
+// 	#endif
+
+// 	string	extention = get_extention(path_translated);
+// 	char**	meta_variable = make_meta_variable();
+// 	cgi.init(path_translated.c_str(), meta_variable);
+// 	cgi.start_cgi();
+// 	cgi.fd_in = sock.fd;
+// 	cgi.stream_out.fd_in = cgi.fd_out;
+
+// 	if (req.headers[TRANSFER_ENCODING] == "chuncked")
+// 		status_proc = STATUS_RECV_CHUNKED_BODY;
+// 	else
+// 		status_proc = STATUS_RECV_BODY;
+
+// 	int		result;
+// 	size_t	body_size;
+// 	while (status_proc == STATUS_RECV_CHUNKED_BODY)
+// 	{
+// 		if (stream_in.pass_remain)
+// 		{
+// 			stream_in.pass(stream_in.pass_remain);
+// 			if (stream_in.pass_remain)
+// 				break;
+// 		}
+// 		result = stream_in.get_chr_token(line, '\n');
+// 		if (result == true)
+// 		{
+// 			body_size = ft::atoi_hex(line);
+// 			if (body_size == 0)
+// 				status_proc = STATUS_RECV_DONE;
+// 			stream_in.pass();
+// 		}
+// 	}
+
+// 	if (status_proc == STATUS_RECV_BODY)
+// 	{
+// 		if (stream_in.pass_remain)
+// 		{
+// 			stream_in.pass(stream_in.pass_remain);
+// 		}
+// 		else
+// 		{
+// 			body_size = ft::atoi_hex(req.headers[CONTNET_LENGTH]);
+// 			stream_in.pass(body_size);
+// 		}
+// 		if (stream_in.pass_remain == 0)
+// 			status_proc = STATUS_RECV_DONE;
+// 	}
+
+// 	while (cgi.stream_out.fill(64000));
+
+
+
+
+
+
+// 	#ifdef DBG
+// 	cout << "::Response::\n\n";
+// 	::write(1, stream_out.buffers.front().start, 
+// 		stream_out.buffers.front().end - stream_out.buffers.front().start);
+// 	cout << "\n---------------------------------------------------";
+// 	cout << endl;
+// 	#endif
+	
+// 	status = STATUS_SEND_MSG;
+// }
 
 
 

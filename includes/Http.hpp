@@ -34,6 +34,7 @@ enum e_header
 	CONTENT_LOCATION,
 	CONTENT_TYPE,
 	DATE,
+	STATUS,
 	NUM_HEADERS,
 };
 

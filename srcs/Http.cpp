@@ -27,24 +27,25 @@ void	Http::init_map_methods()
 
 void		Http::init_map_headers()
 {
-	Http::map_header["ACCEPT_CHARSET"]		 = ACCEPT_CHARSET;
-	Http::map_header["ACCEPT_LANGUAGE"]		 = ACCEPT_LANGUAGE;
+	Http::map_header["ACCEPT-CHARSET"]		 = ACCEPT_CHARSET;
+	Http::map_header["ACCEPT-LANGUAGE"]		 = ACCEPT_LANGUAGE;
 	Http::map_header["AUTHORIZATION"]		 = AUTHORIZATION;
 	Http::map_header["HOST"]				 = HOST;
 	Http::map_header["REFERER"]				 = REFERER;
-	Http::map_header["USER_AGENT"]			 = USER_AGENT;
-	Http::map_header["LAST_MODIFIED"]		 = LAST_MODIFIED;
+	Http::map_header["USER-AGENT"]			 = USER_AGENT;
+	Http::map_header["LAST-MODIFIED"]		 = LAST_MODIFIED;
 	Http::map_header["LOCATION"]			 = LOCATION;
-	Http::map_header["RETRY_AFTER"]			 = RETRY_AFTER;
+	Http::map_header["RETRY-AFTER"]			 = RETRY_AFTER;
 	Http::map_header["SERVER"]				 = SERVER;
-	Http::map_header["TRANSFER_ENCODING"]	 = TRANSFER_ENCODING;
-	Http::map_header["WWW_AUTHENTICATE"]	 = WWW_AUTHENTICATE;
+	Http::map_header["TRANSFER-ENCODING"]	 = TRANSFER_ENCODING;
+	Http::map_header["WWW-AUTHENTICATE"]	 = WWW_AUTHENTICATE;
 	Http::map_header["ALLOW"]				 = ALLOW;
-	Http::map_header["CONTNET_LENGTH"]		 = CONTNET_LENGTH;
-	Http::map_header["CONTENT_LOCATION"]	 = CONTENT_LOCATION;
-	Http::map_header["CONTENT_TYPE"]		 = CONTENT_TYPE;
+	Http::map_header["CONTNET-LENGTH"]		 = CONTNET_LENGTH;
+	Http::map_header["CONTENT-LOCATION"]	 = CONTENT_LOCATION;
+	Http::map_header["CONTENT-TYPE"]		 = CONTENT_TYPE;
 	Http::map_header["DATE"]				 = DATE;
-	Http::map_header["NUM_HEADERS"]			 = NUM_HEADERS;
+	Http::map_header["STATUS"]			 	 = STATUS;
+	Http::map_header["NUM-HEADERS"]			 = NUM_HEADERS;
 }
 
 //------------------------------------------------------------------------------
