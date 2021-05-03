@@ -25,8 +25,8 @@
 void		Client::init(int fd)
 {
 	sock.accept(fd);
-	stream_in.init(1000000, sock.fd, sock.fd);
-	stream_out.init(1000000, sock.fd, sock.fd);
+	stream_in.init(10000000, sock.fd, sock.fd);
+	stream_out.init(10000000, sock.fd, sock.fd);
 	status = STATUS_START_LINE;
 	status_proc = STATUS_INIT;
 }
@@ -40,20 +40,29 @@ void		Client::client_process(FdSet& r, FdSet& w)
 		switch (status)
 		{
 		case STATUS_START_LINE:
+		{
 			stream_in.fill(8000);	// TODO: header size
+			r.del(sock.fd);
 			break;
+		}
 		case STATUS_HEADER:
+		{
 			stream_in.fill(8000);	// TODO: header size
+			r.del(sock.fd);
 			break;
+		}
 		case STATUS_METHOD:
-			stream_in.fill(1000000);
+		{
+			stream_in.fill(2000000);
+			r.del(sock.fd);
+		}
 		default:
 			break;
 		}
 	}
 
 	#ifdef DBG
-	cout << "::Request::\n" << line << endl;
+	cout << "::Request::\n";
 	#endif
 
 	try
@@ -99,27 +108,32 @@ void		Client::client_process(FdSet& r, FdSet& w)
 				if (status == STATUS_METHOD)
 					return;
 			case STATUS_SEND_MSG:
-
-				#ifdef DBG
-				cout << "\n::Response::\n\n";
-				::write(1, stream_out.buffers.front().start, 
-					stream_out.buffers.front().end - stream_out.buffers.front().start);
-				cout << "\n---------------------------------------------------";
-				cout << endl;
-				#endif
-				
 				#ifdef DBG
 				cout << "\n::Sending msg::\n";
 				#endif
-				stream_out.pass();
+				if (w.get(sock.fd))
+				{
+					::write(1, stream_out.buffers.front().start, 
+						stream_out.buffers.front().end - stream_out.buffers.front().start);
+					stream_out.pass();
+					w.del(sock.fd);
+				}
 				if (stream_out.buffers.empty())
 				{
-					cgi.stream_out.pass();
+					if (w.get(sock.fd))
+					{
+						::write(1, stream_out.buffers.front().start, 
+							stream_out.buffers.front().end - stream_out.buffers.front().start);
+						cgi.stream_out.pass();
+						w.del(sock.fd);
+					}
 					if (cgi.stream_out.buffers.empty())
 					{
 						status = STATUS_DONE;
 					}
 				}
+				if (status == STATUS_SEND_MSG)
+					break;
 			case STATUS_DONE:
 				#ifdef DBG
 				cout << "::Sending msg DONE::\n";
@@ -426,6 +440,7 @@ void		Client::process_put()
 			if (ft::is_dir(path_translated.c_str()))
 			{
 				cout << "this is directory\n";
+				cout << path_translated << endl;
 				throw 404;
 			}
 			int		fd = open(path_translated.c_str(), O_CREAT | O_WRONLY | O_TRUNC, 0644);
@@ -479,11 +494,14 @@ void		Client::process_put()
 
 
 						stream_in.pass_remain = ft::atoi_hex(line);
-						cout << "- chunked size: " << line << ", " << stream_in.pass_remain << endl;
-						if (stream_in.pass_remain == 0)
+						cout << "- chunked size hex: " << line  << endl;
+						cout << "- chunked size dec: " << stream_in.pass_remain << endl;
+						if (stream_in.pass_remain > 1000000)
+							exit(1);
+						if (stream_in.pass_remain == 0 && !line.empty())
 						{
 							// status_proc = STATUS_RECV_DONE;
-							cout << "recv end\n";
+							cout << "recv end: " << stream_in.fd_out << endl;
 							status = STATUS_SEND_MSG;
 							close(stream_in.fd_out);
 							return ;
@@ -494,7 +512,8 @@ void		Client::process_put()
 						}
 						break ;
 					case STATUS_BODY:
-						cout << "- bd " << stream_in.pass_remain << ", " << stream_in.size() << endl;
+						cout << "- remain body size: " << stream_in.pass_remain << endl;
+						cout << "- stream size " << stream_in.size() << endl;
 						stream_in.pass(stream_in.pass_remain);
 						if (!stream_in.pass_remain)
 							status_recv = STATUS_NL;
@@ -579,6 +598,8 @@ void		Client::process_post()
 
 						stream_in.pass_remain = ft::atoi_hex(line);
 						cout << "- chunked size: " << line << ", " << stream_in.pass_remain << endl;
+						// if (stream_in.pass_remain > location->body_length)
+						// 	throw 413;
 						if (stream_in.pass_remain == 0)
 						{
 							// status_proc = STATUS_RECV_DONE;
@@ -593,7 +614,8 @@ void		Client::process_post()
 						}
 						break ;
 					case STATUS_BODY:
-						cout << "- bd " << stream_in.pass_remain << ", " << stream_in.size() << endl;
+						cout << "- remain: " << stream_in.pass_remain << endl;
+						cout << "- stream size: " << stream_in.size() << endl;
 						stream_in.pass(stream_in.pass_remain);
 						cout << "- pass!\n";
 						if (!stream_in.pass_remain)

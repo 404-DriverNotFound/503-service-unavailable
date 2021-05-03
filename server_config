@@ -5,7 +5,7 @@ server
 	error_page error.html
 	index index.html
 	head_length 8000
-	body_length 1000000
+	body_length 10000000
 	autoindex on
 	timeout 10
 	location /
@@ -15,15 +15,15 @@ server
 		root /
 		index index.html index.php index.txt
 		method PUT
-		cgi_extension php bla
+		cgi_extension .php .bla
 	location /post_body
 		root /
 		index index.html index.php index.txt
 		method POST PUT GET
-		cgi_extension php bla
+		cgi_extension .php .bla
+		body_length 100
 	location /directory
 		root /YoupiBanane
 		index youpi.bad_extension
 		method GET POST
-		body_length 100
-		cgi_extension php bla
+		cgi_extension .php .bla

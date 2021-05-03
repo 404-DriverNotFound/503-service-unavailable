@@ -8,6 +8,13 @@
 Webserver
 ######################################*/
 
+
+void	broken(int code) {
+	(void)code;
+	perror("error : ");
+	exit(1);
+}
+
 Webserver::Webserver(int argc, char** argv, char** env)
 : max_connection(100), select_timeout(5000000)
 {
@@ -25,6 +32,9 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	Method::init_method_strings();
 	deque<std::string>	token(1);
 	
+	signal(SIGPIPE, broken);
+	signal(SIGCHLD, SIG_IGN);
+	// signal(SIGPIPE, SIG_IGN);
 
 	config_parser(token, argv[1]);
 	server_create(token);
@@ -157,7 +167,7 @@ void			Webserver::start_server()
 		cout << endl;
 		cout << "################################################################################" << endl;
 		cout << endl;
-		usleep(200000);
+		// usleep(200000);
 		r_set = o_set;
 		w_set = o_set;
 		e_set = o_set;
@@ -169,6 +179,10 @@ void			Webserver::start_server()
 		// o_set.print_bit(20);
 		// cout << "r: ";
 		// r_set.print_bit(20);
+		// cout << "w: ";
+		// w_set.print_bit(20);
+		// cout << "e: ";
+		// e_set.print_bit(20);
 		#endif
 		if (result < 0)
 		{
@@ -193,7 +207,7 @@ void			Webserver::check_new_connection()
 {
 	socket_iterator		it = sockets.begin();
 	socket_iterator		end = sockets.end();
-	cout << '\n' <<  __func__ << "\n======================================"<< endl;
+	// cout << '\n' <<  __func__ << "\n======================================"<< endl;
 	while (it != end)
 	{
 		if (r_set.get(it->fd))
@@ -218,10 +232,10 @@ void			Webserver::check_new_connection()
 			o_set.set(clients.back().sock.fd);
 			fcntl(clients.back().sock.fd, O_NONBLOCK);
 			
-			#ifdef DBG
-			cout << "- new client " << clients.back().sock.fd << endl;
-			cout << endl;
-			#endif
+			// #ifdef DBG
+			// cout << "- new client " << clients.back().sock.fd << endl;
+			// cout << endl;
+			// #endif
 		}
 		if (e_set.get(it->fd))
 		{
@@ -236,9 +250,9 @@ void			Webserver::check_new_connection()
 
 void			Webserver::manage_clients()
 {
-	#ifdef DBG
-	cout << '\n' << __func__ << "\n======================================"<< endl;
-	#endif
+	// #ifdef DBG
+	// cout << '\n' << __func__ << "\n======================================"<< endl;
+	// #endif
 
 	for (client_iterator it = clients.begin() ; it != clients.end() ; ++it)
 	{

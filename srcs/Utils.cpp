@@ -489,14 +489,13 @@ bool		ft::is_dir(const char* path)
 {
 	struct stat	stat_f;
 	stat(path, &stat_f);
-	return stat_f.st_mode & S_IFDIR;
+	// return stat_f.st_mode & S_IFDIR;
+	return S_ISDIR(stat_f.st_mode);
 }
 
 // int		main(int argc, char** argv, char** env)
 // {
-// 	// timeval		t;
-// 	// gettimeofday(&t, 0);
-// 	// std::cout << ft::date_to_str(ft::time_convert(t.tv_sec)) << std::endl;
-
-// 	cout << ft::atoi_hex("3e8") << endl;
+// 	cout << ft::is_dir("./") << endl;
+// 	cout << ft::is_dir("./asdf") << endl;
+// 	cout << ft::is_dir("./numbers") << endl;
 // }

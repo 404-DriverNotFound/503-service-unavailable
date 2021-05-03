@@ -31,7 +31,12 @@ void			Cgi::init(const char* path, char** meta_variable, int& sock_stream_in, in
 	pipe(fd_write);
 	pipe(fd_read);
 	sock_stream_in = fd_write[1];
+	// fcntl(fd_write[1], O_NONBLOCK);
+	cout << "pipe:: " << fd_write[0] << ", " <<  fd_write[1] << endl;
+	cout << "pipe:: " << fd_read[0] << ", " <<  fd_read[1] << endl;
 	stream_out.init(0x100000, fd_read[0], sock_fd);
+	cout << "- extension: " << extension << endl;
+	cout << "- interpreter" << cgi_bin[extension] << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -46,8 +51,16 @@ void			Cgi::start_cgi()
 		dup2(fd_read[1], 1);
 		close(fd_write[1]);
 		close(fd_read[0]);
-		if (execve(cgi_bin[extension].c_str(), make_argv(), meta_variable))
+		char* const*	argv = make_argv();
+		if (execve(cgi_bin[extension].c_str(), argv, meta_variable))
+		{
+			std::cerr << "CGI doesn't start" << endl;
+			std::cerr << "argv[0]" << argv[0] << endl;
+			std::cerr << "argv[1]" << argv[1] << endl;
+
+			perror("");
 			throw 500;	// status code 500
+		}
 	}
 	else
 	{
@@ -98,9 +111,9 @@ void			Cgi::terminate()
 
 void			Cgi::set_path_cgi_bin(char** env)
 {
-	Cgi::cgi_bin["php"] = ft::which("php", env);
-	Cgi::cgi_bin["py"] = ft::which("python3", env);
-	Cgi::cgi_bin["bla"] = "./test/cgi_tester";
+	Cgi::cgi_bin[".php"] = ft::which("php", env);
+	Cgi::cgi_bin[".py"] = ft::which("python3", env);
+	Cgi::cgi_bin[".bla"] = "./test/cgi_tester";
 }
 
 

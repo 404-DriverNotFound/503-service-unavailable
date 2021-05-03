@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/wait.h>
 #include "Utils.hpp"
 #include "Stream.hpp"
