@@ -34,7 +34,7 @@ void			Cgi::init(const char* path, char** meta_variable, int& sock_stream_in, in
 	// fcntl(fd_write[1], O_NONBLOCK);
 	cout << "pipe:: " << fd_write[0] << ", " <<  fd_write[1] << endl;
 	cout << "pipe:: " << fd_read[0] << ", " <<  fd_read[1] << endl;
-	stream_out.init(0x100000, fd_read[0], sock_fd);
+	stream_out.init(10000, fd_read[0], sock_fd);
 	cout << "- extension: " << extension << endl;
 	cout << "- interpreter" << cgi_bin[extension] << endl;
 }

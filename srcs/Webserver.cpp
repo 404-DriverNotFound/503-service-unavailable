@@ -11,7 +11,7 @@ Webserver
 
 void	broken(int code) {
 	(void)code;
-	perror("error : ");
+	perror("ERROR : ");
 	exit(1);
 }
 
@@ -167,7 +167,7 @@ void			Webserver::start_server()
 		cout << endl;
 		cout << "################################################################################" << endl;
 		cout << endl;
-		// usleep(200000);
+		// usleep(1000);
 		r_set = o_set;
 		w_set = o_set;
 		e_set = o_set;
@@ -268,6 +268,7 @@ void			Webserver::manage_clients()
 		{
 			cout << "- delete " << it->sock.fd << endl;
 			o_set.del(it->sock.fd);
+			close(it->sock.fd);
 			it = clients.erase(it);
 		}
 	}

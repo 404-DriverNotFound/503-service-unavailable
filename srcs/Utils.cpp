@@ -300,6 +300,23 @@ string	ft::itoa(long n)
 
 //------------------------------------------------------------------------------
 
+string	ft::itoa_hex(long n)
+{
+	char		digit[50];
+	char*		cursor = digit;
+	string		result;
+
+	*cursor = 0;
+	do
+		*cursor++ = "0123456789abcdef"[n & 0xf];
+	while ((n >>= 4));
+	while (*--cursor)
+		result.push_back(*cursor);
+	return result;
+}
+
+//------------------------------------------------------------------------------
+
 long	ft::atoi(const string& s)
 {
 	string::const_iterator	it;
@@ -495,7 +512,7 @@ bool		ft::is_dir(const char* path)
 
 // int		main(int argc, char** argv, char** env)
 // {
-// 	cout << ft::is_dir("./") << endl;
-// 	cout << ft::is_dir("./asdf") << endl;
-// 	cout << ft::is_dir("./numbers") << endl;
+// 	cout << ft::itoa_hex(0xf) << endl;
+// 	cout << ft::itoa_hex(0xff) << endl;
+// 	cout << ft::itoa_hex(0xabcdef) << endl;
 // }

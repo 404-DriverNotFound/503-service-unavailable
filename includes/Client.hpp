@@ -9,6 +9,7 @@ struct Client;
 #include "Cgi.hpp"
 #include "FdSet.hpp"
 #include "Server.hpp"
+#include "Time.hpp"
 
 #define BUFFER_SIZE		16
 
@@ -180,6 +181,7 @@ struct Client
 	Server*					server;				// 참조할 서버
 	Location*				location;			// 로케이션
 	map<string, Server>&	servers;			// 로케이션과 서버를 결정하기 위해 참조할 서버 목록(포트에 종속된 서버 목록)
+	Time					alive;
 
 	/*--------------------------------------------------------------------------
 	Method

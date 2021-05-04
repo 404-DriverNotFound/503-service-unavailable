@@ -22,6 +22,7 @@ struct Time : public timeval
 	long		get_time_sec() const;
 	long		get_time_usec() const;
 	void		set_time(long usec);
+	void		set_current();
 };
 
 /*--------------------------------------------------------------------------

@@ -21,12 +21,18 @@
 }
 
 //------------------------------------------------------------------------------
-
+#include <sys/stat.h>
+#include <sys/socket.h>
 void		Client::init(int fd)
 {
+	linger	a;
+	a.l_onoff = 0;
+	a.l_linger = 50000;
+	alive.set_current();
 	sock.accept(fd);
-	stream_in.init(10000000, sock.fd, sock.fd);
-	stream_out.init(10000000, sock.fd, sock.fd);
+	setsockopt(sock.fd, SOL_SOCKET, SO_LINGER, &a, sizeof(linger));
+	stream_in.init(10000, sock.fd, sock.fd);
+	stream_out.init(10000, sock.fd, sock.fd);
 	status = STATUS_START_LINE;
 	status_proc = STATUS_INIT;
 }
@@ -35,6 +41,8 @@ void		Client::init(int fd)
 
 void		Client::client_process(FdSet& r, FdSet& w)
 {
+	if ((Time() - alive).get_time_sec() > 3)
+		status = STATUS_DONE;
 	if (r.get(sock.fd))
 	{
 		switch (status)
@@ -53,7 +61,7 @@ void		Client::client_process(FdSet& r, FdSet& w)
 		}
 		case STATUS_METHOD:
 		{
-			stream_in.fill(2000000);
+			stream_in.fill(10000);
 			r.del(sock.fd);
 		}
 		default:
@@ -70,6 +78,7 @@ void		Client::client_process(FdSet& r, FdSet& w)
 		switch (status)
 		{
 			case STATUS_START_LINE:
+				cout << "status: startline: " << line.size() << stream_in.size() << endl;
 				if (stream_in.get_line(line))
 				{
 					cout << line << endl;
@@ -79,18 +88,18 @@ void		Client::client_process(FdSet& r, FdSet& w)
 				if (status == STATUS_START_LINE)
 					return;
 			case STATUS_HEADER:
-				while (stream_in.get_line(line) && !line.empty())
+				cout << "status: header: " << line.size() << stream_in.size() << endl;
+				while (stream_in.get_line(line))
 				{
+					if (line.empty())
+					{
+						status = STATUS_CHECK_MSG;
+						cout << "---===Header end===-----\n";
+						break;
+					}
 					cout << line << endl;
 					req.set_header(line);
 				}
-				if (line.empty())
-				{
-					status = STATUS_CHECK_MSG;
-					cout << "---===Header end===-----\n";
-				}
-				else
-					return;
 				if (status == STATUS_HEADER)
 					return;
 			case STATUS_CHECK_MSG:
@@ -104,6 +113,7 @@ void		Client::client_process(FdSet& r, FdSet& w)
 				translate_path();
 				status = STATUS_METHOD;
 			case STATUS_METHOD:
+				cout << "status: method: " << line.size() << stream_in.size() << endl;
 				process_method();
 				if (status == STATUS_METHOD)
 					return;
@@ -136,11 +146,9 @@ void		Client::client_process(FdSet& r, FdSet& w)
 					break;
 			case STATUS_DONE:
 				#ifdef DBG
-				cout << "::Sending msg DONE::\n";
+				cout << "\n::Sending msg DONE::\n";
 				#endif
-				// if (stream_in.buffers.empty())
-				// 	reset();
-				close(sock.fd);
+				
 				break;
 		}
 	}
@@ -427,7 +435,6 @@ char**		Client::make_meta_variable()
 #include <stdio.h>
 void		Client::process_put()
 {
-	
 	switch (status_proc)
 	{
 		case STATUS_INIT:
@@ -491,8 +498,6 @@ void		Client::process_put()
 					case STATUS_LEN:
 						if (!stream_in.get_line(line))
 							return ;
-
-
 						stream_in.pass_remain = ft::atoi_hex(line);
 						cout << "- chunked size hex: " << line  << endl;
 						cout << "- chunked size dec: " << stream_in.pass_remain << endl;
@@ -595,15 +600,15 @@ void		Client::process_post()
 					case STATUS_LEN:
 						if (!stream_in.get_line(line))
 							return ;
-
 						stream_in.pass_remain = ft::atoi_hex(line);
-						cout << "- chunked size: " << line << ", " << stream_in.pass_remain << endl;
-						// if (stream_in.pass_remain > location->body_length)
-						// 	throw 413;
-						if (stream_in.pass_remain == 0)
+						cout << "- chunked size hex: " << line  << endl;
+						cout << "- chunked size dec: " << stream_in.pass_remain << endl;
+						if (stream_in.pass_remain > 1000000)
+							exit(1);
+						if (stream_in.pass_remain == 0 && !line.empty())
 						{
 							// status_proc = STATUS_RECV_DONE;
-							cout << "recv end\n";
+							cout << "recv end: " << stream_in.fd_out << endl;
 							status = STATUS_SEND_MSG;
 							close(stream_in.fd_out);
 							return ;
@@ -614,10 +619,9 @@ void		Client::process_post()
 						}
 						break ;
 					case STATUS_BODY:
-						cout << "- remain: " << stream_in.pass_remain << endl;
-						cout << "- stream size: " << stream_in.size() << endl;
+						cout << "- remain body size: " << stream_in.pass_remain << endl;
+						cout << "- stream size " << stream_in.size() << endl;
 						stream_in.pass(stream_in.pass_remain);
-						cout << "- pass!\n";
 						if (!stream_in.pass_remain)
 							status_recv = STATUS_NL;
 						else

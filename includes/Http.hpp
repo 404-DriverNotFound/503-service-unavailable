@@ -56,6 +56,9 @@ struct Http
 	string							protocol;
 	static map<string, uint16_t>	map_method;
 	static map<string, uint16_t>	map_header;
+	ssize_t							content_length;
+
+									Http();
 	/*--------------------------------------------------------------------------
 	Exception
 	--------------------------------------------------------------------------*/

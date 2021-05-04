@@ -79,6 +79,8 @@ void		HttpReq::set_header(string& line)
 		return;
 		// throw 400;
 	headers[it_header->second] = it_line.base();
+	if (key == "CONTENT-LENGTH")
+		content_length = ft::atoi_hex(val);
 }
 
 //------------------------------------------------------------------------------
