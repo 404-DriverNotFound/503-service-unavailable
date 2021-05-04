@@ -30,14 +30,14 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	Method::init_method_num();
 	Method::init_method_flags();
 	Method::init_method_strings();
-	deque<std::string>	token(1);
+	deque<std::string>	lines(1);
 	
 	signal(SIGPIPE, broken);
 	signal(SIGCHLD, SIG_IGN);
 	// signal(SIGPIPE, SIG_IGN);
 
-	config_parser(token, argv[1]);
-	server_create(token);
+	config_parser(lines, argv[1]);
+	create_server(lines);
 	create_sockets();
 
 	// cout << *this << endl;
@@ -56,7 +56,15 @@ Webserver::Webserver(int argc, char** argv, char** env)
 //------------------------------------------------------------------------------
 
 Webserver::~Webserver()
-{}
+{
+	socket_iterator it = sockets.begin();
+	socket_iterator end = sockets.end();
+	while (it != end)
+	{
+		delete *it;
+		++it;
+	}
+}
 
 //------------------------------------------------------------------------------
 
@@ -93,7 +101,7 @@ void	Webserver::config_parser(deque<string>& token, const char* config_path)
 
 //------------------------------------------------------------------------------
 
-void	Webserver::server_create(deque<string>& lines)
+void	Webserver::create_server(deque<string>& lines)
 {
 	while (!lines.empty())
 	{
@@ -132,14 +140,14 @@ void	Webserver::create_sockets()
 	sockets.reserve(servers.size());
 	while (it != end)
 	{
-		sockets.push_back(Socket());
-		sockets.back().bind(it->first, INADDR_ANY);
+		// sockets.push_back(Socket());
+		sockets.push_back(new Socket(it->first, INADDR_ANY));
 
 		#ifdef DBG
-		cout << "socket: " << sockets.back().fd << ":" << it->first << endl;
+		cout << "socket: " << sockets.back()->fd << ":" << it->first << endl;
 		#endif
 		
-		o_set.set(sockets.back().fd);
+		o_set.set(sockets.back()->fd);
 		++it;
 	}
 }
@@ -159,7 +167,7 @@ void			Webserver::start_server()
 
 	while (it != end)
 	{
-		it->listen(max_connection);
+		(*it)->listen(max_connection);
 		++it;
 	}
 	while (42)
@@ -186,7 +194,7 @@ void			Webserver::start_server()
 		#endif
 		if (result < 0)
 		{
-			perror("result < 0 : ");
+			perror("func: start server : ");
 			throw SelectFailed();
 		}
 		if (result == 0)	// timeout
@@ -210,34 +218,31 @@ void			Webserver::check_new_connection()
 	// cout << '\n' <<  __func__ << "\n======================================"<< endl;
 	while (it != end)
 	{
-		if (r_set.get(it->fd))
+		if (r_set.get((*it)->fd))
 		{
 			// #ifdef DBG
 			// cout << "- new connection with " << it->fd << endl;
 			// cout << "- port: " << ft::hton(it->s_addr.sin_port) << endl;
 			// #endif
-
-			clients.push_back(servers[ft::hton(it->s_addr.sin_port)]);
+			clients.push_back(new Client((*it)->fd, servers[ft::hton((*it)->s_addr.sin_port)]));
 			
 			// #ifdef DBG
 			// cout << "- push_back\n";
 			// #endif
-
-			clients.back().init(it->fd);
 			
 			// #ifdef DBG
 			// cout << "- init\n";
 			// #endif
 			
-			o_set.set(clients.back().sock.fd);
-			fcntl(clients.back().sock.fd, O_NONBLOCK);
+			o_set.set(clients.back()->sock.fd);
+			// fcntl(clients.back().sock.fd, O_NONBLOCK);
 			
 			// #ifdef DBG
 			// cout << "- new client " << clients.back().sock.fd << endl;
 			// cout << endl;
 			// #endif
 		}
-		if (e_set.get(it->fd))
+		if (e_set.get((*it)->fd))
 		{
 			cout << "Selet Error!" << endl;
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
@@ -256,19 +261,20 @@ void			Webserver::manage_clients()
 
 	for (client_iterator it = clients.begin() ; it != clients.end() ; ++it)
 	{
-		if (e_set.get(it->sock.fd))
+		if (e_set.get((*it)->sock.fd))
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
 		cout << "----------------\n";
-		cout << "== Socket: " << it->sock.fd << " ==" << endl;
+		cout << "== Socket: " << (*it)->sock.fd << " ==" << endl;
 		cout << "----------------\n";
-		it->client_process(r_set, w_set);
-		if (it->status == STATUS_DONE)
+		(*it)->client_process(r_set, w_set);
+		if ((*it)->status == STATUS_DONE)
 		{
-			cout << "- delete " << it->sock.fd << endl;
-			o_set.del(it->sock.fd);
-			close(it->sock.fd);
+			cout << "- delete " << (*it)->sock.fd << endl;
+			o_set.del((*it)->sock.fd);
+			// close((*it)->sock.fd);
+			delete *it;
 			it = clients.erase(it);
 		}
 	}

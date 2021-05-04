@@ -7,9 +7,10 @@ Http
 std::map<std::string, u_int16_t>	Http::map_method;
 std::map<std::string, u_int16_t>	Http::map_header;
 
-Http::Http()
-: content_length(-1)
+Http::Http(int sock_fd)
+: stream(0x10000, sock_fd, sock_fd)
 {}
+
 
 const char*		Http::HttpFormException::what() const throw()
 {	return "HttpFormException";	}

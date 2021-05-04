@@ -4,6 +4,13 @@ map<string, uint16_t>	Method::method_num;
 map<string, uint16_t>	Method::method_flags;
 string					Method::method_strings[NUM_METHOD];
 
+		Method::Method()
+{}
+
+		Method::~Method()
+{}
+
+
 string&		Method::get_method(uint16_t num)
 {
 	return method_strings[num];

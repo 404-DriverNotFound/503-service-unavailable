@@ -6,10 +6,8 @@ struct Http;
 #include <deque>
 #include <vector>
 #include "Method.hpp"
-// #include "Url.hpp"
-// #include "Path.hpp"
 #include "Utils.hpp"
-// #include "Client.hpp"
+#include "Stream.hpp"
 
 /*##############################################################################
 Http
@@ -49,22 +47,36 @@ struct Http
 	--------------------------------------------------------------------------*/
 
 	/*--------------------------------------------------------------------------
-	Member
+	Members
 	--------------------------------------------------------------------------*/
 	string							headers[NUM_HEADERS];
 	vector<uint8_t>					body;
 	string							protocol;
+	ssize_t							content_length;
+	Stream							stream;
+
+	/*--------------------------------------------------------------------------
+	Static Members
+	--------------------------------------------------------------------------*/
 	static map<string, uint16_t>	map_method;
 	static map<string, uint16_t>	map_header;
-	ssize_t							content_length;
 
-									Http();
 	/*--------------------------------------------------------------------------
-	Exception
+	Methods
 	--------------------------------------------------------------------------*/
+	private:
+	/*constructor*/					Http();
 	public:
+	/*constructor*/					Http(int sock_fd);
+
+	/*--------------------------------------------------------------------------
+	Static Methods
+	--------------------------------------------------------------------------*/
 	static void						init_map_methods();
 	static void						init_map_headers();
+	/*--------------------------------------------------------------------------
+	Exceptions
+	--------------------------------------------------------------------------*/
 	class HttpFormException : public std::exception{
 		const char* what() const throw();	};
 };	// Http

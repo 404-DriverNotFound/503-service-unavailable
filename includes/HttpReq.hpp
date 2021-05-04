@@ -16,10 +16,12 @@ struct HttpReq : public Http
 	/*--------------------------------------------------------------------------
 	Member
 	--------------------------------------------------------------------------*/
-	uint16_t		method;
+	string			line;
+	string			path_translated;
 	string			path_info;
-	list<string>	path;
 	string			query;
+	uint32_t		method;
+	list<string>	path;
 	
 	/*--------------------------------------------------------------------------
 	Method

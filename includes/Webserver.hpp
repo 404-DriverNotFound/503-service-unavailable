@@ -36,8 +36,8 @@ struct Webserver
 	typedef
 	--------------------------------------------------------------------------*/
 	typedef map<uint16_t, map<string, Server> >::iterator	server_iterator;
-	typedef vector<Socket>::iterator						socket_iterator;
-	typedef list<Client>::iterator							client_iterator;
+	typedef vector<Socket*>::iterator						socket_iterator;
+	typedef list<Client*>::iterator							client_iterator;
 	
 	/*--------------------------------------------------------------------------
 	Member
@@ -48,9 +48,9 @@ struct Webserver
 	FdSet								r_set;
 	FdSet								w_set;
 	FdSet								e_set;
-	vector<Socket>						sockets;
+	vector<Socket*>						sockets;
 	map<uint16_t, map<string, Server> >	servers;
-	list<Client>						clients;
+	list<Client*>						clients;
 
 	/*--------------------------------------------------------------------------
 	Method
@@ -76,7 +76,7 @@ struct Webserver
 	-----------------------*/
 	private:
 	void			config_parser(deque<string>&, const char*);
-	void			server_create(deque<string>&);
+	void			create_server(deque<string>&);
 	void			put_port_numbers();
 
 	/*------------------------------

@@ -75,13 +75,12 @@ struct Cgi
 	int				status;
 	int				is_exit;
 	int				return_code;
-	int				fd_write[2];	// server ---> cgi
-	int				fd_read[2];		//    cgi ---> server
 	std::string		path;
 	std::string		extension;
 	char**			meta_variable;
+	int				fd_in;
+	int				fd_out;
 	static map_path	cgi_bin;
-	Stream			stream_out;		// cgi의 출력
 
 	/*--------------------------------------------------------------------------
 	Method

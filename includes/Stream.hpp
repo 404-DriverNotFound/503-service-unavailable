@@ -7,6 +7,10 @@ using std::string;
 using std::cout;
 using std::endl;
 
+/*##############################################################################
+Buffer
+##############################################################################*/
+
 struct Buffer
 {
 	uint8_t*		start;
@@ -14,8 +18,15 @@ struct Buffer
 	size_t			remain;
 };
 
+/*##############################################################################
+Stream
+##############################################################################*/
+
 struct Stream
 {
+	/*--------------------------------------------------------------------------
+	Members
+	--------------------------------------------------------------------------*/
 	int				fd_in;		// 클라이언트 소켓
 	int				fd_out;		// 곧바로 데이터를 전송받을 fd
 	list<Buffer>	buffers;
@@ -24,8 +35,14 @@ struct Stream
 	int				token_factor;
 	size_t			pass_remain;
 
+	/*--------------------------------------------------------------------------
+	Methods
+	--------------------------------------------------------------------------*/
+	private:
 					Stream();
 					Stream(const Stream& x);
+	public:
+					Stream(size_t default_capacity, int fd_in, int fd_out = 1);
 					~Stream();
 	Stream&			operator=(const Stream& x);
 	void			init(size_t default_capacity, int fd_in, int fd_out = 1);
