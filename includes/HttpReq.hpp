@@ -19,6 +19,7 @@ struct HttpReq : public Http
 	string			line;
 	string			path_translated;
 	string			path_info;
+	string			extension;
 	string			query;
 	uint32_t		method;
 	list<string>	path;
@@ -26,6 +27,7 @@ struct HttpReq : public Http
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
+	/*constructor*/	HttpReq(int sock_fd);
 	void			set_start_line(string& line);
 	void			set_header(string& line);
 	void			set_path(string& token);

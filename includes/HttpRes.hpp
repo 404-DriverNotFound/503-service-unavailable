@@ -22,6 +22,8 @@ struct HttpRes : public Http
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
+	/*constructor*/	HttpRes(int sock_fd);
+
 	string			get_startline();
 
 	string			get_allow(uint16_t method);

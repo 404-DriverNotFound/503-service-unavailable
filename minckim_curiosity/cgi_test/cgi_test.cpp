@@ -1,3 +1,4 @@
+#include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>
@@ -11,8 +12,10 @@ int			main(void)
 	int		status;
 
 
-	int		fd_in = open("file_in", O_RDONLY);
-	int		fd_out = open("file_out", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	int		fd_in = open("file_in", O_RDWR | O_CREAT | O_TRUNC, 0644);
+	write(fd_in, "hello how are you?", 18);
+	lseek(fd_in, 0, SEEK_SET);
+	int		fd_out = open("file_out", O_RDWR | O_CREAT | O_TRUNC, 0644);
 
 	int		pid = fork();	
 	if (fd_in < 0)
@@ -28,7 +31,7 @@ int			main(void)
 		char*	argv[] = {"./cgi_tester", 0};
 		char*	env[] = {
 			"AUTH_TYPE=",
-			"CONTENT_LENGTH=4",
+			"CONTENT_LENGTH=12",
 			"CONTENT_TYPE=",
 			"GATEWAY_INTERFACE=CGI/1.1",
 			"PATH_INFO=aaaaaa",
@@ -37,7 +40,7 @@ int			main(void)
 			"REMOTE_ADDR=",
 			"REMOTE_IDENT=",
 			"REMOTE_USER=",
-			"REQUEST_METHOD=PUT",
+			"REQUEST_METHOD=GET",
 			"REQUEST_URI=",
 			"SCRIPT_NAME=",
 			"SERVER_NAME=",
@@ -47,7 +50,7 @@ int			main(void)
 			0};
 
 
-		if (execve("./cgi_tester", argv, env))
+		if (execve("./ubuntu_cgi_tester", argv, env))
 		{
 			cout << "cgi doesnt started\n";
 			exit(1);

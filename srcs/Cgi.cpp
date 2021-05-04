@@ -23,21 +23,14 @@ Cgi::map_path	Cgi::cgi_bin;
 
 //------------------------------------------------------------------------------
 
-void			Cgi::init(const char* path, char** meta_variable, int& sock_stream_in, int sock_fd)
-{
-	this->path = path;
-	this->meta_variable = meta_variable;
-	set_extension();
-	pipe(fd_write);
-	pipe(fd_read);
-	sock_stream_in = fd_write[1];
-	// fcntl(fd_write[1], O_NONBLOCK);
-	cout << "pipe:: " << fd_write[0] << ", " <<  fd_write[1] << endl;
-	cout << "pipe:: " << fd_read[0] << ", " <<  fd_read[1] << endl;
-	stream_out.init(10000, fd_read[0], sock_fd);
-	cout << "- extension: " << extension << endl;
-	cout << "- interpreter" << cgi_bin[extension] << endl;
-}
+				Cgi::Cgi(string& path, string& extension, 
+				int fd_in, int fd_out, char** meta_variable)
+: path(path), 
+extension(extension),
+fd_in(fd_in),
+fd_out(fd_out),
+meta_variable(meta_variable)
+{}
 
 //------------------------------------------------------------------------------
 
@@ -47,10 +40,8 @@ void			Cgi::start_cgi()
 
 	if (pid == 0)
 	{
-		dup2(fd_write[0], 0);
-		dup2(fd_read[1], 1);
-		close(fd_write[1]);
-		close(fd_read[0]);
+		dup2(fd_in,	0);
+		dup2(fd_out, 1);
 		char* const*	argv = make_argv();
 		if (execve(cgi_bin[extension].c_str(), argv, meta_variable))
 		{
@@ -62,26 +53,11 @@ void			Cgi::start_cgi()
 			throw 500;	// status code 500
 		}
 	}
-	else
+	else if (pid < 0)
 	{
-		close(fd_read[1]);
-		close(fd_write[0]);
+		throw 500;
 	}
-}
-
-//------------------------------------------------------------------------------
-
-void			Cgi::destroy_pipe()
-{
-	close(fd_read[0]);
-	close(fd_write[1]);
-}
-
-//------------------------------------------------------------------------------
-
-void			Cgi::set_extension()
-{
-	extension.assign(path.begin() + path.find_last_of("."), path.end());
+	delete[] meta_variable;
 }
 
 //------------------------------------------------------------------------------
@@ -96,18 +72,16 @@ char* const*	Cgi::make_argv()
 	return argv;
 }
 
-void			Cgi::check_exit()
+bool			Cgi::check_exit()
 {
 	is_exit = waitpid(pid, &status, WNOHANG);
 	if (is_exit)
+	{
 		return_code = (status & 0xff00) >> 8;	// WEXITSTATUS
+		return true;
+	}
+	return false;
 }
-
-void			Cgi::terminate()
-{
-	destroy_pipe();
-}
-
 
 void			Cgi::set_path_cgi_bin(char** env)
 {

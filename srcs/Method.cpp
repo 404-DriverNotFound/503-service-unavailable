@@ -1,27 +1,105 @@
 #include "../includes/Method.hpp"
 
-map<string, uint16_t>	Method::method_num;
-map<string, uint16_t>	Method::method_flags;
+map<string, uint32_t>	Method::method_num;
+map<string, uint32_t>	Method::method_flags;
 string					Method::method_strings[NUM_METHOD];
 
-		Method::Method()
+//------------------------------------------------------------------------------
+
+		Method::Method(HttpReq& req, HttpRes& res)
+:req(req), res(res), cgi(0), status(METHOD_INIT)
 {}
+
+//------------------------------------------------------------------------------
 
 		Method::~Method()
+{
+	if (cgi)
+		delete cgi;
+}
+
+//------------------------------------------------------------------------------
+
+void	Method::recv_body()
 {}
 
+//------------------------------------------------------------------------------
 
-string&		Method::get_method(uint16_t num)
+void	Method::recv_chunked_body()
+{}
+
+//------------------------------------------------------------------------------
+
+void	Method::run_cgi()
+{
+
+}
+
+//------------------------------------------------------------------------------
+
+void	Method::set_cgi_header()
+{
+
+}
+
+//------------------------------------------------------------------------------
+
+void	Method::load_response_header()
+{
+
+}
+
+//------------------------------------------------------------------------------
+
+void	Method::load_cgi_tmp_remain()
+{
+
+}
+
+//------------------------------------------------------------------------------
+
+void	Method::load_body()
+{
+
+}
+
+//------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//------------------------------------------------------------------------------
+
+string&		Method::get_method(uint32_t num)
 {
 	return method_strings[num];
 }
 
-uint16_t	Method::get_method(const string& method_name)
+//------------------------------------------------------------------------------
+
+uint32_t	Method::get_method(const string& method_name)
 {
 	return method_num[method_name];
 }
 
-string		Method::get_allow(uint16_t flag)
+//------------------------------------------------------------------------------
+
+string		Method::get_allow(uint32_t flag)
 {
 	string	line("Allow: ");
 	int		k = 0;
@@ -39,6 +117,8 @@ string		Method::get_allow(uint16_t flag)
 	return line;
 }
 
+//------------------------------------------------------------------------------
+
 void		Method::init_method_num()
 {
 	method_num["CONNECT"] = CONNECT;
@@ -52,6 +132,8 @@ void		Method::init_method_num()
 	method_num["TRACE"] = TRACE;
 }
 
+//------------------------------------------------------------------------------
+
 void		Method::init_method_flags()
 {
 	method_flags["CONNECT"] = (1 << CONNECT);
@@ -64,6 +146,8 @@ void		Method::init_method_flags()
 	method_flags["PUT"] = (1 << PUT);
 	method_flags["TRACE"] = (1 << TRACE);
 }
+
+//------------------------------------------------------------------------------
 
 void		Method::init_method_strings()
 {

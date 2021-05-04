@@ -8,6 +8,12 @@ std::map<int, std::string>	HttpRes::status_code_map;
 
 //------------------------------------------------------------------------------
 
+/*constructor*/	HttpRes::HttpRes(int sock_fd)
+: Http(sock_fd)
+{}
+
+//------------------------------------------------------------------------------
+
 string		HttpRes::get_startline()
 {
 	string	startline;

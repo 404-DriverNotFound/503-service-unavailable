@@ -2,5 +2,5 @@
 
 class MethodGet: public Method
 {
-	
+	bool	run();
 };

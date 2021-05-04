@@ -5,6 +5,12 @@
 {}
 //------------------------------------------------------------------------------
 			Stream::Stream(size_t default_capacity, int fd_in, int fd_out)
+:
+pass_remain(0),
+fd_in(fd_in),
+fd_out(fd_out),
+default_capacity(default_capacity),
+token_factor(false)
 {}
 //------------------------------------------------------------------------------
 			Stream::Stream(const Stream& x)

@@ -42,17 +42,17 @@ struct Client
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	Time					birth;
-	Socket					sock;				// 클라이언트의 소켓
-	map<string, Server>&	servers;			// 로케이션과 서버를 결정하기 위해 참조할 서버 목록(포트에 종속된 서버 목록)
+	Time					birth;		// 클라이언트 생성 시각
+	Socket					sock;		// 클라이언트의 소켓
+	map<string, Server>&	servers;	// 참조할 서버 목록(포트에 종속)
 	FdSet&					r_set;
 	FdSet&					w_set;
-	e_status				status;				// 현재 처리 상태
-	HttpReq					req;				// 요청메시지
-	HttpRes					res;				// 응답메시지
-	Server*					server;				// 참조할 서버
-	Location*				location;			// 로케이션
-	Method*					method;
+	e_status				status;		// 현재 처리 상태
+	HttpReq					req;		// 요청메시지
+	HttpRes					res;		// 응답메시지
+	Server*					server;		// 참조할 서버
+	Location*				location;	// 로케이션
+	Method*					method;		// 실행될 메서드
 
 	/*--------------------------------------------------------------------------
 	Method
@@ -78,6 +78,7 @@ struct Client
 
 	void			recv_stream();
 	void			send_stream();
+	bool			is_expired();	// 생성된 지 너무 오래되면 true
 
 	// void			recv_start_line();
 	// void			recv_header();

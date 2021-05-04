@@ -75,8 +75,8 @@ struct Cgi
 	int				status;
 	int				is_exit;
 	int				return_code;
-	std::string		path;
-	std::string		extension;
+	std::string&	path;
+	std::string&	extension;
 	char**			meta_variable;
 	int				fd_in;
 	int				fd_out;
@@ -85,16 +85,22 @@ struct Cgi
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
-					Cgi();
-					Cgi(const Cgi& x);
+	private:
+	/*constructor*/	Cgi();
+	/*constructor*/	Cgi(const Cgi& x);
 	Cgi&			operator=(const Cgi& x);
-					~Cgi();
-	void			init(const char* path, char** meta_variable, int& sock_stream_in, int sock_fd);
+
+	public:
+	/*constructor*/	Cgi(string& path, string& extension, 
+					int fd_in, int fd_out, char** meta_variable);
+	/*destructor*/	~Cgi();
 	void			start_cgi();
 	void			set_extension();
 	char* const*	make_argv();
-	void			check_exit();
-	void			destroy_pipe();
-	void			terminate();
+	bool			check_exit();
+
+	/*--------------------------------------------------------------------------
+	Static Method
+	--------------------------------------------------------------------------*/	
 	static void		set_path_cgi_bin(char** env);
 };

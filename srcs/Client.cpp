@@ -8,7 +8,9 @@
 servers(servers), 
 r_set(r_set),
 w_set(w_set),
-birth()
+birth(),
+req(sock.fd),
+res(sock.fd)
 {
 	status = CLIENT_STARTLINE;
 }
@@ -23,6 +25,8 @@ birth()
 
 void			Client::process()
 {
+	if (is_expired())
+		status = CLIENT_DONE;
 	recv_stream();
 	switch (status)
 	{
@@ -37,11 +41,14 @@ void			Client::process()
 	case CLIENT_SET:
 		set_client();
 	case CLIENT_METHOD:
-		method->run();
+		if (method->run())
+			status = CLIENT_SEND;
 		if (status == CLIENT_METHOD)
 			break;
+	case CLIENT_SEND:
+		break;
 	case CLIENT_DONE:
-
+		break;
 	default:
 		break;
 	}
@@ -50,12 +57,11 @@ void			Client::process()
 
 //------------------------------------------------------------------------------
 
-
-
-
-
-
-
+bool			Client::is_expired()
+{
+	if ((Time() - birth).get_time_usec() > location->timeout)
+		status = CLIENT_DONE;
+}
 
 //------------------------------------------------------------------------------
 
@@ -63,7 +69,11 @@ void			Client::recv_stream()
 {
 	if (r_set.get(sock.fd))
 	{
-		req.stream.fill(0x2000);
+		size_t len = req.stream.fill(0x2000);
+		if (len == 0)
+		{
+			status = CLIENT_DONE;
+		}
 		r_set.del(sock.fd);
 	}
 }

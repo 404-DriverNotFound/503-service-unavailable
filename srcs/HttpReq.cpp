@@ -8,6 +8,12 @@ map<int, string>	status_code_map;
 
 //------------------------------------------------------------------------------
 
+/*constructor*/	HttpRes::HttpRes(int sock_fd)
+: Http(sock_fd)
+{}
+
+//------------------------------------------------------------------------------
+
 void		HttpReq::set_start_line(string& line)
 {
 	string::const_iterator			it_line = line.begin();
