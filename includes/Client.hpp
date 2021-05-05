@@ -2,6 +2,7 @@
 struct Client;
 #include <sys/types.h>
 #include "Server.hpp"
+#include "Enums.hpp"
 #include "Socket.hpp"
 #include "HttpReq.hpp"
 #include "HttpRes.hpp"
