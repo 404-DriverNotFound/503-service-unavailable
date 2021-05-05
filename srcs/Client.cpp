@@ -29,7 +29,22 @@ res(sock.fd)
 
 void			Client::process()
 {
-	usleep(1000000);
+	try
+	{
+		routine();
+	}
+	catch(int code)
+	{
+		manage_err(code);
+		status = CLIENT_SEND;
+	}
+}
+
+//------------------------------------------------------------------------------
+
+void			Client::routine()
+{
+	// usleep(300000);
 	cout << "in process\n";
 	if (is_expired())
 		status = CLIENT_DONE;
@@ -52,6 +67,7 @@ void			Client::process()
 		if (status == CLIENT_METHOD)
 			break;
 	case CLIENT_SEND:
+		send_stream();
 		break;
 	case CLIENT_DONE:
 		break;
@@ -61,12 +77,21 @@ void			Client::process()
 	send_stream();
 }
 
+void			Client::manage_err(int code)
+{
+	res.stream.clear();
+	res.status_code = code;
+	res.stream << res.get_startline();
+	res.stream << res.get_server();
+	res.stream << "\r\n";
+}
+
 //------------------------------------------------------------------------------
 
 bool			Client::is_expired()
 {
 	cout << __func__ << endl;
-	if ((Time() - birth).get_time_usec() > 5000000)
+	if ((Time() - birth).get_time_usec() > 1000000)
 	{
 		status = CLIENT_DONE;
 		return true;

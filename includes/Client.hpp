@@ -58,6 +58,9 @@ struct Client
 					FdSet& r_set, FdSet& w_set);
 	virtual			~Client();
 
+	void			routine();
+	void			manage_err(int code);
+
 	void			process();
 	void				set_request_startline();
 	void				set_request_header();
