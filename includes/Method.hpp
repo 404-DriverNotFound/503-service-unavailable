@@ -125,4 +125,3 @@ struct	Method
 	static void						init_method_flags();
 	static void						init_method_strings();
 };
-

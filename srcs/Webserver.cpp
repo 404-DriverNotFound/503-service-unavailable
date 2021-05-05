@@ -224,7 +224,7 @@ void			Webserver::check_new_connection()
 			// cout << "- new connection with " << it->fd << endl;
 			// cout << "- port: " << ft::hton(it->s_addr.sin_port) << endl;
 			// #endif
-			clients.push_back(new Client((*it)->fd, servers[ft::hton((*it)->s_addr.sin_port)]));
+			clients.push_back(new Client((*it)->fd, servers[ft::hton((*it)->s_addr.sin_port)], r_set, w_set));
 			
 			// #ifdef DBG
 			// cout << "- push_back\n";
