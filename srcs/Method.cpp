@@ -202,6 +202,8 @@ bool	Method::run()
 	return false;
 }
 
+//------------------------------------------------------------------------------
+
 void		Method::open_file_base(const string& path)
 {
 	if (ft::is_dir(path.c_str()))
@@ -214,11 +216,15 @@ void		Method::open_file_base(const string& path)
 	}
 }
 
+//------------------------------------------------------------------------------
+
 void		Method::open_file_in(const string& path)
 {
 	open_file_base(path);
 	fd_in = open(req.path_translated.c_str(), O_RDONLY);
 }
+
+//------------------------------------------------------------------------------
 
 void		Method::open_file_out(const string& path)
 {
@@ -226,6 +232,7 @@ void		Method::open_file_out(const string& path)
 	fd_out = open(req.path_translated.c_str(), O_RDONLY);
 }
 
+//------------------------------------------------------------------------------
 
 void		Method::open_file(e_openfile option)
 {
@@ -263,6 +270,8 @@ void		Method::open_file(e_openfile option)
 	}
 }
 
+//------------------------------------------------------------------------------
+
 string		Method::temp_name()
 {
 	static unsigned int		count;
@@ -271,37 +280,41 @@ string		Method::temp_name()
 	return name;
 }
 
-/*
+//------------------------------------------------------------------------------
 
-get
-in: 없음
-out: 읽기전용 // 이름이 없으면 디렉토리인 것으로 가정하고 탐색
-
-put
-in: 쓰기, 비우기, 권한 // 그냥
-out: 없음
-
-post cgi
-in: 임시, 쓰기, 비우기, 권한 // 그냥
-out: 임시, 읽기전용 // 그냥
-
-post
-in: 쓰기, 이어쓰기, 권한... // 그냥
-out: 없음
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
+char**		Method::make_meta_variable()
+{
+	char**	meta_var = new char*[18];
+	string	meta_var_str[17];
+	for (int i = 0 ; i < 16 ; i++)
+	{
+		meta_var_str[i].reserve(200);
+	}
+	meta_var_str[0] = string("AUTH_TYPE="			).append(location.auth_type);
+	meta_var_str[1] = string("CONTENT_LENGTH="		).append(req.headers[CONTNET_LENGTH]);
+	meta_var_str[2] = string("CONTENT_TYPE="		).append(req.headers[CONTNET_LENGTH]);
+	meta_var_str[3] = string("GATEWAY_INTERFACE="	).append("CGI/1.1");
+	meta_var_str[4] = string("PATH_INFO="			).append(req.path_info);
+	meta_var_str[5] = string("PATH_TRANSLATED="		).append(req.path_translated);
+	meta_var_str[6] = string("QUERY_STRING="		).append(req.query);
+	meta_var_str[7] = string("REMOTE_ADDR="			).append("");
+	// meta_var_str[7] = string("REMOTE_ADDR="			).append(ft::addr_to_str(ft::hton(sock.s_addr.sin_addr.s_addr)));
+	meta_var_str[8] = string("REMOTE_IDENT="		).append(req.headers[AUTHORIZATION]);
+	meta_var_str[9] = string("REMOTE_USER="			).append("");
+	meta_var_str[10] = string("REQUEST_METHOD="		).append(Method::method_strings[req.method]);
+	meta_var_str[11] = string("REQUEST_URI="		).append(req.path_info);
+	meta_var_str[12] = string("SCRIPT_NAME="		).append(req.path_translated);
+	meta_var_str[13] = string("SERVER_NAME="		).append(server.name);
+	meta_var_str[14] = string("SERVER_PORT="		).append(ft::itoa(server.port));
+	meta_var_str[15] = string("SERVER_PROTOCOL="	).append(req.protocol);
+	meta_var_str[16] = string("SERVER_SOFTWARE="	).append("Webserver42/1.0.0");
+	for (int i = 0 ; i < 16 ; i++)
+	{
+		meta_var[i] = ft::strdup(meta_var[i], meta_var_str[i].c_str());
+	}
+	meta_var[17] = 0;
+	return meta_var;
+}
 
 //------------------------------------------------------------------------------
 

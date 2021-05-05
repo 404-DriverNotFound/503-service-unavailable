@@ -29,6 +29,8 @@ res(sock.fd)
 
 void			Client::process()
 {
+	usleep(1000000);
+	cout << "in process\n";
 	if (is_expired())
 		status = CLIENT_DONE;
 	recv_stream();
@@ -63,7 +65,8 @@ void			Client::process()
 
 bool			Client::is_expired()
 {
-	if ((Time() - birth).get_time_usec() > location->timeout)
+	cout << __func__ << endl;
+	if ((Time() - birth).get_time_usec() > 5000000)
 	{
 		status = CLIENT_DONE;
 		return true;
@@ -75,6 +78,7 @@ bool			Client::is_expired()
 
 void			Client::recv_stream()
 {
+	cout << __func__ << endl;
 	if (r_set.get(sock.fd))
 	{
 		size_t	len = 0;
@@ -102,6 +106,7 @@ void			Client::recv_stream()
 
 void			Client::send_stream()
 {
+	cout << __func__ << endl;
 	if (w_set.get(sock.fd))
 	{
 		res.stream.pass();
@@ -113,6 +118,7 @@ void			Client::send_stream()
 
 void			Client::set_request_startline()
 {
+	cout << __func__ << endl;
 	if (req.stream.get_line(req.line))
 	{
 		cout << req.line << endl;
@@ -125,6 +131,7 @@ void			Client::set_request_startline()
 
 void			Client::set_request_header()
 {
+	cout << __func__ << endl;
 	while (req.stream.get_line(req.line))
 	{
 		if (req.line.empty())
@@ -157,6 +164,7 @@ void		Client::set_server()
 
 void		Client::set_location()
 {
+	cout << __func__ << endl;
 	iterator_location	it_location	= server->locations.find("/" + req.path.front());
 	if (it_location == server->locations.end())
 	{
@@ -175,7 +183,6 @@ void		Client::set_location()
 void		Client::check_auth()
 {
 	cout << __func__ << endl;
-
 	if (location->auth.empty())
 		return ;
 
@@ -226,6 +233,7 @@ void		Client::set_path()
 
 void		Client::set_client()
 {
+	cout << __func__ << endl;
 	set_server();
 	set_location();
 	check_auth();
