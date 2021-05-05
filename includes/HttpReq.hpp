@@ -29,7 +29,6 @@ struct HttpReq : public Http
 	--------------------------------------------------------------------------*/
 	/*constructor*/	HttpReq(int sock_fd);
 	void			set_start_line(string& line);
-	void			set_header(string& line);
 	void			set_path(string& token);
 	string			get_location_name();
 	/*--------------------------------------------------------------------------

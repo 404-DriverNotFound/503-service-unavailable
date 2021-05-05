@@ -68,6 +68,7 @@ struct Http
 	/*constructor*/					Http();
 	public:
 	/*constructor*/					Http(int sock_fd);
+	void							set_header(const string& line);
 
 	/*--------------------------------------------------------------------------
 	Static Methods

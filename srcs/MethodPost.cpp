@@ -36,3 +36,17 @@ POST
 	}
 }
 
+void				MethodPost::load_response_header()
+{
+	res.status_code = 201;
+	res.stream << res.get_startline();
+	if (cgi)
+	{
+		res.content_length += ft::file_size(name_out.c_str());
+		res.stream << res.get_content_length(res.content_length);
+	}
+	else
+		res.stream << res.get_content_length(0);
+	res.stream << res.get_server();
+	res.stream << "\r\n";
+}

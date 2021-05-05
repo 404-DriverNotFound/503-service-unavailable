@@ -87,10 +87,15 @@ void	Method::set_cgi_header()
 {
 	Stream	stream(8000, fd_out);
 	string	line;
+
 	stream.fill(location.head_length);
 	while (stream.get_line(line))
 	{
-		req.set_header(line);
+		res.content_length -= line.length();
+		res.content_length -= 2;
+		if (line.empty())
+			break ;
+		res.set_header(line);
 	}
 	load_response_header();
 	res.stream.write(stream.it_buffer, stream.size());
