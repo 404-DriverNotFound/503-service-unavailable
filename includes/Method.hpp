@@ -5,6 +5,8 @@
 #include "HttpReq.hpp"
 #include "HttpRes.hpp"
 #include "Cgi.hpp"
+#include "Server.hpp"
+#include "Location.hpp"
 
 enum e_method
 {
@@ -40,6 +42,15 @@ enum e_method_status_chunked
 	CHUNKED_NL,
 };
 
+enum e_openfile
+{
+	OPEN_PUT,
+	OPEN_GET,
+	OPEN_POST,
+	OPEN_POST_CGI,
+	// DELETE,
+};
+
 using std::cout;
 using std::endl;
 using std::string;
@@ -54,11 +65,15 @@ struct	Method
 	/*--------------------------------------------------------------------------
 	Members
 	--------------------------------------------------------------------------*/
+	Server&							server;
+	Location&						location;
 	HttpReq&						req;
 	HttpRes&						res;
 	Cgi*							cgi;
 	int								fd_in;
 	int								fd_out;
+	string							name_in;
+	string							name_out;
 	e_method_status					status;
 	e_method_status_chunked			status_chunked;
 
@@ -78,24 +93,26 @@ struct	Method
 	Method&							operator=(const Method& x);
 
 	public:
-	/*constructor*/					Method(HttpReq& req, HttpRes& res);
+	/*constructor*/					Method(HttpReq& req, HttpRes& res, Server& server, Location& location);
 	/*destrucctor*/					~Method();
 
-	bool							is_cgi_extension();
-	void							recv_init();
-	bool							recv_body();
-	bool							recv_chunked_body();
-	void							run_cgi();
-	void							set_cgi_header();
-	virtual void					load_response_header();
-	void							load_cgi_tmp_remain();
-	void							load_body();
-	char**							make_meta_variable();
+	bool							is_cgi_extension(); // cgi를 실행하는 확장자이면 참
+	void							recv_init();		// 본문 받기 초기화
+	bool							recv_body();		// 본문 받기, 끝나면 참
+	bool							recv_chunked_body();	// 조각난 본문 받기, 끝나면 참
+	void							run_cgi();			// cgi 실행
+	void							set_cgi_header();	// cgi 실행결과에서 헤드 추가하기
+	virtual void					load_response_header();	// 응답헤더를 스트림에 적재
+	void							load_cgi_tmp_remain();	// 응답헤더를 만들고 남은 것을 스트림에 적재
+	void							load_body();		// cgi실행결과를 적재
+	char**							make_meta_variable();	// 메타변수 생성
 
-	void							open_in_file();
-	void							open_out_file();
-
-	virtual bool					run() = 0;
+	void							open_file_base(const string& path);
+	virtual void					open_file_in(const string& name);	// 본문을 받아들이는 파일
+	virtual void					open_file_out(const string& name);	// 전송할 파일
+	void							open_file(e_openfile option);	// 전송할 파일
+	string							temp_name();
+	virtual bool					run();
 
 	/*--------------------------------------------------------------------------
 	Static Methods
@@ -108,3 +125,15 @@ struct	Method
 	static void						init_method_flags();
 	static void						init_method_strings();
 };
+
+
+3명이서 해야 하는 과제를 9명이서 하는데,
+3배의 집단 지성을 이용하는데도 직접 코드를 작성하기보단 남의 깃허브를 긁어와서는 "리펙토링"을 하고,
+9명이 다 같은 코드를 제출하는 것에 대해 어떻게 생각하시나요?
+블랙홀이 정말 얼마 남지 않아서 그랬다면 일말의 동정이라도 하겠지만...
+
+
+
+
+
+

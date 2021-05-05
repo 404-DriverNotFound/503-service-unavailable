@@ -2,7 +2,5 @@
 
 class MethodPost: public Method
 {
-	/*constructor*/		MethodPost(HttpReq& req, HttpRes& res);
-	/*destructor*/		~MethodPost();
-	bool				run();
+	/*constructor*/		MethodPost(HttpReq& req, HttpRes& res, Server& server, Location& location);
 };

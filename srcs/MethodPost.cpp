@@ -4,107 +4,35 @@
 POST
 ##############################################################################*/
 
-/*constructor*/		MethodPost::MethodPost(HttpReq& req, HttpRes& res)
-: Method(req, res)
+/*constructor*/		MethodPost::MethodPost(HttpReq& req, HttpRes& res, Server& server, Location& location)
+: Method(req, res, server, location)
 {
-	if (req.headers[TRANSFER_ENCODING] == "chunked")
+	if (Cgi::cgi_bin.find(req.extension) != Cgi::cgi_bin.end())
 	{
-		status = METHOD_RECV_CHUNKED_BODY;
+		open_file(OPEN_POST_CGI);
+		cgi = new Cgi(req.path_translated, req.extension, fd_in, fd_out, make_meta_variable());
+		if (req.headers[TRANSFER_ENCODING] == "chunked")
+		{
+			status = METHOD_RECV_CHUNKED_BODY;
+		}
+		else
+		{
+			req.stream.pass_remain = ft::atoi(req.headers[CONTNET_LENGTH]);
+			status = METHOD_RECV_BODY;
+		}
 	}
 	else
 	{
-		req.stream.pass_remain = ft::atoi(req.headers[CONTNET_LENGTH]);
-		status = METHOD_RECV_BODY;
-	}
-	if (Cgi::cgi_bin.find(req.extension) != Cgi::cgi_bin.end())
-	{
-		open_in_file();
-		open_out_file();
-		cgi = new Cgi(req.path_translated, req.extension, fd_in, fd_out, make_meta_variable());
-	}
-}
-
-bool	MethodPost::run()
-{
-	switch (status)
-	{
-	case METHOD_RECV_BODY:
-		// req.stream.pass(req.stream.pass_remain);
-		if (recv_body())
+		open_file(OPEN_POST);
+		if (req.headers[TRANSFER_ENCODING] == "chunked")
 		{
-			if (cgi)
-			{
-				status = METHOD_START_CGI;
-				goto METHOD_START_CGI;
-			}
-			else
-			{
-				status = METHOD_LOAD_HEADER;
-				goto METHOD_LOAD_HEADER;
-			}
+			status = METHOD_RECV_CHUNKED_BODY;
 		}
-		if (status == METHOD_RECV_BODY)
-			break;
-
-	case METHOD_RECV_CHUNKED_BODY:
-		if (recv_chunked_body())
+		else
 		{
-			if (cgi)
-			{
-				status = METHOD_START_CGI;
-				goto METHOD_START_CGI;
-			}
-			else
-			{
-				status = METHOD_LOAD_HEADER;
-				goto METHOD_LOAD_HEADER;
-			}
+			req.stream.pass_remain = ft::atoi(req.headers[CONTNET_LENGTH]);
+			status = METHOD_RECV_BODY;
 		}
-		if (status == METHOD_RECV_CHUNKED_BODY)
-			break;
-
-	case METHOD_START_CGI:
-	METHOD_START_CGI:
-		run_cgi();
-		status = METHOD_CGI_IS_RUNNING;
-
-	case METHOD_CGI_IS_RUNNING:
-
-
-		if (cgi->check_exit())
-		{
-			status = METHOD_LOAD_HEADER_CGI;
-			goto METHOD_LOAD_HEADER_CGI;
-		}
-		if (status == METHOD_CGI_IS_RUNNING)
-			break;
-		
-	case METHOD_LOAD_HEADER:
-	METHOD_LOAD_HEADER:
-		load_response_header();
-		if (cgi)
-		{
-			status = METHOD_LOAD_BODY;
-			goto METHOD_LOAD_BODY;
-		}
-
-	case METHOD_LOAD_HEADER_CGI:
-	METHOD_LOAD_HEADER_CGI:
-		set_cgi_header();
-		load_response_header();
-		load_cgi_tmp_remain();
-		status = METHOD_LOAD_BODY;
-
-	case METHOD_LOAD_BODY:
-	METHOD_LOAD_BODY:
-		load_body();
-		if (status == METHOD_LOAD_BODY)
-			break;
-
-	case METHOD_DONE:
-		break;
-
-	default:
-		break;
 	}
 }
+

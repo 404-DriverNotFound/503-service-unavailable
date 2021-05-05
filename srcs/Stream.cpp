@@ -98,6 +98,47 @@ void		Stream::write(const string& str)
 		buffers.back().end = end;
 	}
 }
+
+void		Stream::write(uint8_t*	buff, size_t s)
+{
+	if (buffers.empty())
+	{
+		add_buffer(s);
+		it_buffer = buffers.front().start;
+	}
+	uint8_t*	it = buff;
+	uint8_t*	it_end = buff + s;
+	uint8_t*	end = buffers.back().end;
+	
+	if (buffers.back().remain >= s)
+	{
+		// 쭉복사
+		buffers.back().remain -= s;
+		while (it != it_end)
+		{
+			*end++ = *it++;
+		}
+		buffers.back().end = end;
+	}
+	else
+	{
+		// remain만큼만 복사
+		it_end = it + buffers.back().remain;
+		while (it != it_end)
+		{
+			*end++ = *it++;
+		}
+		// 새로 할당해서 나머지 복사
+		add_buffer(it_end - it_end);
+		end = buffers.back().end;
+		it_end = it_end;
+		while (it != it_end)
+		{
+			*end++ = *it++;
+		}
+		buffers.back().end = end;
+	}
+}
 //------------------------------------------------------------------------------
 string		Stream::read(size_t s)
 {

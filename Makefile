@@ -21,6 +21,9 @@ LIST_SRCS = \
 	Location\
 	main\
 	Method\
+	MethodGet\
+	MethodPost\
+	MethodPut\
 	Server\
 	Socket\
 	Stream\

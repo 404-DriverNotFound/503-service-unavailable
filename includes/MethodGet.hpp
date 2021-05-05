@@ -2,5 +2,5 @@
 
 class MethodGet: public Method
 {
-	bool	run();
+	/*constructor*/	MethodGet(HttpReq& req, HttpRes& res, Server& server, Location& location);
 };

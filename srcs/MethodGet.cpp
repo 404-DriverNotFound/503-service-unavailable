@@ -1,14 +1,12 @@
 #include "../includes/MethodGet.hpp"
 
-bool	MethodGet::run()
+/*##############################################################################
+POST
+##############################################################################*/
+
+/*constructor*/		MethodGet::MethodGet(HttpReq& req, HttpRes& res, Server& server, Location& location)
+: Method(req, res, server, location)
 {
-	switch (status)
-	{
-	case METHOD_INIT:
-		
-		break;
-	
-	default:
-		break;
-	}
+	open_file(OPEN_GET);
+	status = METHOD_LOAD_HEADER;
 }

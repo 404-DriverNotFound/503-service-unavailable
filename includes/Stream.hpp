@@ -50,6 +50,7 @@ struct Stream
 	size_t			pass();							// pass 최댓값
 	size_t			fill(size_t s);					// 스트림 내부로 읽어들이기
 	void			write(const string& str);		// 스트림에 데이터 쓰기
+	void			write(uint8_t*	buff, size_t s);
 	string			read(size_t s);					// 스트림 내부 버퍼로부터 밖으로 읽기
 	size_t			read(size_t s, uint8_t* b);		// 스트림 내부 버퍼로부터 밖으로 읽기
 	bool			get_seq_token(string &token, const char *seq);
