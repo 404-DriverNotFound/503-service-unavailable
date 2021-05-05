@@ -64,7 +64,11 @@ void			Client::process()
 bool			Client::is_expired()
 {
 	if ((Time() - birth).get_time_usec() > location->timeout)
+	{
 		status = CLIENT_DONE;
+		return true;
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------
@@ -230,13 +234,12 @@ void		Client::set_client()
 	switch (req.method)
 	{
 		case GET:
-			method = new MethodGet(req, res, server, location);
+			method = new MethodGet(req, res, *server, *location);
 		case POST:
-			method = new MethodPost(req, res, server, location);
+			method = new MethodPost(req, res, *server, *location);
 		break;
 	
 	default:
 		break;
 	}
-	method
 }

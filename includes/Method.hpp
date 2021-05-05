@@ -8,6 +8,9 @@
 #include "Server.hpp"
 #include "Location.hpp"
 
+class Server;
+class Location;
+
 enum e_method
 {
 	CONNECT = 0,

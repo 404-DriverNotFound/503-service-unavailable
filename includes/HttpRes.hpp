@@ -1,6 +1,5 @@
 #pragma once
 struct HttpRes;
-#include "HttpReq.hpp"
 #include "Http.hpp"
 #include "Utils.hpp"
 #include "Time.hpp"

@@ -1,6 +1,4 @@
 #pragma once
-struct HttpReq;
-#include "HttpRes.hpp"
 #include "Http.hpp"
 
 /*##############################################################################
