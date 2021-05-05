@@ -7,7 +7,7 @@ string					Method::method_strings[NUM_METHOD];
 //------------------------------------------------------------------------------
 
 		Method::Method(HttpReq& req, HttpRes& res)
-:req(req), res(res), cgi(0), status(METHOD_INIT)
+:req(req), res(res), cgi(0)
 {}
 
 //------------------------------------------------------------------------------
@@ -20,12 +20,12 @@ string					Method::method_strings[NUM_METHOD];
 
 //------------------------------------------------------------------------------
 
-void	Method::recv_body()
+bool	Method::recv_body()
 {}
 
 //------------------------------------------------------------------------------
 
-void	Method::recv_chunked_body()
+bool	Method::recv_chunked_body()
 {}
 
 //------------------------------------------------------------------------------

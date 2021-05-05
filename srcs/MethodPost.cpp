@@ -29,18 +29,18 @@ bool	MethodPost::run()
 	switch (status)
 	{
 	case METHOD_RECV_BODY:
-		req.stream.pass(req.stream.pass_remain);
-		if (req.stream.pass_remain == 0)
+		// req.stream.pass(req.stream.pass_remain);
+		if (recv_body())
 		{
 			if (cgi)
 			{
 				status = METHOD_START_CGI;
-				// goto
+				goto METHOD_START_CGI;
 			}
 			else
 			{
 				status = METHOD_LOAD_HEADER;
-				// goto
+				goto METHOD_LOAD_HEADER;
 			}
 		}
 		if (status == METHOD_RECV_BODY)
@@ -52,18 +52,19 @@ bool	MethodPost::run()
 			if (cgi)
 			{
 				status = METHOD_START_CGI;
-				// goto
+				goto METHOD_START_CGI;
 			}
 			else
 			{
 				status = METHOD_LOAD_HEADER;
-				// goto
+				goto METHOD_LOAD_HEADER;
 			}
 		}
 		if (status == METHOD_RECV_CHUNKED_BODY)
 			break;
 
 	case METHOD_START_CGI:
+	METHOD_START_CGI:
 		run_cgi();
 		status = METHOD_CGI_IS_RUNNING;
 
@@ -71,18 +72,31 @@ bool	MethodPost::run()
 
 
 		if (cgi->check_exit())
-			status = METHOD_LOAD_HEADER;
+		{
+			status = METHOD_LOAD_HEADER_CGI;
+			goto METHOD_LOAD_HEADER_CGI;
+		}
 		if (status == METHOD_CGI_IS_RUNNING)
 			break;
-
-
+		
 	case METHOD_LOAD_HEADER:
+	METHOD_LOAD_HEADER:
+		load_response_header();
+		if (cgi)
+		{
+			status = METHOD_LOAD_BODY;
+			goto METHOD_LOAD_BODY;
+		}
+
+	case METHOD_LOAD_HEADER_CGI:
+	METHOD_LOAD_HEADER_CGI:
 		set_cgi_header();
 		load_response_header();
 		load_cgi_tmp_remain();
 		status = METHOD_LOAD_BODY;
 
 	case METHOD_LOAD_BODY:
+	METHOD_LOAD_BODY:
 		load_body();
 		if (status == METHOD_LOAD_BODY)
 			break;
