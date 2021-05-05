@@ -44,7 +44,7 @@ void			Client::process()
 
 void			Client::routine()
 {
-	// usleep(300000);
+	usleep(500000);
 	cout << "in process\n";
 	if (is_expired())
 		status = CLIENT_DONE;
@@ -63,11 +63,13 @@ void			Client::routine()
 		set_client();
 	case CLIENT_METHOD:
 		if (method->run())
+		{
+			cout << "Method end!\n";
 			status = CLIENT_SEND;
+		}
 		if (status == CLIENT_METHOD)
 			break;
 	case CLIENT_SEND:
-		send_stream();
 		break;
 	case CLIENT_DONE:
 		break;
@@ -91,11 +93,12 @@ void			Client::manage_err(int code)
 bool			Client::is_expired()
 {
 	cout << __func__ << endl;
-	if ((Time() - birth).get_time_usec() > 1000000)
+	if ((Time() - birth).get_time_usec() > 1000000000)
 	{
 		status = CLIENT_DONE;
 		return true;
 	}
+	cout << (Time() - birth).get_time_sec() << endl;
 	return false;
 }
 
@@ -119,12 +122,16 @@ void			Client::recv_stream()
 				len = req.stream.fill(0x10000);
 				break;
 		}
+		cout << "- r_set.get(fd) != 0" << endl;
+		cout << len << endl;
 		if (len == 0)
 		{
+			cout << "- Client Done!" << endl;
 			status = CLIENT_DONE;
 		}
 		r_set.del(sock.fd);
 	}
+	req.stream.print();
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +154,6 @@ void			Client::set_request_startline()
 	cout << __func__ << endl;
 	if (req.stream.get_line(req.line))
 	{
-		cout << req.line << endl;
 		req.set_start_line(req.line);
 		status = CLIENT_HEADER;
 	}
@@ -160,7 +166,6 @@ void			Client::set_request_header()
 	cout << __func__ << endl;
 	while (req.stream.get_line(req.line))
 	{
-		cout << req.line << endl;
 		if (req.line.empty())
 		{
 			status = CLIENT_SET;
@@ -279,4 +284,5 @@ void		Client::set_client()
 	default:
 		break;
 	}
+	status = CLIENT_METHOD;
 }

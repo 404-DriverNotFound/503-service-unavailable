@@ -47,7 +47,7 @@ size_t		Stream::fill(size_t s)
 		add_buffer(s);
 	}
 	Buffer&		tmp = buffers.back();
-	size_t len = ::read(fd_in, tmp.end, s);
+	ssize_t len = ::read(fd_in, tmp.end, s);
 	if (len < 0)
 		throw 500;
 	tmp.end += len;
@@ -246,7 +246,13 @@ size_t		Stream::pass(size_t s)
 }
 void		Stream::print()
 {
-	::write(1, it_buffer, buffers.front().end - it_buffer);
+	list<Buffer>::iterator it = buffers.begin();
+	list<Buffer>::iterator end = buffers.end();
+	while (it != end)
+	{
+		::write(1, it->start, it->end - it_buffer);
+		++it;
+	}
 }
 
 //------------------------------------------------------------------------------

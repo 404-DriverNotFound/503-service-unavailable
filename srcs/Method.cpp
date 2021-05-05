@@ -117,10 +117,16 @@ void	Method::load_response_header()
 
 void	Method::load_body()
 {
-	cout << __func__ << endl;
-	cout << fd_out << endl;
-	if (res.stream.fill(res.stream.default_capacity) == 0)
+	if (fd_out < 0)
 	{
+		status = METHOD_DONE;
+		return ;
+	}
+	size_t	len = res.stream.fill(res.stream.default_capacity);
+	cout << __func__ << ": " << len << endl;
+	if (len == 0)
+	{
+		cout << "- fill done!" << endl;
 		status = METHOD_DONE;
 		close(fd_out);
 	}
@@ -130,6 +136,7 @@ void	Method::load_body()
 
 bool	Method::run()
 {
+	cout << __func__ << endl;
 	switch (status)
 	{
 	case METHOD_RECV_BODY:
@@ -183,10 +190,9 @@ bool	Method::run()
 	case METHOD_LOAD_HEADER:
 	METHOD_LOAD_HEADER:
 		load_response_header();
-		status = METHOD_DONE;
-		goto METHOD_DONE;
+		status = METHOD_LOAD_BODY;
+		goto METHOD_LOAD_BODY;
 		
-
 	case METHOD_LOAD_HEADER_CGI:
 	METHOD_LOAD_HEADER_CGI:
 		set_cgi_header();
@@ -200,6 +206,7 @@ bool	Method::run()
 
 	case METHOD_DONE:
 	METHOD_DONE:
+		cout << "Method Done!" << endl;
 		return true;
 
 	default:
@@ -222,17 +229,26 @@ void		Method::open_file_base(const string& path)
 		req.path_translated.append(path_tmp);
 		cout << "path(index): " << req.path_translated << endl;
 	}
+	else
+	{
+		string	path_tmp = ft::find(path, location.index);
+		if (path_tmp.empty())
+			throw 404;
+	}
+	
 }
 
 //------------------------------------------------------------------------------
 
 void		Method::open_file(e_openfile option)
 {
+	cout << __func__ << ": ";
 	switch (option)
 	{
 	case OPEN_GET:
 		open_file_base(req.path_translated);
 		fd_out = open(req.path_translated.c_str(), O_RDONLY);
+		cout << fd_out << endl;
 		if (fd_out < 0)
 			throw 500;
 		res.stream.fd_in = fd_out;
