@@ -116,7 +116,8 @@ void	Method::load_response_header()
 
 void	Method::load_body()
 {
-	res.stream.fill()
+	if (res.stream.fill(res.stream.default_capacity) == 0)
+		status = METHOD_DONE;
 }
 
 //------------------------------------------------------------------------------
@@ -183,8 +184,6 @@ bool	Method::run()
 	case METHOD_LOAD_HEADER_CGI:
 	METHOD_LOAD_HEADER_CGI:
 		set_cgi_header();
-		// load_response_header();
-		// load_cgi_tmp_remain();
 		status = METHOD_LOAD_BODY;
 
 	case METHOD_LOAD_BODY:

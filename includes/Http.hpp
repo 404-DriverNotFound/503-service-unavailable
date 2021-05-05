@@ -50,7 +50,6 @@ struct Http
 	Members
 	--------------------------------------------------------------------------*/
 	string							headers[NUM_HEADERS];
-	vector<uint8_t>					body;
 	string							protocol;
 	ssize_t							content_length;
 	Stream							stream;

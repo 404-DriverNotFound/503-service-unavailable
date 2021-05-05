@@ -8,7 +8,7 @@ std::map<std::string, u_int16_t>	Http::map_method;
 std::map<std::string, u_int16_t>	Http::map_header;
 
 Http::Http(int sock_fd)
-: stream(0x10000, sock_fd, sock_fd)
+: stream(0x10000, sock_fd, sock_fd), content_length(0)
 {}
 
 //------------------------------------------------------------------------------
@@ -28,8 +28,8 @@ void		Http::set_header(const string& line)
 		return;
 		// throw 400;
 	headers[it_header->second] = it_line.base();
-	if (key == "CONTENT-LENGTH")
-		content_length = ft::atoi_hex(val);
+	// if (key == "CONTENT-LENGTH")
+	// 	content_length = ft::atoi_hex(val);
 }
 
 //------------------------------------------------------------------------------
