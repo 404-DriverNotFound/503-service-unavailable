@@ -8,7 +8,7 @@ map<int, string>	status_code_map;
 
 //------------------------------------------------------------------------------
 
-/*constructor*/	HttpRes::HttpRes(int sock_fd)
+/*constructor*/	HttpReq::HttpReq(int sock_fd)
 : Http(sock_fd)
 {}
 

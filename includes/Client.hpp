@@ -15,16 +15,6 @@ struct Client;
 using std::string;
 using std::map;
 
-enum e_status
-{
-	CLIENT_STARTLINE,
-	CLIENT_HEADER,
-	CLIENT_SET,
-	CLIENT_METHOD,
-	CLIENT_SEND,
-	CLIENT_DONE,
-};
-
 /*##############################################################################
 Client
 ##############################################################################*/

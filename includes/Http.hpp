@@ -4,36 +4,13 @@
 #include <map>
 #include <deque>
 #include <vector>
-#include "Method.hpp"
 #include "Utils.hpp"
 #include "Stream.hpp"
+#include "Enums.hpp"
 
 /*##############################################################################
 Http
 ##############################################################################*/
-
-enum e_header
-{
-	ACCEPT_CHARSET,
-	ACCEPT_LANGUAGE,
-	AUTHORIZATION,
-	HOST,
-	REFERER,
-	USER_AGENT,
-	LAST_MODIFIED,
-	LOCATION,
-	RETRY_AFTER,
-	SERVER,
-	TRANSFER_ENCODING,
-	WWW_AUTHENTICATE,
-	ALLOW,
-	CONTNET_LENGTH,
-	CONTENT_LOCATION,
-	CONTENT_TYPE,
-	DATE,
-	STATUS,
-	NUM_HEADERS,
-};
 
 using std::string;
 using std::map;

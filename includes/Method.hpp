@@ -11,49 +11,6 @@
 class Server;
 class Location;
 
-enum e_method
-{
-	CONNECT = 0,
-	DELETE,
-	GET,
-	HEAD,
-	OPTIONS,
-	PATCH,
-	POST,
-	PUT,
-	TRACE,
-	NUM_METHOD
-};
-
-
-enum e_method_status
-{
-	METHOD_RECV_BODY,
-	METHOD_RECV_CHUNKED_BODY,
-	METHOD_START_CGI,
-	METHOD_CGI_IS_RUNNING,
-	METHOD_LOAD_HEADER_CGI,
-	METHOD_LOAD_HEADER,
-	METHOD_LOAD_BODY,
-	METHOD_DONE,
-};
-
-enum e_method_status_chunked
-{
-	CHUNKED_SIZE,
-	CHUNKED_RECV,
-	CHUNKED_NL,
-};
-
-enum e_openfile
-{
-	OPEN_PUT,
-	OPEN_GET,
-	OPEN_POST,
-	OPEN_POST_CGI,
-	// DELETE,
-};
-
 using std::cout;
 using std::endl;
 using std::string;

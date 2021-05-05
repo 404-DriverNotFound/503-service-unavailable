@@ -1,4 +1,5 @@
 #include "../includes/HttpRes.hpp"
+#include "../includes/Method.hpp"
 
 /*##############################################################################
 Http Response
