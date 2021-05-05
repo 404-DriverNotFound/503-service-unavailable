@@ -268,8 +268,8 @@ void			Webserver::manage_clients()
 		cout << "----------------\n";
 		cout << "== Socket: " << (*it)->sock.fd << " ==" << endl;
 		cout << "----------------\n";
-		(*it)->client_process(r_set, w_set);
-		if ((*it)->status == STATUS_DONE)
+		(*it)->process();
+		if ((*it)->status == CLIENT_DONE)
 		{
 			cout << "- delete " << (*it)->sock.fd << endl;
 			o_set.del((*it)->sock.fd);
