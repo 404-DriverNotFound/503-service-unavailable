@@ -126,6 +126,8 @@ string		HttpRes::get_www_authenticate(const string& realm)
 	return line;
 }
 
+//------------------------------------------------------------------------------
+
 void		HttpRes::init_status_code()
 {
 	status_code_map[100] = "Continue";

@@ -8,9 +8,31 @@ std::map<std::string, u_int16_t>	Http::map_method;
 std::map<std::string, u_int16_t>	Http::map_header;
 
 Http::Http(int sock_fd)
-: stream(0x10000, sock_fd, sock_fd)
+: stream(0x10000, sock_fd, sock_fd), content_length(0)
 {}
 
+//------------------------------------------------------------------------------
+
+void		Http::set_header(const string& line)
+{
+	string::const_iterator	it_line = line.begin();
+	string					key;
+	string					val;
+
+	ft::get_set_token(line, it_line, key, ": ");
+	ft::uppercase(key);
+	while (ft::strchr(": ", *it_line))
+		++it_line;
+	map<string, uint16_t>::iterator	it_header = map_header.find(key);
+	if (it_header == map_header.end())
+		return;
+		// throw 400;
+	headers[it_header->second] = it_line.base();
+	// if (key == "CONTENT-LENGTH")
+	// 	content_length = ft::atoi_hex(val);
+}
+
+//------------------------------------------------------------------------------
 
 const char*		Http::HttpFormException::what() const throw()
 {	return "HttpFormException";	}

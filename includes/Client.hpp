@@ -73,6 +73,7 @@ struct Client
 	void				set_client();
 	void					set_server();
 	void					set_location();
+	void					check_auth();
 	void					set_path();
 	void					set_method();
 

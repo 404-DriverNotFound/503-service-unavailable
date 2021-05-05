@@ -50,7 +50,6 @@ struct Http
 	Members
 	--------------------------------------------------------------------------*/
 	string							headers[NUM_HEADERS];
-	vector<uint8_t>					body;
 	string							protocol;
 	ssize_t							content_length;
 	Stream							stream;
@@ -68,6 +67,7 @@ struct Http
 	/*constructor*/					Http();
 	public:
 	/*constructor*/					Http(int sock_fd);
+	void							set_header(const string& line);
 
 	/*--------------------------------------------------------------------------
 	Static Methods

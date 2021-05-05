@@ -87,10 +87,15 @@ void	Method::set_cgi_header()
 {
 	Stream	stream(8000, fd_out);
 	string	line;
+
 	stream.fill(location.head_length);
 	while (stream.get_line(line))
 	{
-		req.set_header(line);
+		res.content_length -= line.length();
+		res.content_length -= 2;
+		if (line.empty())
+			break ;
+		res.set_header(line);
 	}
 	load_response_header();
 	res.stream.write(stream.it_buffer, stream.size());
@@ -111,7 +116,8 @@ void	Method::load_response_header()
 
 void	Method::load_body()
 {
-	res.stream.fill()
+	if (res.stream.fill(res.stream.default_capacity) == 0)
+		status = METHOD_DONE;
 }
 
 //------------------------------------------------------------------------------
@@ -178,8 +184,6 @@ bool	Method::run()
 	case METHOD_LOAD_HEADER_CGI:
 	METHOD_LOAD_HEADER_CGI:
 		set_cgi_header();
-		// load_response_header();
-		// load_cgi_tmp_remain();
 		status = METHOD_LOAD_BODY;
 
 	case METHOD_LOAD_BODY:
