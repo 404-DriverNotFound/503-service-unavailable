@@ -7,6 +7,7 @@ POST
 /*constructor*/		MethodPost::MethodPost(HttpReq& req, HttpRes& res, Server& server, Location& location)
 : Method(req, res, server, location)
 {
+	cout << __func__ << endl;
 	if (Cgi::cgi_bin.find(req.extension) != Cgi::cgi_bin.end())
 	{
 		open_file(OPEN_POST_CGI);
@@ -38,6 +39,7 @@ POST
 
 void				MethodPost::load_response_header()
 {
+	cout << __func__ << endl;
 	res.status_code = 201;
 	res.stream << res.get_startline();
 	if (cgi)

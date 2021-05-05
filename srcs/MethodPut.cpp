@@ -7,6 +7,7 @@ PUT
 /*constructor*/		MethodPut::MethodPut(HttpReq& req, HttpRes& res, Server& server, Location& location)
 : Method(req, res, server, location)
 {
+	cout << __func__ << endl;
 	open_file(OPEN_PUT);
 	if (req.headers[TRANSFER_ENCODING] == "chunked")
 	{

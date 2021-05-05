@@ -105,6 +105,7 @@ void	Method::set_cgi_header()
 
 void	Method::load_response_header()
 {
+	cout << "Method::" << __func__ << endl;
 	res.status_code = 200;
 	res.stream << res.get_startline();
 	res.stream << res.get_content_length(ft::file_size(req.path_translated.c_str()));
@@ -116,8 +117,13 @@ void	Method::load_response_header()
 
 void	Method::load_body()
 {
+	cout << __func__ << endl;
+	cout << fd_out << endl;
 	if (res.stream.fill(res.stream.default_capacity) == 0)
+	{
 		status = METHOD_DONE;
+		close(fd_out);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -206,6 +212,7 @@ bool	Method::run()
 
 void		Method::open_file_base(const string& path)
 {
+	cout << "path: " << req.path_translated << endl;
 	if (ft::is_dir(path.c_str()))
 	{
 		string	path_tmp = ft::find(path, location.index);
@@ -213,23 +220,8 @@ void		Method::open_file_base(const string& path)
 			throw 404;
 		req.path_translated.append("/");
 		req.path_translated.append(path_tmp);
+		cout << "path(index): " << req.path_translated << endl;
 	}
-}
-
-//------------------------------------------------------------------------------
-
-void		Method::open_file_in(const string& path)
-{
-	open_file_base(path);
-	fd_in = open(req.path_translated.c_str(), O_RDONLY);
-}
-
-//------------------------------------------------------------------------------
-
-void		Method::open_file_out(const string& path)
-{
-	open_file_base(path);
-	fd_out = open(req.path_translated.c_str(), O_RDONLY);
 }
 
 //------------------------------------------------------------------------------
@@ -243,6 +235,7 @@ void		Method::open_file(e_openfile option)
 		fd_out = open(req.path_translated.c_str(), O_RDONLY);
 		if (fd_out < 0)
 			throw 500;
+		res.stream.fd_in = fd_out;
 		break;
 
 	case OPEN_PUT:
@@ -251,12 +244,15 @@ void		Method::open_file(e_openfile option)
 		fd_in = open(req.path_translated.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);
 		if (fd_in < 0)
 			throw 500;
+		req.stream.fd_out = fd_in;
 		break;
 
 	case OPEN_POST:
 		if (ft::is_dir(req.path_translated.c_str()))
 			throw 404;
 		fd_in = open(req.path_translated.c_str(), O_CREAT | O_APPEND | O_RDWR, 0644);
+		req.stream.fd_out = fd_in;
+		res.stream.fd_in = fd_out;
 		break;
 
 	case OPEN_POST_CGI:

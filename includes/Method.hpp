@@ -68,8 +68,6 @@ struct	Method
 	char**							make_meta_variable();	// 메타변수 생성
 
 	void							open_file_base(const string& path);
-	virtual void					open_file_in(const string& name);	// 본문을 받아들이는 파일
-	virtual void					open_file_out(const string& name);	// 전송할 파일
 	void							open_file(e_openfile option);	// 전송할 파일
 	string							temp_name();
 	virtual bool					run();

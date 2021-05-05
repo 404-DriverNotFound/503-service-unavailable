@@ -244,6 +244,11 @@ size_t		Stream::pass(size_t s)
 	// pass_remain = s - len;
 	// return len;
 }
+void		Stream::print()
+{
+	::write(1, it_buffer, buffers.front().end - it_buffer);
+}
+
 //------------------------------------------------------------------------------
 size_t		Stream::pass()
 {

@@ -65,4 +65,5 @@ struct Stream
 	Stream&			operator>>(string& str);
 	void			clear();
 	size_t			size();
+	void			print();
 };

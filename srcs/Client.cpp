@@ -109,6 +109,7 @@ void			Client::send_stream()
 	cout << __func__ << endl;
 	if (w_set.get(sock.fd))
 	{
+		res.stream.print();
 		res.stream.pass();
 		w_set.del(sock.fd);
 	}
@@ -134,6 +135,7 @@ void			Client::set_request_header()
 	cout << __func__ << endl;
 	while (req.stream.get_line(req.line))
 	{
+		cout << req.line << endl;
 		if (req.line.empty())
 		{
 			status = CLIENT_SET;
@@ -243,8 +245,10 @@ void		Client::set_client()
 	{
 		case GET:
 			method = new MethodGet(req, res, *server, *location);
+			break;
 		case POST:
 			method = new MethodPost(req, res, *server, *location);
+			break;
 		break;
 	
 	default:
