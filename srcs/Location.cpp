@@ -70,7 +70,7 @@ Location::Location(std::deque<std::string>& lines)
 			tokens.pop_front();
 			while (!tokens.empty())
 			{
-				map<string, uint16_t>::iterator	it_method = Method::method_flags.find(tokens.front());
+				map<string, uint32_t>::iterator	it_method = Method::method_flags.find(tokens.front());
 				if (it_method == Method::method_flags.end())
 				{
 					cout << tokens.front() << endl;

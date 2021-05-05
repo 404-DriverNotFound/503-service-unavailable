@@ -1,6 +1,7 @@
 #pragma once
-#include "Location.hpp"
+struct Server;
 #include "ConfigSet.hpp"
+#include "Location.hpp"
 #include "Socket.hpp"
 #include <map>
 
@@ -17,7 +18,7 @@ struct Server : public ConfigSet
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	uint16_t				port;
+	uint32_t				port;
 	map<string, Location>	locations;
 
 	/*--------------------------------------------------------------------------

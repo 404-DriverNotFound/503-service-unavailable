@@ -1,4 +1,5 @@
 #pragma once
+struct Location;
 #include <string>
 #include <deque>
 #include <set>

@@ -1,3 +1,4 @@
+#pragma once
 #include "Method.hpp"
 
 struct MethodGet: public Method

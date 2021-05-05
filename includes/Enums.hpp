@@ -1,4 +1,4 @@
-
+#pragma once
 enum e_status
 {
 	CLIENT_STARTLINE,
