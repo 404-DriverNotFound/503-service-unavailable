@@ -66,4 +66,5 @@ struct Stream
 	void			clear();
 	size_t			size();
 	void			print();
+	void			print_line();
 };

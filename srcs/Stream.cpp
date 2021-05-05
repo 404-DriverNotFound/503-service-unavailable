@@ -254,6 +254,10 @@ void		Stream::print()
 		++it;
 	}
 }
+void		Stream::print_line()
+{
+	::write(1, it_buffer,  buffers.front().end - it_buffer);
+}
 
 //------------------------------------------------------------------------------
 size_t		Stream::pass()

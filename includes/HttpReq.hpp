@@ -29,6 +29,8 @@ struct HttpReq : public Http
 	void			set_start_line(string& line);
 	void			set_path(string& token);
 	string			get_location_name();
+	void			clear();
+	void			set_extension();
 	/*--------------------------------------------------------------------------
 	Private Method
 	--------------------------------------------------------------------------*/

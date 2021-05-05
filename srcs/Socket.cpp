@@ -40,7 +40,8 @@ Socket&		Socket::operator=(const Socket& x)
 {
 	if (fd >= 0)
 	{
-		close(fd);
+		// close(fd);
+		shutdown(fd, SHUT_RDWR);
 	}
 }
 
@@ -64,6 +65,10 @@ void		Socket::accept(int serv_sock)
 {
 	if ((fd = ::accept(serv_sock, reinterpret_cast<sockaddr*>(&s_addr), &socklen)) < 0)
 		throw accept_failed_exception();
+	linger	lin;
+	lin.l_onoff = 0;
+	lin.l_linger = 1;
+	setsockopt(fd, SOL_SOCKET, SO_LINGER, &lin, sizeof(linger));
 }
 
 //------------------------------------------------------------------------------

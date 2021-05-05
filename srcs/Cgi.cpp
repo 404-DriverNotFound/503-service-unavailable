@@ -1,5 +1,5 @@
 #include "../includes/Cgi.hpp"
-// #include <cstdio>
+#include <cstdio>
 #include <iostream>
 
 Cgi::map_path	Cgi::cgi_bin;

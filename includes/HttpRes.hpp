@@ -17,6 +17,8 @@ struct HttpRes : public Http
 	--------------------------------------------------------------------------*/
 	static std::map<int, std::string>	status_code_map;
 	int									status_code;
+	size_t								msg_length;
+	size_t								send_length;
 
 	/*--------------------------------------------------------------------------
 	Method
@@ -36,4 +38,5 @@ struct HttpRes : public Http
 	string			get_transfer_encoding();
 	string			get_www_authenticate(const string& realm);
 	static void		init_status_code();
+	void			clear();
 };	// Http Response

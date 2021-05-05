@@ -83,7 +83,30 @@ string		HttpReq::get_location_name()
 	}
 }
 
+//------------------------------------------------------------------------------
 
+void		HttpReq::clear()
+{
+	for (int i = 0 ; i < NUM_HEADERS ; i++)
+	{
+		headers[i].clear();
+	}
+	protocol.clear();
+	content_length = 0;
+
+	line.clear();
+	path_translated.clear();
+	path_info.clear();
+	extension.clear();
+	query.clear();
+	path.clear();
+}
+
+void		HttpReq::set_extension()
+{
+	size_t	pos = path_translated.rfind('.');
+	extension = &path_translated[pos];
+}
 
 //startline test
 /* 

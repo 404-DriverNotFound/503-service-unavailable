@@ -10,7 +10,7 @@ std::map<int, std::string>	HttpRes::status_code_map;
 //------------------------------------------------------------------------------
 
 /*constructor*/	HttpRes::HttpRes(int sock_fd)
-: Http(sock_fd)
+: Http(sock_fd), msg_length(0), send_length(0)
 {}
 
 //------------------------------------------------------------------------------
@@ -125,6 +125,23 @@ string		HttpRes::get_www_authenticate(const string& realm)
 	line += ", charset=\"UTF-8\"";
 	line += "\r\n";
 	return line;
+}
+
+//------------------------------------------------------------------------------
+
+void		HttpRes::clear()
+{
+	for (int i = 0 ; i < NUM_HEADERS ; i++)
+	{
+		headers[i].clear();
+	}
+	protocol.clear();
+	content_length = 0;
+	
+	status_code = 0;
+	msg_length = 0;
+	send_length = 0;
+	stream.clear();
 }
 
 //------------------------------------------------------------------------------

@@ -14,7 +14,8 @@ r_set(r_set),
 w_set(w_set),
 birth(),
 req(sock.fd),
-res(sock.fd)
+res(sock.fd),
+method(0)
 {
 	status = CLIENT_STARTLINE;
 }
@@ -23,6 +24,8 @@ res(sock.fd)
 
 /*destructor*/	Client::~Client()
 {
+	if (method)
+		delete method;
 }
 
 //------------------------------------------------------------------------------
@@ -44,7 +47,7 @@ void			Client::process()
 
 void			Client::routine()
 {
-	usleep(500000);
+	// usleep(400000);
 	cout << "in process\n";
 	if (is_expired())
 		status = CLIENT_DONE;
@@ -85,20 +88,25 @@ void			Client::manage_err(int code)
 	res.status_code = code;
 	res.stream << res.get_startline();
 	res.stream << res.get_server();
+	res.stream << res.get_content_length(7);
+	res.stream << string("Content-Type: text/plain; charset=utf-8\r\n");
 	res.stream << "\r\n";
+	res.stream << string("Error\r\n");
+	res.send_length = 0;
+	res.msg_length = res.stream.size();
+	status = CLIENT_SEND;
 }
 
 //------------------------------------------------------------------------------
 
 bool			Client::is_expired()
 {
-	cout << __func__ << endl;
-	if ((Time() - birth).get_time_usec() > 1000000000)
+	cout << "elapsed: " << (Time() - birth).get_time_sec() << endl;
+	if ((Time() - birth).get_time_usec() > 30000000)
 	{
 		status = CLIENT_DONE;
 		return true;
 	}
-	cout << (Time() - birth).get_time_sec() << endl;
 	return false;
 }
 
@@ -106,9 +114,9 @@ bool			Client::is_expired()
 
 void			Client::recv_stream()
 {
-	cout << __func__ << endl;
 	if (r_set.get(sock.fd))
 	{
+													cout << __func__ << endl;
 		size_t	len = 0;
 		switch (status)
 		{
@@ -122,29 +130,64 @@ void			Client::recv_stream()
 				len = req.stream.fill(0x10000);
 				break;
 		}
-		cout << "- r_set.get(fd) != 0" << endl;
-		cout << len << endl;
+		cout << "- input len: " << len << endl;
 		if (len == 0)
 		{
-			cout << "- Client Done!" << endl;
+			cout << "\n--- Client Done! ---" << endl;
 			status = CLIENT_DONE;
 		}
 		r_set.del(sock.fd);
+		
+		
+		cout << "\n--- request ---" << endl;
+		req.stream.print_line();
+		cout << "\n--- request ---" << endl;
 	}
-	req.stream.print();
 }
 
 //------------------------------------------------------------------------------
 
 void			Client::send_stream()
 {
-	cout << __func__ << endl;
 	if (w_set.get(sock.fd))
 	{
-		res.stream.print();
-		res.stream.pass();
+		
+		cout << __func__ << endl;
+		cout << "\n--- response ---" << endl;
+		res.stream.print_line();
+		cout << "\n--- response ---" << endl;
+		cout << "send: " << res.send_length << " / " << res.msg_length << endl;
+
+		
+		res.send_length += res.stream.pass();
+
+		
+		cout << "send: " << res.send_length << " / " << res.msg_length << endl;
+
+
+		
+		if (res.msg_length && res.msg_length <= res.send_length)
+		{
+			cout << "\n--- Send Done! ---" << endl;
+			// reset();
+			// usleep(1000000);
+			status = CLIENT_DONE;
+		}
 		w_set.del(sock.fd);
 	}
+}
+
+void			Client::reset()
+{
+	cout << __func__ << endl;
+	birth.set_current();
+	status = CLIENT_STARTLINE;
+	req.clear();
+	res.clear();
+	server = 0;
+	location = 0;
+	delete method;
+	method = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -238,8 +281,9 @@ void		Client::set_method()
 	cout << __func__ << endl;
 	if (!(location->method & (1 << req.method)))
 	{
-		cout << req.method << endl;
-		cout << location->method << endl;
+		cout << "Method Not allowed!" << endl;
+		cout << Method::method_strings[req.method] << endl;
+		cout << Method::get_allow(location->method) << endl;
 		throw 405; // Method not allowed
 	}
 }
@@ -275,6 +319,9 @@ void		Client::set_client()
 	{
 		case GET:
 			method = new MethodGet(req, res, *server, *location);
+			break;
+		case PUT:
+			method = new MethodPut(req, res, *server, *location);
 			break;
 		case POST:
 			method = new MethodPost(req, res, *server, *location);

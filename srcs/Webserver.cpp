@@ -273,7 +273,6 @@ void			Webserver::manage_clients()
 		{
 			cout << "- delete " << (*it)->sock.fd << endl;
 			o_set.del((*it)->sock.fd);
-			// close((*it)->sock.fd);
 			delete *it;
 			it = clients.erase(it);
 		}

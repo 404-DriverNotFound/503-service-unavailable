@@ -27,15 +27,101 @@ bool	Method::recv_body()
 
 //------------------------------------------------------------------------------
 
+bool	Method::run()
+{
+	cout << __func__ << endl;
+	switch (status)
+	{
+		case METHOD_RECV_BODY:
+			if (recv_body())
+			{
+				if (cgi)
+				{
+					status = METHOD_START_CGI;
+					goto METHOD_START_CGI;
+				}
+				else
+				{
+					status = METHOD_LOAD_HEADER;
+					goto METHOD_LOAD_HEADER;
+				}
+			}
+			if (status == METHOD_RECV_BODY)
+				break;
+
+		case METHOD_RECV_CHUNKED_BODY:
+			if (recv_chunked_body())
+			{
+				if (cgi)
+				{
+					status = METHOD_START_CGI;
+					goto METHOD_START_CGI;
+				}
+				else
+				{
+					status = METHOD_LOAD_HEADER;
+					goto METHOD_LOAD_HEADER;
+				}
+			}
+			if (status == METHOD_RECV_CHUNKED_BODY)
+				break;
+
+		case METHOD_START_CGI:
+		METHOD_START_CGI:
+			run_cgi();
+			status = METHOD_CGI_IS_RUNNING;
+
+		case METHOD_CGI_IS_RUNNING:
+			if (cgi->check_exit())
+			{
+				status = METHOD_LOAD_HEADER_CGI;
+				goto METHOD_LOAD_HEADER_CGI;
+			}
+			if (status == METHOD_CGI_IS_RUNNING)
+				break;
+			
+		case METHOD_LOAD_HEADER:
+		METHOD_LOAD_HEADER:
+			load_response_header();
+			status = METHOD_LOAD_BODY;
+			goto METHOD_LOAD_BODY;
+			
+		case METHOD_LOAD_HEADER_CGI:
+		METHOD_LOAD_HEADER_CGI:
+			load_cgi_header();
+			status = METHOD_LOAD_BODY;
+
+		case METHOD_LOAD_BODY:
+		METHOD_LOAD_BODY:
+			load_body();
+			if (status == METHOD_LOAD_BODY)
+				break;
+
+		case METHOD_DONE:
+		METHOD_DONE:
+			cout << "Method Done!" << endl;
+			return true;
+
+		default:
+			break;
+	}
+	return false;
+}
+
+//------------------------------------------------------------------------------
+
 bool	Method::recv_chunked_body()
 {
+	cout << __func__ << endl;
 	while (42)
 	{
 		switch (status_chunked)
 		{
 			case CHUNKED_SIZE:
+				cout << "- size: ";
 				if (req.stream.get_line(req.line))
 				{
+					cout << req.line << endl;
 					req.stream.pass_remain = ft::atoi_hex(req.line);
 					if (req.stream.pass_remain == 0)
 					{
@@ -48,10 +134,13 @@ bool	Method::recv_chunked_body()
 				}
 				else
 				{
+					cout << req.line << endl;
 					return false;
 				}
 			case CHUNKED_RECV:
+				cout << "- send: " << req.stream.pass_remain << endl;
 				req.stream.pass(req.stream.pass_remain);
+				cout << "- send: " << req.stream.pass_remain << endl;
 				if (req.stream.pass_remain == 0)
 				{
 					status_chunked = CHUNKED_NL;
@@ -69,6 +158,9 @@ bool	Method::recv_chunked_body()
 				{
 					return false;
 				}
+			default:
+				cout << status_chunked << endl;
+				break;
 		}
 	}
 	return false;
@@ -83,20 +175,21 @@ void	Method::run_cgi()
 
 //------------------------------------------------------------------------------
 
-void	Method::set_cgi_header()
+void	Method::load_cgi_header()
 {
 	Stream	stream(8000, fd_out);
 	string	line;
 
 	stream.fill(location.head_length);
+	size_t	cgi_header_size = stream.size();
 	while (stream.get_line(line))
 	{
-		res.content_length -= line.length();
-		res.content_length -= 2;
 		if (line.empty())
 			break ;
 		res.set_header(line);
 	}
+	cgi_header_size -= stream.size();
+	res.content_length = ft::file_size(name_out.c_str()) - cgi_header_size;
 	load_response_header();
 	res.stream.write(stream.it_buffer, stream.size());
 }
@@ -105,12 +198,12 @@ void	Method::set_cgi_header()
 
 void	Method::load_response_header()
 {
-	cout << "Method::" << __func__ << endl;
-	res.status_code = 200;
-	res.stream << res.get_startline();
-	res.stream << res.get_content_length(ft::file_size(req.path_translated.c_str()));
-	res.stream << res.get_server();
-	res.stream << "\r\n";
+	// cout << "Method::" << __func__ << endl;
+	// res.status_code = 200;
+	// res.stream << res.get_startline();
+	// res.stream << res.get_content_length();
+	// res.stream << res.get_server();
+	// res.stream << "\r\n";
 }
 
 //------------------------------------------------------------------------------
@@ -134,89 +227,6 @@ void	Method::load_body()
 
 //------------------------------------------------------------------------------
 
-bool	Method::run()
-{
-	cout << __func__ << endl;
-	switch (status)
-	{
-	case METHOD_RECV_BODY:
-		if (recv_body())
-		{
-			if (cgi)
-			{
-				status = METHOD_START_CGI;
-				goto METHOD_START_CGI;
-			}
-			else
-			{
-				status = METHOD_LOAD_HEADER;
-				goto METHOD_LOAD_HEADER;
-			}
-		}
-		if (status == METHOD_RECV_BODY)
-			break;
-
-	case METHOD_RECV_CHUNKED_BODY:
-		if (recv_chunked_body())
-		{
-			if (cgi)
-			{
-				status = METHOD_START_CGI;
-				goto METHOD_START_CGI;
-			}
-			else
-			{
-				status = METHOD_LOAD_HEADER;
-				goto METHOD_LOAD_HEADER;
-			}
-		}
-		if (status == METHOD_RECV_CHUNKED_BODY)
-			break;
-
-	case METHOD_START_CGI:
-	METHOD_START_CGI:
-		run_cgi();
-		status = METHOD_CGI_IS_RUNNING;
-
-	case METHOD_CGI_IS_RUNNING:
-		if (cgi->check_exit())
-		{
-			status = METHOD_LOAD_HEADER_CGI;
-			goto METHOD_LOAD_HEADER_CGI;
-		}
-		if (status == METHOD_CGI_IS_RUNNING)
-			break;
-		
-	case METHOD_LOAD_HEADER:
-	METHOD_LOAD_HEADER:
-		load_response_header();
-		status = METHOD_LOAD_BODY;
-		goto METHOD_LOAD_BODY;
-		
-	case METHOD_LOAD_HEADER_CGI:
-	METHOD_LOAD_HEADER_CGI:
-		set_cgi_header();
-		status = METHOD_LOAD_BODY;
-
-	case METHOD_LOAD_BODY:
-	METHOD_LOAD_BODY:
-		load_body();
-		if (status == METHOD_LOAD_BODY)
-			break;
-
-	case METHOD_DONE:
-	METHOD_DONE:
-		cout << "Method Done!" << endl;
-		return true;
-
-	default:
-		break;
-	}
-	return false;
-}
-
-//------------------------------------------------------------------------------
-
 void		Method::open_file_base(const string& path)
 {
 	cout << "path: " << req.path_translated << endl;
@@ -229,13 +239,6 @@ void		Method::open_file_base(const string& path)
 		req.path_translated.append(path_tmp);
 		cout << "path(index): " << req.path_translated << endl;
 	}
-	else
-	{
-		string	path_tmp = ft::find(path, location.index);
-		if (path_tmp.empty())
-			throw 404;
-	}
-	
 }
 
 //------------------------------------------------------------------------------
@@ -248,10 +251,10 @@ void		Method::open_file(e_openfile option)
 	case OPEN_GET:
 		open_file_base(req.path_translated);
 		fd_out = open(req.path_translated.c_str(), O_RDONLY);
-		cout << fd_out << endl;
 		if (fd_out < 0)
-			throw 500;
+			throw 404;
 		res.stream.fd_in = fd_out;
+		name_out = req.path_translated;
 		break;
 
 	case OPEN_PUT:
@@ -260,7 +263,9 @@ void		Method::open_file(e_openfile option)
 		fd_in = open(req.path_translated.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);
 		if (fd_in < 0)
 			throw 500;
+		cout << "path: " << req.path_translated << endl;
 		req.stream.fd_out = fd_in;
+		name_in = req.path_translated;
 		break;
 
 	case OPEN_POST:
@@ -357,6 +362,7 @@ string		Method::get_allow(uint32_t flag)
 			line += get_method(i);
 			k++;
 		}
+		flag >>= 1;
 	}
 	line += "\r\n";
 	return line;
@@ -406,3 +412,11 @@ void		Method::init_method_strings()
 	method_strings[PUT] = string("PUT");
 	method_strings[TRACE] = string("TRACE");
 }
+
+// int			main()
+// {
+// 	Method::init_method_num();
+// 	Method::init_method_flags();
+// 	Method::init_method_strings();
+// 	cout << Method::get_allow(0) << endl;
+// }

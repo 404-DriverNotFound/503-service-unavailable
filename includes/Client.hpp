@@ -60,7 +60,7 @@ struct Client
 
 	void			routine();
 	void			manage_err(int code);
-
+	void			reset();
 	void			process();
 	void				set_request_startline();
 	void				set_request_header();

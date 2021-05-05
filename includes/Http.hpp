@@ -44,6 +44,7 @@ struct Http
 	public:
 	/*constructor*/					Http(int sock_fd);
 	void							set_header(const string& line);
+	virtual	void					clear() = 0;
 
 	/*--------------------------------------------------------------------------
 	Static Methods

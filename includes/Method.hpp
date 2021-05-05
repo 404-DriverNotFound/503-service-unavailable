@@ -61,7 +61,7 @@ struct	Method
 	bool							recv_body();		// 본문 받기, 끝나면 참
 	bool							recv_chunked_body();	// 조각난 본문 받기, 끝나면 참
 	void							run_cgi();			// cgi 실행
-	void							set_cgi_header();	// cgi 실행결과에서 헤드 추가하기
+	void							load_cgi_header();	// cgi 실행결과에서 헤드 추가하기
 	virtual void					load_response_header();	// 응답헤더를 스트림에 적재
 	void							load_cgi_tmp_remain();	// 응답헤더를 만들고 남은 것을 스트림에 적재
 	void							load_body();		// cgi실행결과를 적재

@@ -12,6 +12,7 @@ PUT
 	if (req.headers[TRANSFER_ENCODING] == "chunked")
 	{
 		status = METHOD_RECV_CHUNKED_BODY;
+		status_chunked = CHUNKED_SIZE;
 	}
 	else
 	{
@@ -20,3 +21,12 @@ PUT
 	}
 }
 
+void	MethodPut::load_response_header() 
+{
+	cout << "MethodPut::" << __func__ << endl;
+	res.status_code = 201;
+	res.stream << res.get_startline();
+	res.stream << res.get_server();
+	res.stream << "\r\n";
+	res.msg_length = res.stream.size();
+}
