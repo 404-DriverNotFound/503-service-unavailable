@@ -270,7 +270,14 @@ size_t		Stream::pass()
 	if (buffers.empty())
 		return 0;
 	len = ::write(fd_out, it_buffer, end - it_buffer);
-	delete_buffer();
+	if (len != end - it_buffer)
+	{
+		it_buffer += len;
+	}
+	else
+	{
+		delete_buffer();
+	}
 	return len;
 }
 //------------------------------------------------------------------------------

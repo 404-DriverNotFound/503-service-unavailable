@@ -52,7 +52,7 @@ all : $(NAME)
 
 disk: 
 	rm -rf ~/Library/Caches
-	rm ./.temp*
+	rm -rf ./.temp*
 
 $(DIR_OBJS):
 	mkdir $(DIR_OBJS)

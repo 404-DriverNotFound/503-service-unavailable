@@ -239,10 +239,10 @@ void	Method::load_body()
 	cout << __func__ << ": " << len << endl;
 	if (len == 0)
 	{
-		cout << "- fill done!" << endl;
-		cout << "len: " << lllen << endl;
-		char	buff[10];
-		read(0, buff, 1);
+		// cout << "- fill done!" << endl;
+		// cout << "len: " << lllen << endl;
+		// char	buff[10];
+		// read(0, buff, 1);
 
 		status = METHOD_DONE;
 	}
