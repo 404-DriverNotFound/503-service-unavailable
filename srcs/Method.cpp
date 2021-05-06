@@ -8,7 +8,9 @@ string					Method::method_strings[NUM_METHOD];
 
 		Method::Method(HttpReq& req, HttpRes& res, Server& server, Location& location)
 :req(req), res(res), cgi(0), server(server), location(location), fd_in(-1), fd_out(-1)
-{}
+{
+	lllen = 0;
+}
 
 //------------------------------------------------------------------------------
 
@@ -162,8 +164,9 @@ bool	Method::recv_chunked_body()
 				{
 					return false;
 				}
+				break;
 			default:
-				cout << status_chunked << endl;
+				cout << "status chunked: " <<  status_chunked << endl;
 				break;
 		}
 	}
@@ -181,7 +184,14 @@ void	Method::run_cgi()
 
 void	Method::load_cgi_header()
 {
-	Stream	stream(8000, fd_out);
+	cout << __func__ << endl;
+
+	close(fd_out);
+	fd_out = open(name_out.c_str(), O_RDONLY);
+	res.stream.fd_in = fd_out;
+
+
+	Stream	stream(location.head_length, fd_out);
 	string	line;
 
 	stream.fill(location.head_length);
@@ -195,38 +205,46 @@ void	Method::load_cgi_header()
 	cgi_header_size -= stream.size();
 	res.content_length = ft::file_size(name_out.c_str()) - cgi_header_size;
 	load_response_header();
+	res.msg_length = res.stream.size();
+	res.msg_length += res.content_length;
+	
+	lllen += stream.size();
 	res.stream.write(stream.it_buffer, stream.size());
 }
 
 //------------------------------------------------------------------------------
 
-void	Method::load_response_header()
-{
-	// cout << "Method::" << __func__ << endl;
-	// res.status_code = 200;
-	// res.stream << res.get_startline();
-	// res.stream << res.get_content_length();
-	// res.stream << res.get_server();
-	// res.stream << "\r\n";
-}
+// void	Method::load_response_header()
+// {
+// 	// cout << "Method::" << __func__ << endl;
+// 	// res.status_code = 200;
+// 	// res.stream << res.get_startline();
+// 	// res.stream << res.get_content_length();
+// 	// res.stream << res.get_server();
+// 	// res.stream << "\r\n";
+// }
 
 //------------------------------------------------------------------------------
 
 void	Method::load_body()
 {
+	cout << __func__ << endl;
 	if (fd_out < 0)
 	{
 		status = METHOD_DONE;
 		return ;
 	}
-	size_t	len = res.stream.fill(res.stream.default_capacity);
+	ssize_t	len = res.stream.fill(res.stream.default_capacity);
+	lllen += len;
 	cout << __func__ << ": " << len << endl;
 	if (len == 0)
 	{
 		cout << "- fill done!" << endl;
+		cout << "len: " << lllen << endl;
+		char	buff[10];
+		read(0, buff, 1);
+
 		status = METHOD_DONE;
-		close(fd_out);
-		fd_out = -1;
 	}
 }
 
@@ -282,6 +300,8 @@ void		Method::open_file(e_openfile option)
 		break;
 
 	case OPEN_POST_CGI:
+		if (ft::is_dir(req.path_translated.c_str()))
+			throw 404;
 		name_in = temp_name();
 		name_out = temp_name();
 		fd_in = open(name_in.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);

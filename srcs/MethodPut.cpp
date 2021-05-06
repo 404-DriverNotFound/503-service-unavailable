@@ -27,6 +27,8 @@ void	MethodPut::load_response_header()
 	res.status_code = 201;
 	res.stream << res.get_startline();
 	res.stream << res.get_server();
+	res.stream << res.get_content_length(6);
 	res.stream << "\r\n";
+	res.stream << "hello\n";
 	res.msg_length = res.stream.size();
 }

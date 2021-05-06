@@ -32,9 +32,9 @@ void			Cgi::start_cgi()
 
 	pid = fork();
 
-	lseek(fd_in, SEEK_SET, 0);
 	if (pid == 0)
 	{
+		lseek(fd_in, 0, SEEK_SET);
 		dup2(fd_in,	0);
 		dup2(fd_out, 1);
 		char* const*	argv = make_argv();
@@ -57,7 +57,6 @@ void			Cgi::start_cgi()
 	{
 		throw 500;
 	}
-	close(fd_in);
 	delete[] meta_variable;
 }
 
@@ -79,7 +78,7 @@ bool			Cgi::check_exit()
 	if (is_exit)
 	{
 		return_code = (status & 0xff00) >> 8;	// WEXITSTATUS
-		lseek(fd_out, SEEK_SET, 0);
+		// lseek(fd_out, 0, SEEK_SET);
 		return true;
 	}
 	return false;

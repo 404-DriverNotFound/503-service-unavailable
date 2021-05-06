@@ -54,7 +54,7 @@ void			Client::process()
 void			Client::routine()
 {
 	// usleep(400000);
-
+	cout << "status: " << status << endl;
 	switch (status)
 	{
 	case CLIENT_STARTLINE:
@@ -119,7 +119,7 @@ void			Client::recv_stream()
 {
 	if (r_set.get(sock.fd))
 	{
-													cout << __func__ << endl;
+		cout << __func__ << endl;
 		ssize_t	len = 0;
 		switch (status)
 		{
@@ -147,9 +147,12 @@ void			Client::recv_stream()
 		r_set.del(sock.fd);
 		
 		
-		// cout << "\n--- request ---" << endl;
-		// req.stream.print_line();
-		// cout << "\n--- request ---" << endl;
+		cout << "\n--- request ---" << endl;
+		if (req.stream.size() < 1000)
+			req.stream.print_line();
+		else
+			cout << "len: " << req.stream.size() << endl;
+		cout << "\n--- request ---" << endl;
 	}
 }
 
@@ -161,9 +164,12 @@ void			Client::send_stream()
 	{
 		
 		cout << __func__ << endl;
-		// cout << "\n--- response ---" << endl;
-		// res.stream.print_line();
-		// cout << "\n--- response ---" << endl;
+		cout << "\n--- response ---" << endl;
+		if (res.stream.size() < 1000)
+			res.stream.print_line();
+		else
+			cout << "len: " << (res.stream.buffers.front().end - res.stream.it_buffer) << endl;
+		cout << "\n--- response ---" << endl;
 		cout << "send: " << res.send_length << " / " << res.msg_length << endl;
 
 		
@@ -182,7 +188,6 @@ void			Client::send_stream()
 			else
 				reset();
 			
-			// usleep(1000000);
 			// status = CLIENT_DONE;
 		}
 		w_set.del(sock.fd);
@@ -200,6 +205,7 @@ void			Client::reset()
 	server = 0;
 	location = 0;
 	delete method;
+	cout << "--------------\n";
 	method = 0;
 }
 

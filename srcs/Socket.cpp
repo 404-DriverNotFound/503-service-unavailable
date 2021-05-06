@@ -4,7 +4,9 @@
 
 			Socket::Socket()
 : fd(-1)
-{}
+{
+	throw 10000;
+}
 
 //------------------------------------------------------------------------------
 
@@ -24,12 +26,15 @@
 
 			Socket::Socket(const Socket& x)
 : fd(-1)
-{}
+{
+	throw 10000;
+}
 
 //------------------------------------------------------------------------------
 
 Socket&		Socket::operator=(const Socket& x)
 {
+	throw 10000;
 	fd = -1;
 	return *this;
 }
@@ -40,8 +45,7 @@ Socket&		Socket::operator=(const Socket& x)
 {
 	if (fd >= 0)
 	{
-		// close(fd);
-		shutdown(fd, SHUT_RDWR);
+		close(fd);
 	}
 }
 
@@ -65,6 +69,7 @@ void		Socket::accept(int serv_sock)
 {
 	if ((fd = ::accept(serv_sock, reinterpret_cast<sockaddr*>(&s_addr), &socklen)) < 0)
 		throw accept_failed_exception();
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 	linger	lin;
 	lin.l_onoff = 0;
 	lin.l_linger = 1;

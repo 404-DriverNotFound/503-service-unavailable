@@ -49,7 +49,7 @@ void				MethodPost::load_response_header()
 	res.stream << res.get_startline();
 	if (cgi)
 	{
-		res.content_length += ft::file_size(name_out.c_str());
+		// res.content_length += ft::file_size(name_out.c_str());
 		res.stream << res.get_content_length(res.content_length);
 	}
 	else

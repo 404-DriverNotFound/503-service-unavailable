@@ -36,6 +36,7 @@ struct	Method
 	string							name_out;
 	e_method_status					status;
 	e_method_status_chunked			status_chunked;
+	size_t							lllen;
 
 	/*--------------------------------------------------------------------------
 	Static Members
@@ -54,7 +55,7 @@ struct	Method
 
 	public:
 	/*constructor*/					Method(HttpReq& req, HttpRes& res, Server& server, Location& location);
-	/*destrucctor*/					~Method();
+	virtual /*destrucctor*/			~Method();
 
 	bool							is_cgi_extension(); // cgi를 실행하는 확장자이면 참
 	void							recv_init();		// 본문 받기 초기화
@@ -62,7 +63,7 @@ struct	Method
 	bool							recv_chunked_body();	// 조각난 본문 받기, 끝나면 참
 	void							run_cgi();			// cgi 실행
 	void							load_cgi_header();	// cgi 실행결과에서 헤드 추가하기
-	virtual void					load_response_header();	// 응답헤더를 스트림에 적재
+	virtual void					load_response_header() = 0;	// 응답헤더를 스트림에 적재
 	void							load_cgi_tmp_remain();	// 응답헤더를 만들고 남은 것을 스트림에 적재
 	void							load_body();		// cgi실행결과를 적재
 	char**							make_meta_variable();	// 메타변수 생성

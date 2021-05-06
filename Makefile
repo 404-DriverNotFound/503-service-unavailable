@@ -47,12 +47,17 @@ RM = rm -rf
 #-------------------------------------------------------------------------------
 #	RULES
 #-------------------------------------------------------------------------------
+
 all : $(NAME)
+
+disk: 
+	rm -rf ~/Library/Caches
+	rm ./.temp*
 
 $(DIR_OBJS):
 	mkdir $(DIR_OBJS)
 
-$(NAME) : $(DIR_OBJS) $(OBJS)
+$(NAME) : disk $(DIR_OBJS) $(OBJS)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME)
 
 asan : $(DIR_OBJS) $(OBJS)
