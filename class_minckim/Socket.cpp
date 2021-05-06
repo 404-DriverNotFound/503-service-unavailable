@@ -6,13 +6,13 @@
 /*   By: elegie <elegie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/17 08:42:39 by elegie           ###   ########.fr       */
+/*   Updated: 2021/05/07 02:36:12 by elegie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
 
-			Socket::Socket(uint16_t port, uint32_t ip = INADDR_ANY)
+			Socket::Socket(uint32_t port, uint32_t ip = INADDR_ANY)
 {
 	bind(port, ip);
 }
@@ -27,7 +27,7 @@
 	close(fd);
 }
 
-void		Socket::bind(uint16_t port, uint32_t ip = INADDR_ANY)
+void		Socket::bind(uint32_t port, uint32_t ip = INADDR_ANY)
 {
 	sockaddr_in&	tmp = reinterpret_cast<sockaddr_in&>\
 							(dynamic_cast<sockaddr&>(*this));

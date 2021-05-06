@@ -25,7 +25,6 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	}
 	Cgi::set_path_cgi_bin(env);
 	HttpRes::init_status_code();
-	Http::init_map_headers();
 	Http::init_map_methods();
 	Method::init_method_num();
 	Method::init_method_flags();

@@ -518,6 +518,21 @@ bool		ft::is_dir(const char* path)
 	return S_ISDIR(stat_f.st_mode);
 }
 
+void		ft::str_meta_key(string& str)
+{
+	string::iterator	it = str.begin();
+	string::iterator	end = str.end();
+
+	while (it != end)
+	{
+		if ('a' <= *it && *it <= 'z')
+			*it -= 32;
+		else if (*it == '-')
+			*it = '_';
+		++it;
+	}
+}
+
 // int		main(int argc, char** argv, char** env)
 // {
 // 	ft::strdup()

@@ -1,7 +1,7 @@
 server
 	root ./root
 	server_name localhost
-	port 9191
+	port 9190
 	error_page error.html
 	index index.html
 	head_length 8000

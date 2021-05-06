@@ -9,14 +9,14 @@ PUT
 {
 	cout << __func__ << endl;
 	open_file(OPEN_PUT);
-	if (req.headers[TRANSFER_ENCODING] == "chunked")
+	if (req.headers["TRANSFER_ENCODING"] == "chunked")
 	{
 		status = METHOD_RECV_CHUNKED_BODY;
 		status_chunked = CHUNKED_SIZE;
 	}
 	else
 	{
-		req.stream.pass_remain = ft::atoi(req.headers[CONTNET_LENGTH]);
+		req.stream.pass_remain = ft::atoi(req.headers["CONTNET_LENGTH"]);
 		status = METHOD_RECV_BODY;
 	}
 }

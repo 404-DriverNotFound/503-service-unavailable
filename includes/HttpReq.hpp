@@ -1,5 +1,6 @@
 #pragma once
 #include "Http.hpp"
+#include "Utils.hpp"
 
 /*##############################################################################
 Http Request

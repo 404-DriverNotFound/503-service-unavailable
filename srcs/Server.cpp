@@ -28,8 +28,6 @@ void	Server::Server_setter(std::deque<std::string>&	lines)
 
 	while (!lines.empty())
 	{
-		// cout << lines.front() << endl;
-
 		int		indent = ft::count_chr(lines.front(), '\t');
 		lines.front().erase(lines.front().begin(), lines.front().begin() + indent);
 		list<string>	tokens = ft::get_set_token(lines.front(), " ");
@@ -113,85 +111,6 @@ void	Server::Server_setter(std::deque<std::string>&	lines)
 		}
 		lines.pop_front();
 	}
-
-
-	// std::string	str = " \t";
-	// char	*base, *seq = str.begin().base();
-
-	// base = token[0].begin().base();
-	// while (!token.empty() && !ft::strncmp(base, "\t", 1))
-	// {
-	// 	++base;
-	// 	bool	flag = true;
-	// 	if (!ft::strncmp(base, "location", 8))
-	// 	{
-	// 		string		location_name = base + 9;
-	// 		Location	temp(token);
-	// 		temp.name = location_name;
-	// 		locations.insert(std::make_pair(temp.name, temp));
-	// 		flag = false;
-	// 	}
-	// 	else if (!ft::strncmp(base, "root", 4))
-	// 	{
-	// 		root += (base + 5);
-	// 	}
-	// 	else if (!ft::strncmp(base, "server_name", 11))
-	// 	{
-	// 		name += (base + 12);
-	// 	}
-	// 	else if (!ft::strncmp(base, "port", 4))
-	// 	{
-	// 		port = static_cast<u_int16_t>(atoi(base + 5));
-	// 	}
-	// 	else if (!ft::strncmp(base, "error_page", 10))
-	// 	{
-	// 		std::string::const_iterator	it;
-	// 		std::string					temp;
-
-	// 		it = token[0].begin() + 12;
-	// 		while (ft::get_set_token(token[0], it, temp, seq))
-	// 		{
-	// 			error_page.insert(temp);
-	// 		}
-	// 		error_page.insert(temp);
-	// 	}
-	// 	else if (!ft::strncmp(base, "index", 5))
-	// 	{
-	// 		std::string::const_iterator	it;
-	// 		std::string					temp;
-
-	// 		it = token[0].begin() + 7;
-	// 		while (ft::get_set_token(token[0], it, temp, seq))
-	// 		{
-	// 			index.insert(temp);
-	// 		}
-	// 		index.insert(temp);
-	// 	}
-	// 	else if (!ft::strncmp(base, "head_length", 11))
-	// 	{
-	// 		head_length = static_cast<u_int32_t>(atoi(base + 12));
-	// 	}
-	// 	else if (!ft::strncmp(base, "body_length", 11))
-	// 	{
-	// 		body_length = static_cast<u_int64_t>(atoi(base + 12));
-	// 	}
-	// 	else if (!ft::strncmp(base, "autoindex", 8))
-	// 	{
-	// 		if (!ft::strncmp(base + 9, " on", 0))
-	// 			autoindex = true;
-	// 		else
-	// 			autoindex = false;
-	// 	}
-	// 	else if (!ft::strncmp(base, "timeout", 7))
-	// 	{
-	// 		timeout = static_cast<u_int16_t>(atoi(base + 7));
-	// 	}
-	// 	else
-	// 		throw Server::InvalidConfig();
-	// 	if (flag)
-	// 		token.pop_front();
-	// 	base = token[0].begin().base();
-	// }
 }
 
 /*--------------------------------------------------------------------------

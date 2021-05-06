@@ -8,7 +8,7 @@
 
 //------------------------------------------------------------------------------
 
-			Socket::Socket(uint16_t port, uint32_t ip)
+			Socket::Socket(uint32_t port, uint32_t ip)
 {
 	bind(port, ip);
 }
@@ -37,7 +37,7 @@
 
 //------------------------------------------------------------------------------
 
-void		Socket::bind(uint16_t port, uint32_t ip)
+void		Socket::bind(uint32_t port, uint32_t ip)
 {
 	ft::memset(&s_addr, 0, sizeof(s_addr));
 	if ((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0)

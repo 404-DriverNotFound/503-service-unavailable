@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <vector>
 #include "Utils.hpp"
 #include "Stream.hpp"
 
@@ -19,16 +20,14 @@ Cgi
  * - status
  * - is_exit = 종료 상태 (참이면 종료)(check_exit()으로 갱신)
  * - return_code = 반환값 (check_exit()으로 갱신)
- * - fd_write[2] = 서버에서 CGI로의 쓰기 전용 파이프
- * - fd_read[2] = CGI에서 서버로의 읽기 전용 파이프
- * - fd_in = fd_read[0]&
- * - fd_out = fd_write[1]&
- *     Server                 CGI
- *     -----------------------------------
- *     read:                  write:
- *      fd_read[0] <---------- fd_read[1]
- *     write:                 read:
- *      fd_write[1] ----------> fd_write[0]
+ * - fd_in = 읽기용
+ * - fd_out = 출력용
+ * - 
+ * - 임시파일(요청 본문)                    임시파일(응답 본문)
+ * - fd_in --------------> CGI -----------> fd_out
+ * -
+ * -
+ * -
  * 
  * - path = 실행할 스크립트의 경로 (init의 인자)
  * - extention = init에서 생성
@@ -59,28 +58,32 @@ Cgi
 
 
 */
+using std::vector;
+using std::map;
+using std::string;
+
 struct Cgi
 {
 	/*--------------------------------------------------------------------------
 	Typedef
 	--------------------------------------------------------------------------*/
 	public:
-	typedef std::map<std::string, std::string>	 map_path;
+	typedef map<string, string>	 map_path;
 
 	/*--------------------------------------------------------------------------
 	Member
 	--------------------------------------------------------------------------*/
 	public:
-	int				pid;
-	int				status;
-	int				is_exit;
-	int				return_code;
-	std::string&	path;
-	std::string&	extension;
-	char**			meta_variable;
-	int				fd_in;
-	int				fd_out;
-	static map_path	cgi_bin;
+	int					pid;
+	int					status;
+	int					is_exit;
+	int					return_code;
+	string&				path;
+	string&				extension;
+	int					fd_in;
+	int					fd_out;
+	static map_path		cgi_bin;
+	vector<string>		meta_variables;
 
 	/*--------------------------------------------------------------------------
 	Method
@@ -92,11 +95,12 @@ struct Cgi
 
 	public:
 	/*constructor*/	Cgi(string& path, string& extension, 
-					int fd_in, int fd_out, char** meta_variable);
+					int fd_in, int fd_out);
 	/*destructor*/	~Cgi();
 	void			start_cgi();
 	void			set_extension();
-	char* const*	make_argv();
+	char * const*	make_argv();
+	char * const*	make_meta_variable();
 	bool			check_exit();
 
 	/*--------------------------------------------------------------------------

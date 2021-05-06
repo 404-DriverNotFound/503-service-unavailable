@@ -1,4 +1,4 @@
-typedef unsigned short	uint16_t;
+typedef unsigned short	uint32_t;
 typedef short			int16_t;
 typedef unsigned int	uint32_t;
 
@@ -26,7 +26,7 @@ struct in_addr
 struct sockaddr_in
 {
 	sa_family_t		sin_family;		// 주소 체계(Address Family)
-	uint16_t		sin_port;		// 16비트 TCP/UDP 포트 번호
+	uint32_t		sin_port;		// 16비트 TCP/UDP 포트 번호
 	struct in_addr	sin_addr;		// 32비트 IP주소
 	char			sin_zero[8];	// 사용되지 않음
 };

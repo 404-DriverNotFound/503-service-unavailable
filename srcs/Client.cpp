@@ -4,6 +4,9 @@
 #include "../includes/MethodPut.hpp"
 #include "../includes/MethodHead.hpp"
 
+#define TIMEOUT 30000000
+#define DBG
+
 //------------------------------------------------------------------------------
 
 /*constructor*/	Client::Client(int accept_fd, map<string, Server>& servers, 
@@ -91,8 +94,10 @@ void			Client::manage_err(int code)
 	res.stream << res.get_startline();
 	res.stream << res.get_server();
 	res.stream << res.get_content_length(7);
+	// TODO: 에러페이지 타입을 잘 적자
 	res.stream << string("Content-Type: text/plain; charset=utf-8\r\n");
 	res.stream << "\r\n";
+	// TODO: 에러페이지를 찾아서 전송하기
 	res.stream << string("Error\r\n");
 	res.send_length = 0;
 	res.msg_length = res.stream.size();
@@ -105,7 +110,7 @@ void			Client::manage_err(int code)
 bool			Client::is_expired()
 {
 	cout << "elapsed: " << (Time() - birth).get_time_sec() << endl;
-	if ((Time() - birth).get_time_usec() > 15000000)
+	if ((Time() - birth).get_time_usec() > TIMEOUT)
 	{
 		status = CLIENT_DONE;
 		return true;
@@ -162,7 +167,7 @@ void			Client::send_stream()
 {
 	if (w_set.get(sock.fd))
 	{
-		
+		#ifdef DBG
 		cout << __func__ << endl;
 		cout << "\n--- response ---" << endl;
 		if (res.stream.size() < 1000)
@@ -171,24 +176,27 @@ void			Client::send_stream()
 			cout << "len: " << (res.stream.buffers.front().end - res.stream.it_buffer) << endl;
 		cout << "\n--- response ---" << endl;
 		cout << "send: " << res.send_length << " / " << res.msg_length << endl;
-
+		#endif
+		
 		
 		res.send_length += res.stream.pass();
 
 		
+		#ifdef DBG
 		cout << "send: " << res.send_length << " / " << res.msg_length << endl;
-
+		#endif
 
 		
 		if (res.msg_length && res.msg_length <= res.send_length)
 		{
+			#ifdef DBG
 			cout << "\n--- Send Done! ---" << endl;
+			#endif
+
 			if (client_status == STATUS_DEAD)
 				status = CLIENT_DONE;
 			else
 				reset();
-			
-			// status = CLIENT_DONE;
 		}
 		w_set.del(sock.fd);
 	}
@@ -242,13 +250,22 @@ void			Client::set_request_header()
 void		Client::set_server()
 {
 	cout << __func__ << endl;
-	string				host;
-	string::const_iterator	it = req.headers[HOST].begin();
-	ft::get_chr_token(req.headers[HOST], it, host, ':');
-	iterator_server	it_server = servers.find(host);
+	// 헤더에서 호스트 찾기
+	map<string, string>::iterator	it_header = req.headers.find("HOST");
+	if (it_header == req.headers.end())
+	{
+		cout << "Host Empty\n";
+		throw 400;
+	}
+	// 호스트에서 포트 제거
+	string					host;
+	string::const_iterator	it_string = it_header->second.begin();
+	ft::get_chr_token(it_header->second, it_string, host, ':');
+	// 호스트로 서버 찾기
+	iterator_server			it_server = servers.find(host);
 	if (it_server == servers.end())
 	{
-		cout << "server not found: " << host << endl;
+		cout << "Server Not Found\n";
 		throw 404;
 	}
 	server = &it_server->second;
@@ -280,7 +297,7 @@ void		Client::check_auth()
 	if (location->auth.empty())
 		return ;
 
-	string&					line_auth = req.headers[AUTHORIZATION];
+	string&					line_auth = req.headers["AUTHORIZATION"];
 	string::const_iterator	it = line_auth.begin();
 	string					client_auth_type;
 	string					client_auth;

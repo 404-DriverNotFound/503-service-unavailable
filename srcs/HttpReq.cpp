@@ -62,7 +62,7 @@ void		HttpReq::set_path(string& token)
 
 void		HttpReq::set_method(const string& token)
 {
-	map<string, uint16_t>::iterator it = Http::map_method.find(token);
+	map<string, uint32_t>::iterator it = Http::map_method.find(token);
 	if (it == Http::map_method.end())
 		throw 400;
 	method = it->second;
@@ -88,10 +88,7 @@ string		HttpReq::get_location_name()
 void		HttpReq::clear()
 {
 	cout << "Req clear\n";
-	for (int i = 0 ; i < NUM_HEADERS ; i++)
-	{
-		headers[i].clear();
-	}
+	headers.clear();
 	stream.clear();
 	protocol.clear();
 	content_length = 0;

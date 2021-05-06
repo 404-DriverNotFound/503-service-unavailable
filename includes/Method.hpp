@@ -66,7 +66,7 @@ struct	Method
 	virtual void					load_response_header() = 0;	// 응답헤더를 스트림에 적재
 	void							load_cgi_tmp_remain();	// 응답헤더를 만들고 남은 것을 스트림에 적재
 	void							load_body();		// cgi실행결과를 적재
-	char**							make_meta_variable();	// 메타변수 생성
+	void							make_meta_variable();	// 메타변수 생성
 
 	void							open_file_base(const string& path);
 	void							open_file(e_openfile option);	// 전송할 파일

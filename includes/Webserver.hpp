@@ -34,7 +34,7 @@ struct Webserver
 	/*--------------------------------------------------------------------------
 	typedef
 	--------------------------------------------------------------------------*/
-	typedef map<uint16_t, map<string, Server> >::iterator	server_iterator;
+	typedef map<uint32_t, map<string, Server> >::iterator	server_iterator;
 	typedef vector<Socket*>::iterator						socket_iterator;
 	typedef list<Client*>::iterator							client_iterator;
 	
@@ -48,7 +48,7 @@ struct Webserver
 	FdSet								w_set;
 	FdSet								e_set;
 	vector<Socket*>						sockets;
-	map<uint16_t, map<string, Server> >	servers;
+	map<uint32_t, map<string, Server> >	servers;
 	list<Client*>						clients;
 
 	/*--------------------------------------------------------------------------
