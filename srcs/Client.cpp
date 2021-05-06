@@ -169,9 +169,9 @@ void			Client::send_stream()
 		if (res.msg_length && res.msg_length <= res.send_length)
 		{
 			cout << "\n--- Send Done! ---" << endl;
-			// reset();
+			reset();
 			// usleep(1000000);
-			status = CLIENT_DONE;
+			// status = CLIENT_DONE;
 		}
 		w_set.del(sock.fd);
 	}
