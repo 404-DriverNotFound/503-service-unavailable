@@ -35,8 +35,9 @@ void		Stream::init(size_t capacity, int in, int out)
 	token_factor = false;
 }
 //------------------------------------------------------------------------------
-size_t		Stream::fill(size_t s)
+ssize_t		Stream::fill(size_t s)
 {
+	cout << __func__ << endl;
 	if (buffers.empty())
 	{
 		add_buffer(s);
@@ -49,7 +50,9 @@ size_t		Stream::fill(size_t s)
 	Buffer&		tmp = buffers.back();
 	ssize_t len = ::read(fd_in, tmp.end, s);
 	if (len < 0)
-		throw 500;
+		return -1;
+	// if (len < 0)
+	// 	throw 500;
 	tmp.end += len;
 	tmp.remain -= len;
 	return len;
@@ -192,7 +195,6 @@ size_t		Stream::pass(size_t s)
 
 	uint8_t*	end = buffers.front().end;
 	size_t		len = 0;
-	cout << "enter pass" << len << endl;
 	while (s && !buffers.empty())
 	{
 		end = buffers.front().end;
@@ -200,21 +202,21 @@ size_t		Stream::pass(size_t s)
 		if (buffers.empty())
 		{
 			pass_remain = s;
-			cout << "empty buffer" << len << endl;
+			cout << "  - empty buffer" << len << endl;
 			return 0;
 		}
 		if (s > end - it_buffer)
 		{
-			cout << "write1 bf" << len << endl;
+			cout << "  - write1 bf: " << len << endl;
 			len = ::write(fd_out, it_buffer, end - it_buffer);
-			cout << "write1 af" << len << endl;
+			cout << "  - write1 af: " << len << endl;
 			delete_buffer();
 		}
 		else
 		{
-			cout << "write2 bf" << len << endl;
+			cout << "  - write2 bf: " << len << endl;
 			len = ::write(fd_out, it_buffer, s);
-			cout << "write2 af" << len << endl;
+			cout << "  - write2 af: " << len << endl;
 		}
 		pass_remain = s - len;
 		s -= len;

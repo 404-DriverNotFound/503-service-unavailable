@@ -16,6 +16,10 @@ string					Method::method_strings[NUM_METHOD];
 {
 	if (cgi)
 		delete cgi;
+	if (fd_in >= 0)
+		close(fd_in);
+	if (fd_out >= 0)
+		close(fd_out);
 }
 
 //------------------------------------------------------------------------------
@@ -222,6 +226,7 @@ void	Method::load_body()
 		cout << "- fill done!" << endl;
 		status = METHOD_DONE;
 		close(fd_out);
+		fd_out = -1;
 	}
 }
 
@@ -281,6 +286,13 @@ void		Method::open_file(e_openfile option)
 		name_out = temp_name();
 		fd_in = open(name_in.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);
 		fd_out = open(name_out.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);
+		req.stream.fd_out = fd_in;
+		res.stream.fd_in = fd_out;	
+		if (fd_in < 0 || fd_out < 0)
+		{
+			cout << "FDERR!\n";
+			exit(1);
+		}
 
 	default:
 		break;
@@ -301,9 +313,10 @@ string		Method::temp_name()
 
 char**		Method::make_meta_variable()
 {
+	cout << __func__ << endl;
 	char**	meta_var = new char*[18];
 	string	meta_var_str[17];
-	for (int i = 0 ; i < 16 ; i++)
+	for (int i = 0 ; i < 17 ; i++)
 	{
 		meta_var_str[i].reserve(200);
 	}
@@ -325,11 +338,17 @@ char**		Method::make_meta_variable()
 	meta_var_str[14] = string("SERVER_PORT="		).append(ft::itoa(server.port));
 	meta_var_str[15] = string("SERVER_PROTOCOL="	).append(req.protocol);
 	meta_var_str[16] = string("SERVER_SOFTWARE="	).append("Webserver42/1.0.0");
-	for (int i = 0 ; i < 16 ; i++)
+	for (int i = 0 ; i < 17 ; i++)
 	{
-		meta_var[i] = ft::strdup(meta_var[i], meta_var_str[i].c_str());
+		meta_var[i] = ft::strdup(meta_var_str[i].c_str());
 	}
 	meta_var[17] = 0;
+		// for (int i = 0 ; i < 17 ; i++)
+		// {
+		// 	cout << meta_var[i] << endl;
+		// }
+		// exit(1);
+	cout << __func__ << endl;
 	return meta_var;
 }
 

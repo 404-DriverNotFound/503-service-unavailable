@@ -87,10 +87,12 @@ string		HttpReq::get_location_name()
 
 void		HttpReq::clear()
 {
+	cout << "Req clear\n";
 	for (int i = 0 ; i < NUM_HEADERS ; i++)
 	{
 		headers[i].clear();
 	}
+	stream.clear();
 	protocol.clear();
 	content_length = 0;
 

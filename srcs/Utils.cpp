@@ -355,13 +355,21 @@ long	ft::atoi_hex(const string& s)
 
 //------------------------------------------------------------------------------
 
-char*	ft::strdup(char* dest, const char* src)
+char*	ft::strdup(const char* src)
 {
+	char *temp;
+	char* dest;
 	dest = new char[ft::strlen(src) + 1];
+	temp = dest;
 	while (*src)
+	{
+		cout << *src;
 		*dest++ = *src++;
+	}
+	cout << endl;
 	*dest = 0;
-	return dest;
+	// cout << temp << endl;
+	return temp;
 }
 
 //------------------------------------------------------------------------------
@@ -512,7 +520,5 @@ bool		ft::is_dir(const char* path)
 
 // int		main(int argc, char** argv, char** env)
 // {
-// 	cout << ft::itoa_hex(0xf) << endl;
-// 	cout << ft::itoa_hex(0xff) << endl;
-// 	cout << ft::itoa_hex(0xabcdef) << endl;
+// 	ft::strdup()
 // }

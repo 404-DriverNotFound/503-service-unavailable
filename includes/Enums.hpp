@@ -74,3 +74,10 @@ enum e_openfile
 	OPEN_POST_CGI,
 	// DELETE,
 };
+
+enum e_client_status
+{
+	STATUS_ROUTINE,
+	STATUS_SUCCESS,
+	STATUS_DEAD,
+};

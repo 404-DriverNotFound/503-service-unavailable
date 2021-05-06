@@ -18,33 +18,46 @@ extension(extension),
 fd_in(fd_in),
 fd_out(fd_out),
 meta_variable(meta_variable)
-{}
+{
+	cout << __func__ << endl;
+
+}
 
 //------------------------------------------------------------------------------
 
 void			Cgi::start_cgi()
 {
+	cout << __func__ << endl;
+
+
 	pid = fork();
 
+	lseek(fd_in, SEEK_SET, 0);
 	if (pid == 0)
 	{
 		dup2(fd_in,	0);
 		dup2(fd_out, 1);
 		char* const*	argv = make_argv();
+		
+		
 		if (execve(cgi_bin[extension].c_str(), argv, meta_variable))
 		{
 			std::cerr << "CGI doesn't start" << endl;
 			std::cerr << "argv[0]" << argv[0] << endl;
 			std::cerr << "argv[1]" << argv[1] << endl;
 
+
+
 			perror("");
 			throw 500;	// status code 500
 		}
+		exit(1);
 	}
 	else if (pid < 0)
 	{
 		throw 500;
 	}
+	close(fd_in);
 	delete[] meta_variable;
 }
 
@@ -66,6 +79,7 @@ bool			Cgi::check_exit()
 	if (is_exit)
 	{
 		return_code = (status & 0xff00) >> 8;	// WEXITSTATUS
+		lseek(fd_out, SEEK_SET, 0);
 		return true;
 	}
 	return false;

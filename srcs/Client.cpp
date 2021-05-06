@@ -18,6 +18,7 @@ res(sock.fd),
 method(0)
 {
 	status = CLIENT_STARTLINE;
+	client_status = STATUS_ROUTINE;
 }
 
 //------------------------------------------------------------------------------
@@ -32,6 +33,10 @@ method(0)
 
 void			Client::process()
 {
+	cout << "in process\n";
+	if (is_expired())
+		status = CLIENT_DONE;
+	recv_stream();
 	try
 	{
 		routine();
@@ -41,6 +46,7 @@ void			Client::process()
 		manage_err(code);
 		status = CLIENT_SEND;
 	}
+	send_stream();
 }
 
 //------------------------------------------------------------------------------
@@ -48,10 +54,7 @@ void			Client::process()
 void			Client::routine()
 {
 	// usleep(400000);
-	cout << "in process\n";
-	if (is_expired())
-		status = CLIENT_DONE;
-	recv_stream();
+
 	switch (status)
 	{
 	case CLIENT_STARTLINE:
@@ -79,7 +82,6 @@ void			Client::routine()
 	default:
 		break;
 	}
-	send_stream();
 }
 
 void			Client::manage_err(int code)
@@ -95,6 +97,7 @@ void			Client::manage_err(int code)
 	res.send_length = 0;
 	res.msg_length = res.stream.size();
 	status = CLIENT_SEND;
+	client_status = STATUS_DEAD;
 }
 
 //------------------------------------------------------------------------------
@@ -102,7 +105,7 @@ void			Client::manage_err(int code)
 bool			Client::is_expired()
 {
 	cout << "elapsed: " << (Time() - birth).get_time_sec() << endl;
-	if ((Time() - birth).get_time_usec() > 30000000)
+	if ((Time() - birth).get_time_usec() > 15000000)
 	{
 		status = CLIENT_DONE;
 		return true;
@@ -117,7 +120,7 @@ void			Client::recv_stream()
 	if (r_set.get(sock.fd))
 	{
 													cout << __func__ << endl;
-		size_t	len = 0;
+		ssize_t	len = 0;
 		switch (status)
 		{
 			case CLIENT_STARTLINE:
@@ -127,7 +130,7 @@ void			Client::recv_stream()
 				len = req.stream.fill(0x2000);
 				break;
 			default:
-				len = req.stream.fill(0x10000);
+				len = req.stream.fill(req.stream.default_capacity);
 				break;
 		}
 		cout << "- input len: " << len << endl;
@@ -136,12 +139,17 @@ void			Client::recv_stream()
 			cout << "\n--- Client Done! ---" << endl;
 			status = CLIENT_DONE;
 		}
+		else if (len < 0)
+		{
+			cout << "\n--- Client ERR! ---" << endl;
+			status = CLIENT_DONE;
+		}
 		r_set.del(sock.fd);
 		
 		
-		cout << "\n--- request ---" << endl;
-		req.stream.print_line();
-		cout << "\n--- request ---" << endl;
+		// cout << "\n--- request ---" << endl;
+		// req.stream.print_line();
+		// cout << "\n--- request ---" << endl;
 	}
 }
 
@@ -153,9 +161,9 @@ void			Client::send_stream()
 	{
 		
 		cout << __func__ << endl;
-		cout << "\n--- response ---" << endl;
-		res.stream.print_line();
-		cout << "\n--- response ---" << endl;
+		// cout << "\n--- response ---" << endl;
+		// res.stream.print_line();
+		// cout << "\n--- response ---" << endl;
 		cout << "send: " << res.send_length << " / " << res.msg_length << endl;
 
 		
@@ -169,7 +177,11 @@ void			Client::send_stream()
 		if (res.msg_length && res.msg_length <= res.send_length)
 		{
 			cout << "\n--- Send Done! ---" << endl;
-			reset();
+			if (client_status == STATUS_DEAD)
+				status = CLIENT_DONE;
+			else
+				reset();
+			
 			// usleep(1000000);
 			// status = CLIENT_DONE;
 		}
@@ -179,6 +191,7 @@ void			Client::send_stream()
 
 void			Client::reset()
 {
+	client_status = STATUS_ROUTINE;
 	cout << __func__ << endl;
 	birth.set_current();
 	status = CLIENT_STARTLINE;

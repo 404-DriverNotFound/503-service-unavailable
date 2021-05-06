@@ -39,6 +39,7 @@ struct Client
 	FdSet&					r_set;
 	FdSet&					w_set;
 	e_status				status;		// 현재 처리 상태
+	e_client_status			client_status;
 	HttpReq					req;		// 요청메시지
 	HttpRes					res;		// 응답메시지
 	Server*					server;		// 참조할 서버

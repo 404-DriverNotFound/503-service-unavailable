@@ -131,6 +131,7 @@ string		HttpRes::get_www_authenticate(const string& realm)
 
 void		HttpRes::clear()
 {
+	cout << "Res clear\n";
 	for (int i = 0 ; i < NUM_HEADERS ; i++)
 	{
 		headers[i].clear();

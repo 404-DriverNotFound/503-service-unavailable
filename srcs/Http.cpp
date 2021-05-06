@@ -8,7 +8,7 @@ std::map<std::string, u_int16_t>	Http::map_method;
 std::map<std::string, u_int16_t>	Http::map_header;
 
 Http::Http(int sock_fd)
-: stream(0x10000, sock_fd, sock_fd), content_length(0)
+: stream(0x1000000, sock_fd, sock_fd), content_length(0)
 {}
 
 //------------------------------------------------------------------------------

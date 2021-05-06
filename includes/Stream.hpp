@@ -48,7 +48,7 @@ struct Stream
 	void			init(size_t default_capacity, int fd_in, int fd_out = 1);
 	size_t			pass(size_t s);					// 스트림 내부 버퍼로부터 외부의 fd로 바로 쓰기
 	size_t			pass();							// pass 최댓값
-	size_t			fill(size_t s);					// 스트림 내부로 읽어들이기
+	ssize_t			fill(size_t s);					// 스트림 내부로 읽어들이기
 	void			write(const string& str);		// 스트림에 데이터 쓰기
 	void			write(uint8_t*	buff, size_t s);
 	string			read(size_t s);					// 스트림 내부 버퍼로부터 밖으로 읽기

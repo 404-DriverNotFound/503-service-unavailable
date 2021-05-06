@@ -24,6 +24,7 @@ POST
 			req.stream.pass_remain = ft::atoi(req.headers[CONTNET_LENGTH]);
 			status = METHOD_RECV_BODY;
 		}
+		cout << __func__ << endl;
 	}
 	else
 	{

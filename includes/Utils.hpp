@@ -59,7 +59,7 @@ string			find(const string& path, set<string> files);
 long			atoi(const string& s);
 string			itoa(long n);
 string			itoa_hex(long n);
-char*			strdup(char* dest, const char* src);
+char*			strdup(const char* src);
 long			atoi_hex(const string& s);
 string			get_last_modified(const char* path);
 Date			time_convert(long time_sec);
