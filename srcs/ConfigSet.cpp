@@ -3,7 +3,7 @@
 ConfigSet::ConfigSet()
 : method(0),
 head_length(8000),
-body_length(1000000),
+body_length(200000000),
 autoindex(false),
 timeout(5000000)
 {}

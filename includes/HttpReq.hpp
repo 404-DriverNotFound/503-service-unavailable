@@ -22,6 +22,7 @@ struct HttpReq : public Http
 	string			query;
 	uint32_t		method;
 	list<string>	path;
+	size_t			recv_length;
 	
 	/*--------------------------------------------------------------------------
 	Method

@@ -36,6 +36,7 @@ struct	Method
 	string							name_out;
 	e_method_status					status;
 	e_method_status_chunked			status_chunked;
+	e_openfile						open_option;
 	size_t							lllen;
 
 	/*--------------------------------------------------------------------------

@@ -71,3 +71,7 @@ bool			is_dir(const char* path);
 bool			rm_df(const char* path);
 void			str_meta_key(string& str);
 }		// end ft
+
+#define STOP\
+	char	buffff[10];\
+	read(0, buffff, 5);

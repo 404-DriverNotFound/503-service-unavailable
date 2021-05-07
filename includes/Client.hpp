@@ -75,7 +75,7 @@ struct Client
 	void			recv_stream();
 	void			send_stream();
 	bool			is_expired();	// 생성된 지 너무 오래되면 true
-
+	void			err();
 	// void			recv_start_line();
 	// void			recv_header();
 

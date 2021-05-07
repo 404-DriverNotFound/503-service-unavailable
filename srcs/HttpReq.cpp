@@ -9,7 +9,7 @@ map<int, string>	status_code_map;
 //------------------------------------------------------------------------------
 
 /*constructor*/	HttpReq::HttpReq(int sock_fd)
-: Http(sock_fd)
+: Http(sock_fd), recv_length(0)
 {}
 
 //------------------------------------------------------------------------------
@@ -99,6 +99,7 @@ void		HttpReq::clear()
 	extension.clear();
 	query.clear();
 	path.clear();
+	recv_length = 0;
 }
 
 void		HttpReq::set_extension()

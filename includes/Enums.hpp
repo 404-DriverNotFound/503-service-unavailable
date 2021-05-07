@@ -7,6 +7,7 @@ enum e_status
 	CLIENT_METHOD,
 	CLIENT_SEND,
 	CLIENT_DONE,
+	CLIENT_ERR,
 };
 
 
@@ -71,6 +72,7 @@ enum e_openfile
 	OPEN_PUT,
 	OPEN_GET,
 	OPEN_POST,
+	OPEN_POST_DIR,
 	OPEN_POST_CGI,
 	// DELETE,
 };

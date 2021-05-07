@@ -7,9 +7,10 @@ string					Method::method_strings[NUM_METHOD];
 //------------------------------------------------------------------------------
 
 		Method::Method(HttpReq& req, HttpRes& res, Server& server, Location& location)
-:req(req), res(res), cgi(0), server(server), location(location), fd_in(-1), fd_out(-1)
+:req(req), res(res), cgi(0), server(server), location(location), fd_in(-1), fd_out(-1),
+open_option(OPEN_GET)
 {
-	lllen = 0;
+	// lllen = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -22,12 +23,18 @@ string					Method::method_strings[NUM_METHOD];
 		close(fd_in);
 	if (fd_out >= 0)
 		close(fd_out);
+	if (open_option == OPEN_POST_CGI)
+		ft::rm_df(name_in.c_str());
+	if (open_option == OPEN_POST_CGI)
+		ft::rm_df(name_out.c_str());
 }
 
 //------------------------------------------------------------------------------
 
 bool	Method::recv_body()
 {
+	if (req.content_length > location.body_length)
+		throw 413;
 	return !req.stream.pass(req.stream.pass_remain);
 }
 
@@ -105,12 +112,7 @@ bool	Method::run()
 
 		case METHOD_DONE:
 		METHOD_DONE:
-			if (cgi)
-				for (vector<string>::iterator it = cgi->meta_variables.begin(); it != cgi->meta_variables.end() ; ++it)
-				{
-					cout << *it << endl;
-				}
-			cout << "Method Done!" << endl;
+			// cout << "Method Done!" << endl;
 			return true;
 
 		default:
@@ -129,11 +131,16 @@ bool	Method::recv_chunked_body()
 		switch (status_chunked)
 		{
 			case CHUNKED_SIZE:
-				cout << "- size: ";
+				// cout << "- size: ";
 				if (req.stream.get_line(req.line))
 				{
-					cout << req.line << endl;
+					// cout << req.line << endl;
 					req.stream.pass_remain = ft::atoi_hex(req.line);
+					req.recv_length += req.stream.pass_remain;
+					if (req.recv_length > location.body_length)
+					{
+						throw 413;
+					}
 					if (req.stream.pass_remain == 0)
 					{
 						return true;
@@ -149,9 +156,9 @@ bool	Method::recv_chunked_body()
 					return false;
 				}
 			case CHUNKED_RECV:
-				cout << "- send: " << req.stream.pass_remain << endl;
+				// cout << "- send: " << req.stream.pass_remain << endl;
 				req.stream.pass(req.stream.pass_remain);
-				cout << "- send: " << req.stream.pass_remain << endl;
+				// cout << "- send: " << req.stream.pass_remain << endl;
 				if (req.stream.pass_remain == 0)
 				{
 					status_chunked = CHUNKED_NL;
@@ -171,7 +178,7 @@ bool	Method::recv_chunked_body()
 				}
 				break;
 			default:
-				cout << "status chunked: " <<  status_chunked << endl;
+				// cout << "status chunked: " <<  status_chunked << endl;
 				break;
 		}
 	}
@@ -213,7 +220,7 @@ void	Method::load_cgi_header()
 	res.msg_length = res.stream.size();
 	res.msg_length += res.content_length;
 	
-	lllen += stream.size();
+	// lllen += stream.size();
 	res.stream.write(stream.it_buffer, stream.size());
 }
 
@@ -239,13 +246,12 @@ void	Method::load_body()
 		status = METHOD_DONE;
 		return ;
 	}
-	ssize_t	len = res.stream.fill(res.stream.default_capacity);
-	lllen += len;
-	cout << __func__ << ": " << len << endl;
+	ssize_t	len = res.stream.fill(res.content_length < res.stream.default_capacity ? res.content_length : res.stream.default_capacity);
+	// lllen += len;
 	if (len == 0)
 	{
 		// cout << "- fill done!" << endl;
-		// cout << "len: " << lllen << endl;
+		cout << "len: " << lllen << endl;
 		// char	buff[10];
 		// read(0, buff, 1);
 
@@ -297,12 +303,29 @@ void		Method::open_file(e_openfile option)
 		break;
 
 	case OPEN_POST:
-		if (ft::is_dir(req.path_translated.c_str()))
-			throw 404;
 		fd_in = open(req.path_translated.c_str(), O_CREAT | O_APPEND | O_RDWR, 0644);
 		req.stream.fd_out = fd_in;
 		res.stream.fd_in = fd_out;
 		break;
+
+	case OPEN_POST_DIR:
+		open_file_base(req.path_translated);
+		res.content_length = ft::file_size(req.path_translated.c_str());
+		name_in = temp_name();
+		name_out = req.path_translated;
+		fd_in = open(name_in.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);
+		fd_out = open(req.path_translated.c_str(), O_RDONLY);
+		if (fd_out < 0)
+			throw 404;
+		req.stream.fd_out = fd_in;
+		res.stream.fd_in = fd_out;
+		if (fd_in < 0 || fd_out < 0)
+		{
+			cout << "FDERR!\n";
+			exit(1);
+		}
+		break;
+		
 
 	case OPEN_POST_CGI:
 		if (ft::is_dir(req.path_translated.c_str()))
@@ -329,7 +352,7 @@ void		Method::open_file(e_openfile option)
 string		Method::temp_name()
 {
 	static unsigned int		count;
-	string		name("./.temp");
+	string		name("/Users/minckim/goinfre/temp");
 	name += ft::itoa(count++);
 	return name;
 }

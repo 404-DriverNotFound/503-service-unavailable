@@ -37,8 +37,8 @@ method(0)
 void			Client::process()
 {
 	cout << "in process\n";
-	if (is_expired())
-		status = CLIENT_DONE;
+	// if (is_expired())
+	// 	status = CLIENT_DONE;
 	recv_stream();
 	try
 	{
@@ -49,7 +49,7 @@ void			Client::process()
 		manage_err(code);
 		status = CLIENT_SEND;
 	}
-	send_stream();
+	
 }
 
 //------------------------------------------------------------------------------
@@ -79,9 +79,14 @@ void			Client::routine()
 		if (status == CLIENT_METHOD)
 			break;
 	case CLIENT_SEND:
+		send_stream();
 		break;
 	case CLIENT_DONE:
 		break;
+	case CLIENT_ERR:
+		err();
+		if (status == CLIENT_ERR)
+			break;
 	default:
 		break;
 	}
@@ -89,6 +94,7 @@ void			Client::routine()
 
 void			Client::manage_err(int code)
 {
+	cout <<__func__ << endl;
 	res.stream.clear();
 	res.status_code = code;
 	res.stream << res.get_startline();
@@ -101,8 +107,21 @@ void			Client::manage_err(int code)
 	res.stream << string("Error\r\n");
 	res.send_length = 0;
 	res.msg_length = res.stream.size();
-	status = CLIENT_SEND;
-	client_status = STATUS_DEAD;
+	status = CLIENT_ERR;
+	// status = CLIENT_SEND;
+	// client_status = STATUS_DEAD;
+}
+
+void			Client::err()
+{
+	cout <<__func__ << endl;
+	if (req.headers["TRANSFER_ENCODING"] == "chunked")
+	{
+		if (req.stream.get_line(req.line))
+			if (req.line == "0")
+				status = CLIENT_SEND;
+	}
+
 }
 
 //------------------------------------------------------------------------------
@@ -193,9 +212,9 @@ void			Client::send_stream()
 			cout << "\n--- Send Done! ---" << endl;
 			#endif
 
-			if (client_status == STATUS_DEAD)
-				status = CLIENT_DONE;
-			else
+			// if (client_status == STATUS_DEAD)// && req.method != POST)
+			// 	status = CLIENT_DONE;
+			// else
 				reset();
 		}
 		w_set.del(sock.fd);
@@ -204,8 +223,8 @@ void			Client::send_stream()
 
 void			Client::reset()
 {
-	client_status = STATUS_ROUTINE;
 	cout << __func__ << endl;
+	client_status = STATUS_ROUTINE;
 	birth.set_current();
 	status = CLIENT_STARTLINE;
 	req.clear();

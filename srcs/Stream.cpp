@@ -202,7 +202,7 @@ size_t		Stream::pass(size_t s)
 		if (buffers.empty())
 		{
 			pass_remain = s;
-			cout << "  - empty buffer" << len << endl;
+			// cout << "  - empty buffer" << len << endl;
 			return 0;
 		}
 		if (s > end - it_buffer)
@@ -223,29 +223,10 @@ size_t		Stream::pass(size_t s)
 	}
 	// cout << "out of pass" << len << endl;
 	return len;
-
-
-
-	// if (buffers.empty())
-	// 	return 0;
-	// uint8_t*	end = buffers.front().end;
-	// size_t		len = 0;
-	
-	// if (buffers.empty())
-	// {
-	// 	pass_remain = s;
-	// 	return 0;
-	// }
-	// if (s > end - it_buffer)
-	// {
-	// 	len = ::write(fd_out, it_buffer, end - it_buffer);
-	// 	delete_buffer();
-	// }
-	// else
-	// 	len = ::write(fd_out, it_buffer, s);
-	// pass_remain = s - len;
-	// return len;
 }
+
+//------------------------------------------------------------------------------
+
 void		Stream::print()
 {
 	list<Buffer>::iterator it = buffers.begin();

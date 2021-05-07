@@ -47,7 +47,8 @@ Socket&		Socket::operator=(const Socket& x)
 {
 	if (fd >= 0)
 	{
-		close(fd);
+		shutdown(fd, SHUT_RDWR);
+		// close(fd);
 	}
 }
 

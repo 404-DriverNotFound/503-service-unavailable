@@ -485,6 +485,8 @@ ssize_t		ft::file_size(const char* path)
 	return stat_f.st_size;
 }
 
+//------------------------------------------------------------------------------
+
 string		ft::addr_to_str(uint32_t addr)
 {
 	string	result;
@@ -498,6 +500,8 @@ string		ft::addr_to_str(uint32_t addr)
 	return result;
 }
 
+//------------------------------------------------------------------------------
+
 int			ft::count_chr(string& str, char c)
 {
 	string::iterator	it = str.begin();
@@ -510,6 +514,8 @@ int			ft::count_chr(string& str, char c)
 		return it - str.begin();
 }
 
+//------------------------------------------------------------------------------
+
 bool		ft::is_dir(const char* path)
 {
 	struct stat	stat_f;
@@ -517,6 +523,8 @@ bool		ft::is_dir(const char* path)
 	// return stat_f.st_mode & S_IFDIR;
 	return S_ISDIR(stat_f.st_mode);
 }
+
+//------------------------------------------------------------------------------
 
 void		ft::str_meta_key(string& str)
 {
@@ -533,10 +541,7 @@ void		ft::str_meta_key(string& str)
 	}
 }
 
-// int		main(int argc, char** argv, char** env)
-// {
-// 	ft::strdup()
-// }
+//------------------------------------------------------------------------------
 
 bool		ft::rm_df(const char *path)
 {
@@ -568,3 +573,18 @@ bool		ft::rm_df(const char *path)
 		unlink(path);
 	return (true);
 }
+
+// #include <fcntl.h>
+
+// int		main(int argc, char** argv, char** env)
+// {
+// 	int		fd = open("test", O_RDONLY);
+// 	cout << fd << endl;
+// 	close(fd);
+
+// 	ft::rm_df("ttt");
+
+// 	fd = open("test", O_RDONLY);
+// 	cout << fd << endl;
+// 	close(fd);
+// }
