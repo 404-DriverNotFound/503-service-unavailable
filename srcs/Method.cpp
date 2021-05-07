@@ -8,7 +8,9 @@ string					Method::method_strings[NUM_METHOD];
 
 		Method::Method(HttpReq& req, HttpRes& res, Server& server, Location& location)
 :req(req), res(res), cgi(0), server(server), location(location), fd_in(-1), fd_out(-1)
-{}
+{
+	lllen = 0;
+}
 
 //------------------------------------------------------------------------------
 
@@ -103,6 +105,11 @@ bool	Method::run()
 
 		case METHOD_DONE:
 		METHOD_DONE:
+			if (cgi)
+				for (vector<string>::iterator it = cgi->meta_variables.begin(); it != cgi->meta_variables.end() ; ++it)
+				{
+					cout << *it << endl;
+				}
 			cout << "Method Done!" << endl;
 			return true;
 
@@ -162,8 +169,9 @@ bool	Method::recv_chunked_body()
 				{
 					return false;
 				}
+				break;
 			default:
-				cout << status_chunked << endl;
+				cout << "status chunked: " <<  status_chunked << endl;
 				break;
 		}
 	}
@@ -181,7 +189,14 @@ void	Method::run_cgi()
 
 void	Method::load_cgi_header()
 {
-	Stream	stream(8000, fd_out);
+	cout << __func__ << endl;
+
+	// close(fd_out);
+	// fd_out = open(name_out.c_str(), O_RDONLY);
+	// res.stream.fd_in = fd_out;
+
+
+	Stream	stream(location.head_length, fd_out);
 	string	line;
 
 	stream.fill(location.head_length);
@@ -195,38 +210,46 @@ void	Method::load_cgi_header()
 	cgi_header_size -= stream.size();
 	res.content_length = ft::file_size(name_out.c_str()) - cgi_header_size;
 	load_response_header();
+	res.msg_length = res.stream.size();
+	res.msg_length += res.content_length;
+	
+	lllen += stream.size();
 	res.stream.write(stream.it_buffer, stream.size());
 }
 
 //------------------------------------------------------------------------------
 
-void	Method::load_response_header()
-{
-	// cout << "Method::" << __func__ << endl;
-	// res.status_code = 200;
-	// res.stream << res.get_startline();
-	// res.stream << res.get_content_length();
-	// res.stream << res.get_server();
-	// res.stream << "\r\n";
-}
+// void	Method::load_response_header()
+// {
+// 	// cout << "Method::" << __func__ << endl;
+// 	// res.status_code = 200;
+// 	// res.stream << res.get_startline();
+// 	// res.stream << res.get_content_length();
+// 	// res.stream << res.get_server();
+// 	// res.stream << "\r\n";
+// }
 
 //------------------------------------------------------------------------------
 
 void	Method::load_body()
 {
+	cout << __func__ << endl;
 	if (fd_out < 0)
 	{
 		status = METHOD_DONE;
 		return ;
 	}
-	size_t	len = res.stream.fill(res.stream.default_capacity);
+	ssize_t	len = res.stream.fill(res.stream.default_capacity);
+	lllen += len;
 	cout << __func__ << ": " << len << endl;
 	if (len == 0)
 	{
-		cout << "- fill done!" << endl;
+		// cout << "- fill done!" << endl;
+		// cout << "len: " << lllen << endl;
+		// char	buff[10];
+		// read(0, buff, 1);
+
 		status = METHOD_DONE;
-		close(fd_out);
-		fd_out = -1;
 	}
 }
 
@@ -282,6 +305,8 @@ void		Method::open_file(e_openfile option)
 		break;
 
 	case OPEN_POST_CGI:
+		if (ft::is_dir(req.path_translated.c_str()))
+			throw 404;
 		name_in = temp_name();
 		name_out = temp_name();
 		fd_in = open(name_in.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);
@@ -311,45 +336,50 @@ string		Method::temp_name()
 
 //------------------------------------------------------------------------------
 
-char**		Method::make_meta_variable()
+void		Method::make_meta_variable()
 {
 	cout << __func__ << endl;
-	char**	meta_var = new char*[18];
-	string	meta_var_str[17];
-	for (int i = 0 ; i < 17 ; i++)
+
+	cgi->meta_variables.reserve(17 + req.headers.size());
+	cgi->meta_variables.assign(17, string());
+
+	cgi->meta_variables[0] = string("AUTH_TYPE="		).append(location.auth_type);
+	cgi->meta_variables[1] = string("CONTENT_LENGTH="	).append(req.headers["CONTNET_LENGTH"]);
+	cgi->meta_variables[2] = string("CONTENT_TYPE="		).append(req.headers["CONTNET_TYPE"]);
+	cgi->meta_variables[3] = string("GATEWAY_INTERFACE=").append("CGI/1.1");
+	cgi->meta_variables[4] = string("PATH_INFO="		).append(req.path_info);
+	cgi->meta_variables[5] = string("PATH_TRANSLATED="	).append(req.path_translated);
+	cgi->meta_variables[6] = string("QUERY_STRING="		).append(req.query);
+	cgi->meta_variables[7] = string("REMOTE_ADDR="		).append("");
+	// cgi->meta_variables[7] = string("REMOTE_ADDR="		).append(ft::addr_to_str(ft::hton(sock.s_addr.sin_addr.s_addr)));
+	cgi->meta_variables[8] = string("REMOTE_IDENT="		).append(req.headers["AUTHORIZATION"]);
+	cgi->meta_variables[9] = string("REMOTE_USER="		).append("");
+	cgi->meta_variables[10] = string("REQUEST_METHOD="	).append(Method::method_strings[req.method]);
+	cgi->meta_variables[11] = string("REQUEST_URI="		).append(req.path_info);
+	cgi->meta_variables[12] = string("SCRIPT_NAME="		).append(req.path_translated);
+	cgi->meta_variables[13] = string("SERVER_NAME="		).append(server.name);
+	cgi->meta_variables[14] = string("SERVER_PORT="		).append(ft::itoa(server.port));
+	cgi->meta_variables[15] = string("SERVER_PROTOCOL="	).append(req.protocol);
+	cgi->meta_variables[16] = string("SERVER_SOFTWARE="	).append("Webserver42/1.0.0");
+
+	map<string, string>::iterator	it_header = req.headers.begin();
+	map<string, string>::iterator	it_header_end = req.headers.end();
+
+	while (it_header != it_header_end)
 	{
-		meta_var_str[i].reserve(200);
+		cgi->meta_variables.push_back(string());
+		cgi->meta_variables.back().reserve(100);
+		cgi->meta_variables.back() += "HTTP_";
+		cgi->meta_variables.back() += it_header->first;
+		cgi->meta_variables.back() += "=";
+		cgi->meta_variables.back() += it_header->second;
+		++it_header;
 	}
-	meta_var_str[0] = string("AUTH_TYPE="			).append(location.auth_type);
-	meta_var_str[1] = string("CONTENT_LENGTH="		).append(req.headers[CONTNET_LENGTH]);
-	meta_var_str[2] = string("CONTENT_TYPE="		).append(req.headers[CONTNET_LENGTH]);
-	meta_var_str[3] = string("GATEWAY_INTERFACE="	).append("CGI/1.1");
-	meta_var_str[4] = string("PATH_INFO="			).append(req.path_info);
-	meta_var_str[5] = string("PATH_TRANSLATED="		).append(req.path_translated);
-	meta_var_str[6] = string("QUERY_STRING="		).append(req.query);
-	meta_var_str[7] = string("REMOTE_ADDR="			).append("");
-	// meta_var_str[7] = string("REMOTE_ADDR="			).append(ft::addr_to_str(ft::hton(sock.s_addr.sin_addr.s_addr)));
-	meta_var_str[8] = string("REMOTE_IDENT="		).append(req.headers[AUTHORIZATION]);
-	meta_var_str[9] = string("REMOTE_USER="			).append("");
-	meta_var_str[10] = string("REQUEST_METHOD="		).append(Method::method_strings[req.method]);
-	meta_var_str[11] = string("REQUEST_URI="		).append(req.path_info);
-	meta_var_str[12] = string("SCRIPT_NAME="		).append(req.path_translated);
-	meta_var_str[13] = string("SERVER_NAME="		).append(server.name);
-	meta_var_str[14] = string("SERVER_PORT="		).append(ft::itoa(server.port));
-	meta_var_str[15] = string("SERVER_PROTOCOL="	).append(req.protocol);
-	meta_var_str[16] = string("SERVER_SOFTWARE="	).append("Webserver42/1.0.0");
-	for (int i = 0 ; i < 17 ; i++)
-	{
-		meta_var[i] = ft::strdup(meta_var_str[i].c_str());
-	}
-	meta_var[17] = 0;
-		// for (int i = 0 ; i < 17 ; i++)
-		// {
-		// 	cout << meta_var[i] << endl;
-		// }
-		// exit(1);
-	cout << __func__ << endl;
-	return meta_var;
+
+	// for (vector<string>::iterator it = cgi->meta_variables.begin(); it != cgi->meta_variables.end() ; ++it)
+	// {
+	// 	cout << *it << endl;
+	// }
 }
 
 //------------------------------------------------------------------------------

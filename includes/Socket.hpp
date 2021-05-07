@@ -6,13 +6,14 @@
 /*   By: minckim <minckim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/05/04 15:37:26 by minckim          ###   ########.fr       */
+/*   Updated: 2021/05/06 20:14:30 by minckim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 #include <errno.h>
 #include "Utils.hpp"
 

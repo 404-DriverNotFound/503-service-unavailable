@@ -12,15 +12,13 @@ Cgi::map_path	Cgi::cgi_bin;
 //------------------------------------------------------------------------------
 
 				Cgi::Cgi(string& path, string& extension, 
-				int fd_in, int fd_out, char** meta_variable)
+				int fd_in, int fd_out)
 : path(path), 
 extension(extension),
 fd_in(fd_in),
-fd_out(fd_out),
-meta_variable(meta_variable)
+fd_out(fd_out)
 {
 	cout << __func__ << endl;
-
 }
 
 //------------------------------------------------------------------------------
@@ -32,33 +30,29 @@ void			Cgi::start_cgi()
 
 	pid = fork();
 
-	lseek(fd_in, SEEK_SET, 0);
 	if (pid == 0)
 	{
+		lseek(fd_in, 0, SEEK_SET);
 		dup2(fd_in,	0);
 		dup2(fd_out, 1);
 		char* const*	argv = make_argv();
 		
 		
-		if (execve(cgi_bin[extension].c_str(), argv, meta_variable))
+		if (execve(cgi_bin[extension].c_str(), argv, make_meta_variable()))
 		{
 			std::cerr << "CGI doesn't start" << endl;
 			std::cerr << "argv[0]" << argv[0] << endl;
 			std::cerr << "argv[1]" << argv[1] << endl;
 
-
-
 			perror("");
-			throw 500;	// status code 500
+			exit(500);
+			// throw 500;	// status code 500
 		}
-		exit(1);
 	}
 	else if (pid < 0)
 	{
 		throw 500;
 	}
-	close(fd_in);
-	delete[] meta_variable;
 }
 
 //------------------------------------------------------------------------------
@@ -73,23 +67,47 @@ char* const*	Cgi::make_argv()
 	return argv;
 }
 
+//------------------------------------------------------------------------------
+
+char * const*	Cgi::make_meta_variable()
+{
+	char**	result = new char*[meta_variables.size() + 1];
+
+	for (int i = 0 ; i < meta_variables.size(); ++i)
+	{
+		result[i] = const_cast<char*>(meta_variables[i].c_str());
+	}
+	result[meta_variables.size()] = 0;
+	return result;
+}
+
+//------------------------------------------------------------------------------
+
 bool			Cgi::check_exit()
 {
 	is_exit = waitpid(pid, &status, WNOHANG);
 	if (is_exit)
 	{
 		return_code = (status & 0xff00) >> 8;	// WEXITSTATUS
-		lseek(fd_out, SEEK_SET, 0);
+		if (return_code)
+			throw 500;
+		lseek(fd_out, 0, SEEK_SET);
 		return true;
 	}
 	return false;
 }
 
+//------------------------------------------------------------------------------
+
 void			Cgi::set_path_cgi_bin(char** env)
 {
 	Cgi::cgi_bin[".php"] = ft::which("php", env);
 	Cgi::cgi_bin[".py"] = ft::which("python3", env);
+	#ifdef __APPLE__
 	Cgi::cgi_bin[".bla"] = "./test/cgi_tester";
+	#else
+	Cgi::cgi_bin[".bla"] = "./test/ubuntu_cgi_tester";
+	#endif
 }
 
 

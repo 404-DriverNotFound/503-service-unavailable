@@ -69,4 +69,5 @@ string			addr_to_str(uint32_t addr);
 int				count_chr(string& str, char c);
 bool			is_dir(const char* path);
 bool			rm_df(const char* path);
+void			str_meta_key(string& str);
 }		// end ft

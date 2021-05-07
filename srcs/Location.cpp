@@ -7,7 +7,6 @@
 Location::Location()
 : ConfigSet()
 {
-	//TODO
 }
 //------------------------------------------------------------------------------
 
@@ -17,7 +16,6 @@ cgi_extension(ref.cgi_extension),
 auth_type(ref.auth_type),
 auth(ref.auth)
 {
-	//TODO
 }
 
 Location::Location(std::deque<std::string>& lines)
@@ -135,103 +133,6 @@ Location::Location(std::deque<std::string>& lines)
 		}
 		lines.pop_front();
 	}
-
-
-	// cout << token.front() << endl;
-	// std::string	str = " \t";
-	// char	*base, *seq = str.begin().base();
-
-	// method = 0;
-	// base = token[0].begin().base();
-	// location += base + 10;
-	// token.pop_front();
-	// base = token[0].begin().base();
-	// while (!token.empty() && !ft::strncmp(base, "\t\t", 2))
-	// {
-	// 	base += 2;
-	// 	if (!ft::strncmp(base, "root", 4))
-	// 	{
-	// 		root += (base + 5);
-	// 	}
-	// 	else if (!ft::strncmp(base, "cgi", 3))
-	// 	{
-	// 		cgi += (base + 4);
-	// 	}
-	// 	else if (!ft::strncmp(base, "auth", 4))
-	// 	{
-	// 		char	buffer[1001];
-	// 		int		len;
-	// 		int		fd_auth;
-			
-	// 		fd_auth = open(base + 5, O_RDONLY);
-	// 		if (fd_auth < 0)
-	// 			throw AuthFailed();
-	// 		while ((len = read(fd_auth, buffer, 1000)) > 0)
-	// 		{
-	// 			buffer[len] = 0;
-	// 			auth.insert(auth.end(), buffer, buffer + len);
-	// 		}
-	// 		if (len < 0)
-	// 			throw AuthFailed();
-	// 		auth_type = "Basic";
-	// 		close(fd_auth);
-	// 	}
-	// 	else if (!ft::strncmp(base, "error_page", 10))
-	// 	{
-	// 		std::string::const_iterator	it;
-	// 		std::string					temp;
-
-	// 		it = token[0].begin() + 13;
-	// 		while (ft::get_set_token(token[0], it, temp, seq))
-	// 		{
-	// 			error_page.insert(temp);
-	// 		}
-	// 		error_page.insert(temp);
-	// 	}
-	// 	else if (!ft::strncmp(base, "index", 5))
-	// 	{
-	// 		std::string::const_iterator	it;
-	// 		std::string					temp;
-
-	// 		it = token[0].begin() + 8;
-	// 		while (ft::get_set_token(token[0], it, temp, seq))
-	// 		{
-	// 			index.insert(temp);
-	// 		}
-	// 		index.insert(temp);
-	// 	}
-	// 	else if (!ft::strncmp(base, "method", 6))
-	// 	{
-	// 		std::string::const_iterator	it;
-	// 		std::string					temp;
-	// 		bool						is_remain;
-
-	// 		it = token[0].begin() + 9;
-	// 		while (42)
-	// 		{
-	// 			is_remain = ft::get_set_token(token[0], it, temp, seq);
-	// 			map<string, uint16_t>::iterator	it_method = Method::method_flags.find(temp);
-	// 			if (it_method == Method::method_flags.end())
-	// 				throw InvalidMethod();
-	// 			method |= it_method->second;
-	// 			if (!is_remain)
-	// 				break;
-	// 		}
-	// 	}
-	// 	else if (!ft::strncmp(base, "body_length", 11))
-	// 	{
-	// 		body_length = static_cast<u_int64_t>(atoi(base + 12));
-	// 	}
-	// 	else if (!ft::strncmp(base, "autoindex", 8))
-	// 	{
-	// 		if (!ft::strncmp(base + 9, " on", 0))
-	// 			autoindex = true;
-	// 		else
-	// 			autoindex = false;
-	// 	}
-	// 	token.pop_front();
-	// 	base = token[0].begin().base();
-	// }
 }
 
 //------------------------------------------------------------------------------

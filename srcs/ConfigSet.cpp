@@ -5,7 +5,7 @@ ConfigSet::ConfigSet()
 head_length(8000),
 body_length(1000000),
 autoindex(false),
-timeout(0)
+timeout(5000000)
 {}
 
 ConfigSet::ConfigSet(const ConfigSet& x)

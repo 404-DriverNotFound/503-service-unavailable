@@ -28,7 +28,7 @@ string		HttpRes::get_startline()
 
 //------------------------------------------------------------------------------
 
-string		HttpRes::get_allow(uint16_t method)
+string		HttpRes::get_allow(uint32_t method)
 {
 	string	line("Allow: ");
 	line += Method::get_allow(method);
@@ -132,10 +132,7 @@ string		HttpRes::get_www_authenticate(const string& realm)
 void		HttpRes::clear()
 {
 	cout << "Res clear\n";
-	for (int i = 0 ; i < NUM_HEADERS ; i++)
-	{
-		headers[i].clear();
-	}
+	headers.clear();
 	protocol.clear();
 	content_length = 0;
 	

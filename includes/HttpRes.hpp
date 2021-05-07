@@ -27,7 +27,7 @@ struct HttpRes : public Http
 
 	string			get_startline();
 
-	string			get_allow(uint16_t method);
+	string			get_allow(uint32_t method);
 	string			get_content_language(const string& accept_language = string());
 	string			get_content_length(size_t size);
 	string			get_last_modified(const char* path);

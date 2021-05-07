@@ -16,7 +16,7 @@ void	broken(int code) {
 }
 
 Webserver::Webserver(int argc, char** argv, char** env)
-: max_connection(100), select_timeout(5000000)
+: max_connection(300), select_timeout(5000000)
 {
 	if (argc > 2)
 	{
@@ -25,7 +25,6 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	}
 	Cgi::set_path_cgi_bin(env);
 	HttpRes::init_status_code();
-	Http::init_map_headers();
 	Http::init_map_methods();
 	Method::init_method_num();
 	Method::init_method_flags();
@@ -34,13 +33,11 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	
 	signal(SIGPIPE, broken);
 	signal(SIGCHLD, SIG_IGN);
-	// signal(SIGPIPE, SIG_IGN);
 
 	config_parser(lines, argv[1]);
 	create_server(lines);
 	create_sockets();
 
-	// cout << *this << endl;
 	try
 	{
 		start_server();
@@ -125,6 +122,15 @@ void	Webserver::create_server(deque<string>& lines)
 			if (lines.empty())
 				break;
 		}
+		else if (tokens.front() == "max_connection")
+		{
+			max_connection = ft::atoi(*++tokens.begin());
+			tokens.pop_front();
+		}
+		else if (tokens.front().empty())
+		{
+			tokens.pop_front();
+		}
 		else
 			throw Webserver::InvalidServerBlock();
 	}
@@ -175,7 +181,11 @@ void			Webserver::start_server()
 		cout << endl;
 		cout << "################################################################################" << endl;
 		cout << endl;
-		// usleep(1000);
+
+
+		// usleep(100000);
+
+
 		r_set = o_set;
 		w_set = o_set;
 		e_set = o_set;
@@ -235,7 +245,7 @@ void			Webserver::check_new_connection()
 			// #endif
 			
 			o_set.set(clients.back()->sock.fd);
-			// fcntl(clients.back().sock.fd, O_NONBLOCK);
+			// fcntl(clients.back()->sock.fd, O_NONBLOCK);
 			
 			// #ifdef DBG
 			// cout << "- new client " << clients.back().sock.fd << endl;
@@ -258,6 +268,7 @@ void			Webserver::manage_clients()
 	// #ifdef DBG
 	// cout << '\n' << __func__ << "\n======================================"<< endl;
 	// #endif
+	char	temp[1];
 
 	for (client_iterator it = clients.begin() ; it != clients.end() ; ++it)
 	{

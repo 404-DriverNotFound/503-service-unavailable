@@ -25,7 +25,7 @@ struct Http
 	/*--------------------------------------------------------------------------
 	Members
 	--------------------------------------------------------------------------*/
-	string							headers[NUM_HEADERS];
+	map<string, string>				headers;
 	string							protocol;
 	ssize_t							content_length;
 	Stream							stream;
@@ -33,14 +33,14 @@ struct Http
 	/*--------------------------------------------------------------------------
 	Static Members
 	--------------------------------------------------------------------------*/
-	static map<string, uint16_t>	map_method;
-	static map<string, uint16_t>	map_header;
+	static map<string, uint32_t>	map_method;
 
 	/*--------------------------------------------------------------------------
 	Methods
 	--------------------------------------------------------------------------*/
 	private:
 	/*constructor*/					Http();
+	
 	public:
 	/*constructor*/					Http(int sock_fd);
 	void							set_header(const string& line);
@@ -50,7 +50,7 @@ struct Http
 	Static Methods
 	--------------------------------------------------------------------------*/
 	static void						init_map_methods();
-	static void						init_map_headers();
+
 	/*--------------------------------------------------------------------------
 	Exceptions
 	--------------------------------------------------------------------------*/

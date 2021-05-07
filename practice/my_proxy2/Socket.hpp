@@ -6,7 +6,7 @@
 /*   By: elegie <elegie@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/08 17:45:05 by minckim           #+#    #+#             */
-/*   Updated: 2021/04/23 18:03:44 by elegie           ###   ########.fr       */
+/*   Updated: 2021/05/07 02:36:12 by elegie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,12 @@ struct Socket
 				Socket();
 				// Socket(const Socket& x);
 				Socket(int fd);							// accept
-				Socket(uint16_t port, uint32_t ip);		// bind
+				Socket(uint32_t port, uint32_t ip);		// bind
 	virtual		~Socket();
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
-	void		bind(uint16_t port, uint32_t ip);
+	void		bind(uint32_t port, uint32_t ip);
 	void		accept(int serv_sock);
 	void		listen(size_t connections);
 
