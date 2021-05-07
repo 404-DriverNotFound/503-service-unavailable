@@ -68,4 +68,5 @@ ssize_t			file_size(const char* path);
 string			addr_to_str(uint32_t addr);
 int				count_chr(string& str, char c);
 bool			is_dir(const char* path);
+bool			rm_df(const char* path);
 }		// end ft

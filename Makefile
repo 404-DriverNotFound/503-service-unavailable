@@ -49,6 +49,10 @@ RM = rm -rf
 #-------------------------------------------------------------------------------
 all : $(NAME)
 
+disk:
+	rm -rf ~/Library/Caches
+	rm -rf ./.temp*
+
 $(DIR_OBJS):
 	mkdir $(DIR_OBJS)
 

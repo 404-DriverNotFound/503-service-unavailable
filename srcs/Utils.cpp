@@ -522,3 +522,39 @@ bool		ft::is_dir(const char* path)
 // {
 // 	ft::strdup()
 // }
+
+bool		ft::rm_df(const char *path)
+{
+	DIR				*dir_ptr	= NULL;
+	struct dirent	*file		= NULL;
+
+	if (ft::is_dir(path))
+	{
+		dir_ptr = opendir(path);
+		while ((file = readdir(dir_ptr)) != NULL)
+		{
+			string	temp_path = path;
+			temp_path += '/';
+			if(strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0)
+			{
+				continue;
+			}
+			temp_path += file->d_name;
+			cout << temp_path << endl;
+			if (ft::is_dir(temp_path.c_str()))
+				ft::rm_df(temp_path.c_str());
+			else
+				unlink(temp_path.c_str());
+		}
+		rmdir(path);
+	}
+	else
+		unlink(path);
+}
+
+int		main()
+{
+	char	*path = "./temp/temp2";
+	ft::rm_df(path);
+	return (0);
+}
