@@ -1,5 +1,8 @@
 #include "../includes/Socket.hpp"
 #include <stdio.h>
+
+// #define DBG
+
 //------------------------------------------------------------------------------
 
 			Socket::Socket()
@@ -47,8 +50,8 @@ Socket&		Socket::operator=(const Socket& x)
 {
 	if (fd >= 0)
 	{
-		shutdown(fd, SHUT_RDWR);
-		// close(fd);
+		// shutdown(fd, SHUT_RDWR);
+		close(fd);
 	}
 }
 

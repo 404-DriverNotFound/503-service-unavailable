@@ -1,6 +1,8 @@
 #include "../includes/HttpRes.hpp"
 #include "../includes/Method.hpp"
 
+// #define DBG
+
 /*##############################################################################
 Http Response
 ##############################################################################*/
@@ -131,7 +133,10 @@ string		HttpRes::get_www_authenticate(const string& realm)
 
 void		HttpRes::clear()
 {
+	#ifdef DBG
 	cout << "Res clear\n";
+	#endif
+	
 	headers.clear();
 	protocol.clear();
 	content_length = 0;

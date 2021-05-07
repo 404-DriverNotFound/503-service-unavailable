@@ -1,6 +1,7 @@
 #include "../includes/Location.hpp"
 #include "../includes/Utils.hpp"
-#define DBG
+
+// #define DBG
 
 //------------------------------------------------------------------------------
 
@@ -24,7 +25,9 @@ Location::Location(std::deque<std::string>& lines)
 	autoindex = false;
 	while (!lines.empty())
 	{
-		// cout << lines.front() << endl;
+		#ifdef DBG
+		cout << lines.front() << endl;
+		#endif
 
 		int		indent = ft::count_chr(lines.front(), '\t');
 		lines.front().erase(lines.front().begin(), lines.front().begin() + indent);
@@ -71,7 +74,9 @@ Location::Location(std::deque<std::string>& lines)
 				map<string, uint32_t>::iterator	it_method = Method::method_flags.find(tokens.front());
 				if (it_method == Method::method_flags.end())
 				{
+					#ifdef DBG
 					cout << tokens.front() << endl;
+					#endif
 					throw InvalidMethod();
 				}
 				method |= it_method->second;

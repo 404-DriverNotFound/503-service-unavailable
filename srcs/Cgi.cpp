@@ -2,6 +2,8 @@
 #include <cstdio>
 #include <iostream>
 
+// #define DBG
+
 Cgi::map_path	Cgi::cgi_bin;
 
 //------------------------------------------------------------------------------
@@ -18,15 +20,18 @@ extension(extension),
 fd_in(fd_in),
 fd_out(fd_out)
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 }
 
 //------------------------------------------------------------------------------
 
 void			Cgi::start_cgi()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
-
+	#endif
 
 	pid = fork();
 

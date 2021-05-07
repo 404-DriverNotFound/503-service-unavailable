@@ -1,6 +1,8 @@
 #include "../includes/FdSet.hpp"
 #include <string.h>
 
+// #define DBG
+
 		FdSet::FdSet()
 {
 	zero();

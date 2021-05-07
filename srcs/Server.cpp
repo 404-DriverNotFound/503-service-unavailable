@@ -2,6 +2,8 @@
 #include "../includes/Server.hpp"
 #include "../includes/Utils.hpp"
 
+// #define DBG
+
 //------------------------------------------------------------------------------
 
 Server::Server(std::deque<std::string>& token)

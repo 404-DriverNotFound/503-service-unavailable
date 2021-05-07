@@ -2,7 +2,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "../includes/Webserver.hpp"
-#define DBG
+
+// #define DBG
 
 /*#####################################
 Webserver
@@ -178,10 +179,11 @@ void			Webserver::start_server()
 	}
 	while (42)
 	{
+		#ifdef DBG
 		cout << endl;
 		cout << "################################################################################" << endl;
 		cout << endl;
-
+		#endif
 
 		// usleep(100000);
 
@@ -276,13 +278,17 @@ void			Webserver::manage_clients()
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
+		#ifdef DBG
 		cout << "----------------\n";
 		cout << "== Socket: " << (*it)->sock.fd << " ==" << endl;
 		cout << "----------------\n";
+		#endif
 		(*it)->process();
 		if ((*it)->status == CLIENT_DONE)
 		{
+			#ifdef DBG
 			cout << "- delete " << (*it)->sock.fd << endl;
+			#endif
 			o_set.del((*it)->sock.fd);
 			delete *it;
 			it = clients.erase(it);

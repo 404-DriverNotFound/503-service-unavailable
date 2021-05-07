@@ -5,7 +5,8 @@
 #include "../includes/MethodHead.hpp"
 
 #define TIMEOUT 30000000
-#define DBG
+
+// #define DBG
 
 //------------------------------------------------------------------------------
 
@@ -36,7 +37,9 @@ method(0)
 
 void			Client::process()
 {
+	#ifdef DBG
 	cout << "in process\n";
+	#endif
 	// if (is_expired())
 	// 	status = CLIENT_DONE;
 	recv_stream();
@@ -47,7 +50,6 @@ void			Client::process()
 	catch(int code)
 	{
 		manage_err(code);
-		status = CLIENT_SEND;
 	}
 	
 }
@@ -57,7 +59,10 @@ void			Client::process()
 void			Client::routine()
 {
 	// usleep(400000);
+	#ifdef DBG
 	cout << "status: " << status << endl;
+	#endif
+
 	switch (status)
 	{
 	case CLIENT_STARTLINE:
@@ -73,7 +78,9 @@ void			Client::routine()
 	case CLIENT_METHOD:
 		if (method->run())
 		{
+			#ifdef DBG
 			cout << "Method end!\n";
+			#endif
 			status = CLIENT_SEND;
 		}
 		if (status == CLIENT_METHOD)
@@ -94,8 +101,11 @@ void			Client::routine()
 
 void			Client::manage_err(int code)
 {
+	#ifdef DBG
 	cout <<__func__ << endl;
-	res.stream.clear();
+	#endif
+
+	// res.stream.clear();
 	res.status_code = code;
 	res.stream << res.get_startline();
 	res.stream << res.get_server();
@@ -114,21 +124,40 @@ void			Client::manage_err(int code)
 
 void			Client::err()
 {
+	#ifdef DBG
 	cout <<__func__ << endl;
+	#endif
 	if (req.headers["TRANSFER_ENCODING"] == "chunked")
 	{
-		if (req.stream.get_line(req.line))
-			if (req.line == "0")
+		if (req.stream.get_seq_token(req.line, "0\r\n\r\n"))
+		{
+			#ifdef DBG
+			cout << "find: 0rnrn\n";
+			#endif
+			// if (req.line == "0")
 				status = CLIENT_SEND;
+		}
+		else
+		{
+			#ifdef DBG
+			cout << req.line << endl;
+			#endif
+		}
 	}
-
+	else
+	{
+		status = CLIENT_SEND;
+	}
+	
 }
 
 //------------------------------------------------------------------------------
 
 bool			Client::is_expired()
 {
+	#ifdef DBG
 	cout << "elapsed: " << (Time() - birth).get_time_sec() << endl;
+	#endif
 	if ((Time() - birth).get_time_usec() > TIMEOUT)
 	{
 		status = CLIENT_DONE;
@@ -143,7 +172,10 @@ void			Client::recv_stream()
 {
 	if (r_set.get(sock.fd))
 	{
+		#ifdef DBG
 		cout << __func__ << endl;
+		#endif
+
 		ssize_t	len = 0;
 		switch (status)
 		{
@@ -157,26 +189,35 @@ void			Client::recv_stream()
 				len = req.stream.fill(req.stream.default_capacity);
 				break;
 		}
+		#ifdef DBG
 		cout << "- input len: " << len << endl;
+		#endif
 		if (len == 0)
 		{
+			#ifdef DBG
 			cout << "\n--- Client Done! ---" << endl;
+			#endif
+
 			status = CLIENT_DONE;
 		}
 		else if (len < 0)
 		{
+			#ifdef DBG
 			cout << "\n--- Client ERR! ---" << endl;
+			#endif
+
 			status = CLIENT_DONE;
 		}
 		r_set.del(sock.fd);
 		
-		
+		#ifdef DBG
 		cout << "\n--- request ---" << endl;
 		if (req.stream.size() < 1000)
 			req.stream.print_line();
 		else
 			cout << "len: " << req.stream.size() << endl;
 		cout << "\n--- request ---" << endl;
+		#endif
 	}
 }
 
@@ -223,7 +264,9 @@ void			Client::send_stream()
 
 void			Client::reset()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	client_status = STATUS_ROUTINE;
 	birth.set_current();
 	status = CLIENT_STARTLINE;
@@ -232,7 +275,6 @@ void			Client::reset()
 	server = 0;
 	location = 0;
 	delete method;
-	cout << "--------------\n";
 	method = 0;
 }
 
@@ -240,7 +282,9 @@ void			Client::reset()
 
 void			Client::set_request_startline()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	if (req.stream.get_line(req.line))
 	{
 		req.set_start_line(req.line);
@@ -252,7 +296,9 @@ void			Client::set_request_startline()
 
 void			Client::set_request_header()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	while (req.stream.get_line(req.line))
 	{
 		if (req.line.empty())
@@ -268,7 +314,9 @@ void			Client::set_request_header()
 
 void		Client::set_server()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	// 헤더에서 호스트 찾기
 	map<string, string>::iterator	it_header = req.headers.find("HOST");
 	if (it_header == req.headers.end())
@@ -294,7 +342,9 @@ void		Client::set_server()
 
 void		Client::set_location()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	iterator_location	it_location	= server->locations.find("/" + req.path.front());
 	if (it_location == server->locations.end())
 	{
@@ -312,7 +362,9 @@ void		Client::set_location()
 
 void		Client::check_auth()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	if (location->auth.empty())
 		return ;
 
@@ -333,7 +385,9 @@ void		Client::check_auth()
 
 void		Client::set_method()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	if (!(location->method & (1 << req.method)))
 	{
 		cout << "Method Not allowed!" << endl;
@@ -347,7 +401,9 @@ void		Client::set_method()
 
 void		Client::set_path()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	req.path_translated = location->root;
 	list<string>::iterator 	it = req.path.begin();
 	list<string>::iterator 	end = req.path.end();
@@ -364,7 +420,9 @@ void		Client::set_path()
 
 void		Client::set_client()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	set_server();
 	set_location();
 	check_auth();

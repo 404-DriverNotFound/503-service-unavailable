@@ -1,5 +1,7 @@
 #include "../includes/HttpReq.hpp"
 
+// #define DBG
+
 /*##############################################################################
 Http Request
 ##############################################################################*/
@@ -87,7 +89,10 @@ string		HttpReq::get_location_name()
 
 void		HttpReq::clear()
 {
+	#ifdef DBG
 	cout << "Req clear\n";
+	#endif
+	
 	headers.clear();
 	stream.clear();
 	protocol.clear();

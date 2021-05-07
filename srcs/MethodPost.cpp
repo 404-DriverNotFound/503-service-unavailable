@@ -1,5 +1,7 @@
 #include "../includes/MethodPost.hpp"
 
+// #define DBG
+
 /*##############################################################################
 POST
 ##############################################################################*/
@@ -7,8 +9,9 @@ POST
 /*constructor*/		MethodPost::MethodPost(HttpReq& req, HttpRes& res, Server& server, Location& location)
 : Method(req, res, server, location)
 {
-	
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	req.set_extension();
 	if (Cgi::cgi_bin.find(req.extension) != Cgi::cgi_bin.end())
 	{
@@ -26,7 +29,9 @@ POST
 			req.stream.pass_remain = ft::atoi(req.headers["CONTNET_LENGTH"]);
 			status = METHOD_RECV_BODY;
 		}
+		#ifdef DBG
 		cout << __func__ << endl;
+		#endif
 	}
 	else if (ft::is_dir(req.path_translated.c_str()))
 	{
@@ -62,26 +67,37 @@ POST
 
 void				MethodPost::load_response_header()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	res.status_code = 201;
 	res.stream << res.get_startline();
 	res.stream << res.get_server();
 	switch(open_option)
 	{
 		case OPEN_POST_CGI:
+			#ifdef DBG
 			cout << "open_option: " << open_option << endl;
+			#endif
+			
 			res.stream << res.get_content_length(res.content_length);
 			res.stream << "\r\n";
 			break;
 		case OPEN_POST:
+			#ifdef DBG
 			cout << "open_option: " << open_option << endl;
+			#endif
+			
 			res.stream << res.get_content_length(0);
 			res.stream << "\r\n";
 			res.msg_length += res.stream.size();
 			res.msg_length += res.content_length;
 			break;
 		default:
+			#ifdef DBG
 			cout << "open_option: " << open_option << endl;
+			#endif
+			
 			res.stream << res.get_content_length(res.content_length);
 			res.stream << "\r\n";
 			res.msg_length += res.stream.size();

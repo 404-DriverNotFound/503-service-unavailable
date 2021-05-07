@@ -1,5 +1,7 @@
 #include "../includes/MethodGet.hpp"
 
+// #define DBG
+
 /*##############################################################################
 GET
 ##############################################################################*/
@@ -7,7 +9,9 @@ GET
 /*constructor*/		MethodGet::MethodGet(HttpReq& req, HttpRes& res, Server& server, Location& location)
 : Method(req, res, server, location)
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	open_file(OPEN_GET);
 	status = METHOD_LOAD_HEADER;
 	res.content_length = ft::file_size(req.path_translated.c_str());
@@ -15,7 +19,9 @@ GET
 
 void	MethodGet::load_response_header() 
 {
+	#ifdef DBG
 	cout << "MethodGet::" << __func__ << endl;
+	#endif
 	res.content_length = ft::file_size(name_out.c_str());
 	res.status_code = 200;
 	res.stream << res.get_startline();

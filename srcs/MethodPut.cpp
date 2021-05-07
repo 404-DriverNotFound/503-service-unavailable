@@ -1,5 +1,7 @@
 #include "../includes/MethodPut.hpp"
 
+// #define DBG
+
 /*##############################################################################
 PUT
 ##############################################################################*/
@@ -7,7 +9,9 @@ PUT
 /*constructor*/		MethodPut::MethodPut(HttpReq& req, HttpRes& res, Server& server, Location& location)
 : Method(req, res, server, location)
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	open_file(OPEN_PUT);
 	if (req.headers["TRANSFER_ENCODING"] == "chunked")
 	{
@@ -23,7 +27,9 @@ PUT
 
 void	MethodPut::load_response_header() 
 {
+	#ifdef DBG
 	cout << "MethodPut::" << __func__ << endl;
+	#endif
 	res.status_code = 201;
 	res.stream << res.get_startline();
 	res.stream << res.get_server();

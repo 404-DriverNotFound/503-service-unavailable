@@ -1,5 +1,7 @@
 #include "../includes/Stream.hpp"
 
+// #define DBG
+
 //------------------------------------------------------------------------------
 			Stream::Stream()
 {}
@@ -304,6 +306,61 @@ bool		Stream::get_chr_token(string &token, const char c)
 	token_factor = false;
 	return false;
 }
+
+//------------------------------------------------------------------------------
+
+bool		Stream::get_seq_token(string &token, const char* seq)
+{
+	uint8_t*	end;
+	size_t		len_seq = ft::strlen(seq);
+	if (token_factor)
+		token.clear();
+	while (42)
+	{
+		if (buffers.empty())
+		{
+			token_factor = false;
+			return false;
+		}
+		end = buffers.front().end;
+		while (it_buffer != end)
+		{
+			token.push_back(*it_buffer);
+			++it_buffer;
+			if (token.size() >= len_seq)
+			{
+				if (ft::strcmp((token.end() - len_seq).base(), seq) == 0)
+				{
+					return true;
+				}
+			}
+		}
+		delete_buffer();
+	}
+	token_factor = false;
+	return false;
+
+
+	// str_citerator	end = token.end();
+	// int						seq_len;
+
+	// seq_len = ft::strlen(seq);
+	// if (token_factor)
+	// 	token.clear();
+	// token.reserve(reserve_size);
+	// while (it != end)
+	// {
+	// 	if (!ft::strncmp(it.base(), seq, seq_len))
+	// 	{
+	// 		it += seq_len;
+	// 		return true;
+	// 	}
+	// 	token.push_back(*it);
+	// 	++it;
+	// }
+	// return false;
+}
+
 //------------------------------------------------------------------------------
 bool		Stream::get_line(string &token)
 {
@@ -461,3 +518,16 @@ int			main()
 		// cout << tok << endl;
 	}
 } */
+
+
+// int			main()
+// {
+// 	Stream	s(6, 1, 1);
+
+// 	s << "abcdef01234";
+
+// 	string	tok;
+// 	cout << s.get_seq_token(tok, "ef0") << endl;
+// 	cout << tok << endl;
+// 	cout << ft::strlen("ef0") << endl;
+// }

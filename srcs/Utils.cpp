@@ -1,5 +1,7 @@
 #include "../includes/Utils.hpp"
 
+// #define DBG
+
 //------------------------------------------------------------------------------
 
 void*	ft::memset(void* dest, int c, size_t size)
@@ -32,8 +34,10 @@ size_t	ft::strlen(const char* str)
 {
 	const char*		head = str;
 
-	while (*str++)
-	{}
+	while (*str)
+	{
+		++str;
+	}
 	return str - head;
 }
 
@@ -363,10 +367,8 @@ char*	ft::strdup(const char* src)
 	temp = dest;
 	while (*src)
 	{
-		cout << *src;
 		*dest++ = *src++;
 	}
-	cout << endl;
 	*dest = 0;
 	// cout << temp << endl;
 	return temp;
@@ -479,7 +481,9 @@ ssize_t		ft::file_size(const char* path)
 
 	if (stat(path, &stat_f) < 0)
 	{
+		#ifdef DBG
 		cout << "wrong_path: " << path << endl;
+		#endif
 		return -1;
 	}
 	return stat_f.st_size;
@@ -560,7 +564,11 @@ bool		ft::rm_df(const char *path)
 				continue;
 			}
 			temp_path += file->d_name;
+
+			#ifdef DBG
 			cout << temp_path << endl;
+			#endif
+
 			if (ft::is_dir(temp_path.c_str()))
 				ft::rm_df(temp_path.c_str());
 			else

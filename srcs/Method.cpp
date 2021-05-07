@@ -1,5 +1,7 @@
 #include "../includes/Method.hpp"
 
+// #define DBG
+
 map<string, uint32_t>	Method::method_num;
 map<string, uint32_t>	Method::method_flags;
 string					Method::method_strings[NUM_METHOD];
@@ -23,7 +25,7 @@ open_option(OPEN_GET)
 		close(fd_in);
 	if (fd_out >= 0)
 		close(fd_out);
-	if (open_option == OPEN_POST_CGI)
+	if (open_option == OPEN_POST_CGI || open_option == OPEN_POST_DIR)
 		ft::rm_df(name_in.c_str());
 	if (open_option == OPEN_POST_CGI)
 		ft::rm_df(name_out.c_str());
@@ -42,7 +44,10 @@ bool	Method::recv_body()
 
 bool	Method::run()
 {
+	
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	switch (status)
 	{
 		case METHOD_RECV_BODY:
@@ -125,7 +130,10 @@ bool	Method::run()
 
 bool	Method::recv_chunked_body()
 {
+	
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	while (42)
 	{
 		switch (status_chunked)
@@ -152,7 +160,9 @@ bool	Method::recv_chunked_body()
 				}
 				else
 				{
+					#ifdef DBG
 					cout << req.line << endl;
+					#endif
 					return false;
 				}
 			case CHUNKED_RECV:
@@ -196,8 +206,10 @@ void	Method::run_cgi()
 
 void	Method::load_cgi_header()
 {
+	
+	#ifdef DBG
 	cout << __func__ << endl;
-
+	#endif
 	// close(fd_out);
 	// fd_out = open(name_out.c_str(), O_RDONLY);
 	// res.stream.fd_in = fd_out;
@@ -240,7 +252,9 @@ void	Method::load_cgi_header()
 
 void	Method::load_body()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 	if (fd_out < 0)
 	{
 		status = METHOD_DONE;
@@ -251,7 +265,7 @@ void	Method::load_body()
 	if (len == 0)
 	{
 		// cout << "- fill done!" << endl;
-		cout << "len: " << lllen << endl;
+		// cout << "len: " << lllen << endl;
 		// char	buff[10];
 		// read(0, buff, 1);
 
@@ -263,7 +277,9 @@ void	Method::load_body()
 
 void		Method::open_file_base(const string& path)
 {
+	#ifdef DBG
 	cout << "path: " << req.path_translated << endl;
+	#endif
 	if (ft::is_dir(path.c_str()))
 	{
 		string	path_tmp = ft::find(path, location.index);
@@ -271,7 +287,9 @@ void		Method::open_file_base(const string& path)
 			throw 404;
 		req.path_translated.append("/");
 		req.path_translated.append(path_tmp);
+		#ifdef DBG
 		cout << "path(index): " << req.path_translated << endl;
+		#endif
 	}
 }
 
@@ -279,7 +297,9 @@ void		Method::open_file_base(const string& path)
 
 void		Method::open_file(e_openfile option)
 {
+	#ifdef DBG
 	cout << __func__ << ": ";
+	#endif
 	switch (option)
 	{
 	case OPEN_GET:
@@ -297,7 +317,9 @@ void		Method::open_file(e_openfile option)
 		fd_in = open(req.path_translated.c_str(), O_CREAT | O_TRUNC | O_RDWR, 0644);
 		if (fd_in < 0)
 			throw 500;
+		#ifdef DBG
 		cout << "path: " << req.path_translated << endl;
+		#endif
 		req.stream.fd_out = fd_in;
 		name_in = req.path_translated;
 		break;
@@ -321,7 +343,9 @@ void		Method::open_file(e_openfile option)
 		res.stream.fd_in = fd_out;
 		if (fd_in < 0 || fd_out < 0)
 		{
+			#ifdef DBG
 			cout << "FDERR!\n";
+			#endif
 			exit(1);
 		}
 		break;
@@ -338,7 +362,9 @@ void		Method::open_file(e_openfile option)
 		res.stream.fd_in = fd_out;	
 		if (fd_in < 0 || fd_out < 0)
 		{
+			#ifdef DBG
 			cout << "FDERR!\n";
+			#endif
 			exit(1);
 		}
 
@@ -361,7 +387,9 @@ string		Method::temp_name()
 
 void		Method::make_meta_variable()
 {
+	#ifdef DBG
 	cout << __func__ << endl;
+	#endif
 
 	cgi->meta_variables.reserve(17 + req.headers.size());
 	cgi->meta_variables.assign(17, string());
