@@ -9,6 +9,7 @@
 Webserver
 ######################################*/
 
+string		Webserver::temp_file_dir;
 
 void	broken(int code) {
 	(void)code;
@@ -126,11 +127,17 @@ void	Webserver::create_server(deque<string>& lines)
 		else if (tokens.front() == "max_connection")
 		{
 			max_connection = ft::atoi(*++tokens.begin());
-			tokens.pop_front();
+			lines.pop_front();
+		}
+		else if (tokens.front() == "temp_file_dir")
+		{
+			temp_file_dir = *++tokens.begin();
+			lines.pop_front();
 		}
 		else if (tokens.front().empty())
 		{
-			tokens.pop_front();
+			lines.pop_front();
+			// tokens.pop_front();
 		}
 		else
 			throw Webserver::InvalidServerBlock();

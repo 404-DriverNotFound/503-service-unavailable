@@ -43,6 +43,7 @@ struct Webserver
 	--------------------------------------------------------------------------*/
 	size_t								max_connection;
 	Time								select_timeout;
+	static string						temp_file_dir;
 	FdSet								o_set;
 	FdSet								r_set;
 	FdSet								w_set;

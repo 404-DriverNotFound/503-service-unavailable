@@ -105,6 +105,9 @@ void			Client::manage_err(int code)
 	cout <<__func__ << endl;
 	#endif
 
+	if (code == 400)
+		return ;
+
 	// res.stream.clear();
 	res.status_code = code;
 	res.stream << res.get_startline();

@@ -378,7 +378,8 @@ void		Method::open_file(e_openfile option)
 string		Method::temp_name()
 {
 	static unsigned int		count;
-	string		name("/Users/minckim/goinfre/temp");
+	// string		name("/Users/minckim/goinfre/temp");
+	string		name("./root/temp");
 	name += ft::itoa(count++);
 	return name;
 }
