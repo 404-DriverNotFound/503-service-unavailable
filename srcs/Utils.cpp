@@ -559,7 +559,7 @@ bool		ft::rm_df(const char *path)
 		{
 			string	temp_path = path;
 			temp_path += '/';
-			if(strcmp(file->d_name, ".") == 0 || strcmp(file->d_name, "..") == 0)
+			if(ft::strcmp(file->d_name, ".") == 0 || ft::strcmp(file->d_name, "..") == 0)
 			{
 				continue;
 			}
