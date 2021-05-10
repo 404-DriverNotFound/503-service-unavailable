@@ -13,6 +13,7 @@ POST
 	cout << __func__ << endl;
 	#endif
 	req.set_extension();
+	cout << "MethodPost : " << server.temp_file_dir << endl;
 	if (Cgi::cgi_bin.find(req.extension) != Cgi::cgi_bin.end())
 	{
 		open_option = OPEN_POST_CGI;

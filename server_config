@@ -1,6 +1,6 @@
 max_connection 300
-temp_file_dir ./root
 server
+	temp_file_dir /Users/minckim/goinfre
 	root ./root
 	server_name localhost
 	port 9191

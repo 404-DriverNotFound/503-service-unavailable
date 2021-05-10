@@ -23,6 +23,8 @@ method(0)
 {
 	status = CLIENT_STARTLINE;
 	client_status = STATUS_ROUTINE;
+
+	// cout << servers["localhost"].temp_file_dir << endl;
 }
 
 //------------------------------------------------------------------------------

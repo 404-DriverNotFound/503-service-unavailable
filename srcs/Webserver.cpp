@@ -9,8 +9,6 @@
 Webserver
 ######################################*/
 
-string		Webserver::temp_file_dir;
-
 void	broken(int code) {
 	(void)code;
 	perror("ERROR : ");
@@ -40,6 +38,11 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	create_server(lines);
 	create_sockets();
 
+	// server_iterator it = servers.begin();
+	
+	// cout << "after create_sockets : " <<(*it).second["localhost"].temp_file_dir << endl;
+	cout << "after create_sockets : " << servers.begin()->second.begin()->second.name << endl;
+	cout << "after create_sockets : " << servers.begin()->second.begin()->second.temp_file_dir << endl;
 	try
 	{
 		start_server();
@@ -129,15 +132,9 @@ void	Webserver::create_server(deque<string>& lines)
 			max_connection = ft::atoi(*++tokens.begin());
 			lines.pop_front();
 		}
-		else if (tokens.front() == "temp_file_dir")
-		{
-			temp_file_dir = *++tokens.begin();
-			lines.pop_front();
-		}
 		else if (tokens.front().empty())
 		{
 			lines.pop_front();
-			// tokens.pop_front();
 		}
 		else
 			throw Webserver::InvalidServerBlock();
@@ -254,7 +251,6 @@ void			Webserver::check_new_connection()
 			// #endif
 			
 			o_set.set(clients.back()->sock.fd);
-			// fcntl(clients.back()->sock.fd, O_NONBLOCK);
 			
 			// #ifdef DBG
 			// cout << "- new client " << clients.back().sock.fd << endl;

@@ -107,6 +107,11 @@ void	Server::Server_setter(std::deque<std::string>&	lines)
 		{
 			timeout = ft::atoi(val);
 		}
+		else if (key == "temp_file_dir")
+		{
+			temp_file_dir = val;
+			cout << "temp : " << temp_file_dir << endl;
+		}
 		else
 		{
 			throw ConfigSet::InvalidConfig();

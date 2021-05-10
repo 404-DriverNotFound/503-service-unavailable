@@ -20,6 +20,7 @@ struct Server : public ConfigSet
 	public:
 	uint32_t				port;
 	map<string, Location>	locations;
+	string					temp_file_dir;
 
 	/*--------------------------------------------------------------------------
 	Method

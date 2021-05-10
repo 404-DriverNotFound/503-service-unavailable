@@ -13,6 +13,7 @@ string					Method::method_strings[NUM_METHOD];
 open_option(OPEN_GET)
 {
 	// lllen = 0;
+	cout << "MethodPost : " << server.temp_file_dir << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -378,9 +379,14 @@ void		Method::open_file(e_openfile option)
 string		Method::temp_name()
 {
 	static unsigned int		count;
+	string		name(server.temp_file_dir);
+	cout << "[" << name << "]" << endl;
+	cout << server.name << endl;
 	// string		name("/Users/minckim/goinfre/temp");
-	string		name("./root/temp");
+	// string		name("./root/temp");
+	name += "/temp";
 	name += ft::itoa(count++);
+	cout << name << endl;
 	return name;
 }
 
