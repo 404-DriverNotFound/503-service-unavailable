@@ -12,8 +12,6 @@ string					Method::method_strings[NUM_METHOD];
 :req(req), res(res), cgi(0), server(server), location(location), fd_in(-1), fd_out(-1),
 open_option(OPEN_GET)
 {
-	// lllen = 0;
-	cout << "MethodPost : " << server.temp_file_dir << endl;
 }
 
 //------------------------------------------------------------------------------
@@ -211,10 +209,6 @@ void	Method::load_cgi_header()
 	#ifdef DBG
 	cout << __func__ << endl;
 	#endif
-	// close(fd_out);
-	// fd_out = open(name_out.c_str(), O_RDONLY);
-	// res.stream.fd_in = fd_out;
-
 
 	Stream	stream(location.head_length, fd_out);
 	string	line;
@@ -233,21 +227,8 @@ void	Method::load_cgi_header()
 	res.msg_length = res.stream.size();
 	res.msg_length += res.content_length;
 	
-	// lllen += stream.size();
 	res.stream.write(stream.it_buffer, stream.size());
 }
-
-//------------------------------------------------------------------------------
-
-// void	Method::load_response_header()
-// {
-// 	// cout << "Method::" << __func__ << endl;
-// 	// res.status_code = 200;
-// 	// res.stream << res.get_startline();
-// 	// res.stream << res.get_content_length();
-// 	// res.stream << res.get_server();
-// 	// res.stream << "\r\n";
-// }
 
 //------------------------------------------------------------------------------
 
@@ -265,11 +246,6 @@ void	Method::load_body()
 	// lllen += len;
 	if (len == 0)
 	{
-		// cout << "- fill done!" << endl;
-		// cout << "len: " << lllen << endl;
-		// char	buff[10];
-		// read(0, buff, 1);
-
 		status = METHOD_DONE;
 	}
 }
@@ -285,7 +261,12 @@ void		Method::open_file_base(const string& path)
 	{
 		string	path_tmp = ft::find(path, location.index);
 		if (path_tmp.empty())
-			throw 404;
+		{
+			if (location.autoindex == false)
+				throw 404;
+			else
+				return;
+		}
 		req.path_translated.append("/");
 		req.path_translated.append(path_tmp);
 		#ifdef DBG
@@ -305,6 +286,7 @@ void		Method::open_file(e_openfile option)
 	{
 	case OPEN_GET:
 		open_file_base(req.path_translated);
+		
 		fd_out = open(req.path_translated.c_str(), O_RDONLY);
 		if (fd_out < 0)
 			throw 404;

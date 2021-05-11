@@ -8,4 +8,4 @@
 
 using std::string;
 
-void	make_dir_list(const char *path);
+void	make_dir_list(const char *path, int fd);

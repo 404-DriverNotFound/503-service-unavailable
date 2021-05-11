@@ -1,24 +1,28 @@
-#pragma once
-#include <vector>
 #include <string>
+#include <list>
+#include <iomanip>
+#include <iostream>
 
-/*##############################################################################
-Path
-##############################################################################*/
-struct Path
+using std::list;
+using std::string;
+
+
+class Path
 {
-	/*--------------------------------------------------------------------------
-	Member
-	--------------------------------------------------------------------------*/
-	std::vector<std::string>	segments;
+	enum flag_path
+	{
+		f_is_file,
+		f_is_dir,
+		f_is_exist,
+	};
 
-	/*--------------------------------------------------------------------------
-	Method
-	--------------------------------------------------------------------------*/
+	private:
+		list<string>	_segments;
+		int				_flag;
+
 	public:
-	const char*					getPath() const;
-	void						setPath(const std::string&);
-	Path&						operator+(Path&);
-	Path&						operator--();
-	Path&						operator=(const std::string&);
+		bool			is_file();
+		bool			is_exist();
+		bool			is_dir();
+
 };

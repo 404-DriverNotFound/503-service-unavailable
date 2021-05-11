@@ -41,8 +41,7 @@ Webserver::Webserver(int argc, char** argv, char** env)
 	// server_iterator it = servers.begin();
 	
 	// cout << "after create_sockets : " <<(*it).second["localhost"].temp_file_dir << endl;
-	cout << "after create_sockets : " << servers.begin()->second.begin()->second.name << endl;
-	cout << "after create_sockets : " << servers.begin()->second.begin()->second.temp_file_dir << endl;
+	// cout << *this << endl;
 	try
 	{
 		start_server();

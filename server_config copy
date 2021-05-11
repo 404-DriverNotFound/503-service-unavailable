@@ -1,6 +1,6 @@
 server
 	root ./root
-	server_name localhost
+	name localhost
 	port 9190
 	error_page error.html
 	index index.html
@@ -8,7 +8,8 @@ server
 	body_length 1000000
 	autoindex on
 	timeout 10
-	location /abc
+	location 
+		name /abc
 		root /a_directory
 		index index.html index.php index.txt
 		method POST PUT GET

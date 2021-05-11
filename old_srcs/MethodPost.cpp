@@ -13,7 +13,7 @@ POST
 	cout << __func__ << endl;
 	#endif
 	req.set_extension();
-	cout << "MethodPost : " << server.temp_file_dir << endl;
+	
 	if (Cgi::cgi_bin.find(req.extension) != Cgi::cgi_bin.end())
 	{
 		open_option = OPEN_POST_CGI;
@@ -66,6 +66,8 @@ POST
 	}
 }
 
+//------------------------------------------------------------------------------
+
 void				MethodPost::load_response_header()
 {
 	#ifdef DBG
@@ -105,21 +107,4 @@ void				MethodPost::load_response_header()
 			res.msg_length += res.content_length;
 			break;
 	}
-	// if (OPEN_POST_CGI)
-	// {
-	// 	// res.content_length += ft::file_size(name_out.c_str());
-	// 	res.stream << res.get_content_length(res.content_length);
-	// }
-	// else if (OPEN_POST)
-	// {
-	// 	res.stream << res.get_content_length(0);
-	// 	res.msg_length += res.stream.size();
-	// 	res.msg_length += res.content_length;
-	// }
-	// else
-	// {
-
-	// }
-
-	// STOP
 }

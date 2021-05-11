@@ -1,7 +1,7 @@
 #include "../includes/AutoIndex.hpp"
 #include "../includes/Utils.hpp"
 
-void	make_dir_list(const char *path)
+void	make_dir_list(const char *path, int fd)
 {
 	DIR				*dir_ptr		=	NULL;
 	struct dirent	*file			=	NULL;
@@ -9,7 +9,7 @@ void	make_dir_list(const char *path)
 
 	if (ft::is_dir(path))
 	{
-		fd = open("./autoresult.html", O_CREAT | O_RDWR, 0644);
+		// fd = open("./autoresult.html", O_CREAT | O_RDWR, 0644);
 		dir_ptr = opendir(path);
 		while ((file = readdir(dir_ptr)) != NULL)
 		{
@@ -35,7 +35,7 @@ void	make_dir_list(const char *path)
 	}
 }
 
-int		main(void)
-{
-	make_dir_list(".");
-}
+// int		main(void)
+// {
+// 	make_dir_list(".");
+// }

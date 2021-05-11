@@ -7,6 +7,7 @@
 #include "Cgi.hpp"
 #include "Server.hpp"
 #include "Location.hpp"
+#include "AutoIndex.hpp"
 
 class Server;
 class Location;

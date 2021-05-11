@@ -15,7 +15,8 @@ Server::Server(std::deque<std::string>& token)
 Server::Server(const Server& x)
 : ConfigSet(x),
 port(x.port),
-locations(x.locations)
+locations(x.locations),
+temp_file_dir(x.temp_file_dir)
 {}
 
 //------------------------------------------------------------------------------
@@ -110,7 +111,6 @@ void	Server::Server_setter(std::deque<std::string>&	lines)
 		else if (key == "temp_file_dir")
 		{
 			temp_file_dir = val;
-			cout << "temp : " << temp_file_dir << endl;
 		}
 		else
 		{
@@ -132,6 +132,7 @@ const char*	Server::InvalidConfig::what() const throw()
 std::ostream&	operator<<(std::ostream& os, Server& ref) {
 	os << "	root: " << ref.root << std::endl
 		<<"	server_name: " << ref.name << std::endl
+		<<"	temp_file_dir" << ref.temp_file_dir << std::endl
 		<<"	error_page: ";
 	std::set<std::string>::iterator	it;
 	it = ref.error_page.begin();

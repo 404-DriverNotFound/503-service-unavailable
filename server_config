@@ -1,7 +1,7 @@
 max_connection 300
 server
-	temp_file_dir /Users/minckim/goinfre
 	root ./root
+	temp_file_dir /Users/minckim/goinfre
 	server_name localhost
 	port 9191
 	error_page error.html
