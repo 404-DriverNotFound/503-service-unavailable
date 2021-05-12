@@ -1,0 +1,17 @@
+#pragma once
+
+#include "AMethod.hpp"
+#include "ConfigGlobal.hpp"
+#include "Client.hpp"
+#include "ConfigLocation.hpp"
+#include "ConfigServer.hpp"
+#include "Fdset.hpp"
+#include "Http.hpp"
+#include "HttpReq.hpp"
+#include "HttpRes.hpp"
+#include "Path.hpp"
+#include "Socket.hpp"
+#include "Stream.hpp"
+#include "Time.hpp"
+#include "Utils.hpp"
+#include "Webserver.hpp"

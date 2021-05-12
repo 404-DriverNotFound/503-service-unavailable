@@ -33,7 +33,7 @@ LIST_SRCS = \
 
 	
 	
-DIR_SRCS = ./srcs/
+DIR_SRCS = ./srcs/srcs/
 DIR_OBJS = ./objs/
 
 SRCS = $(addprefix $(DIR_SRCS), $(addsuffix .cpp, $(LIST_SRCS)))
