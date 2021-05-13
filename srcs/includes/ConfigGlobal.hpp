@@ -1,4 +1,5 @@
 #pragma once
+#include "ClassModule.hpp"
 #include <string>
 #include <unistd.h>
 #include <fcntl.h>
@@ -17,9 +18,12 @@ class ConfigGlobal
 	Member
 	--------------------------------------------------------------------------*/
 	private:
-		size_t				_max_connection;
-		long				_timeout;
-		string				_temp_file_dir;
+		size_t						_max_connection;
+		long						_timeout;
+		string						_temp_file_dir;
+
+	public:
+		map<uint32_t, ConfigServer>	servers;
 	
 	/*--------------------------------------------------------------------------
 	Constructor & Destructor
@@ -27,7 +31,7 @@ class ConfigGlobal
 	private:
 		ConfigGlobal();
 		ConfigGlobal(const ConfigGlobal& ref);
-		ConfigGlobal&		operator=(const ConfigGlobal& ref);
+		ConfigGlobal& operator=(const ConfigGlobal& ref);
 		
 	public:
 		ConfigGlobal(int argc, char** argv, char** env);
@@ -41,6 +45,12 @@ class ConfigGlobal
 		void			set_timeout(map<string, string>, string& key);
 		void			set_temp_file_dir(map<string, string>, string& key);
 
-
-
+	/*--------------------------------------------------------------------------
+	Exception
+	--------------------------------------------------------------------------*/
+	private:
+		class FileOpenError: public std::exception
+		{
+			public: const char* what() const throw();	
+		};
 };

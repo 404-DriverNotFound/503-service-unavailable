@@ -1,18 +1,37 @@
 #pragma once
 #include <string>
+#include "../includes/ConfigGlobal.hpp"
 
-class ConfigGlobal
+ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 {
-	private:
-		size_t				_max_connection;
-		long				_timeout;
-		
-	private:
-		ConfigGlobal();
-		ConfigGlobal(const ConfigGlobal& ref);
-		ConfigGlobal&		operator=(const ConfigGlobal& ref);
-		
-	public:
-		ConfigGlobal(int argc, char** argv, char** env);
-		~ConfigGlobal();
-};
+	int		fd;
+
+	if (argc == 1)
+	{
+		fd = open("server_config", O_RDONLY);
+	}
+	else
+	{
+		fd = open(argv[1], O_RDONLY);
+	}
+	if (fd < 0)
+		throw FileOpenError();
+	Stream	stream(10000, fd);
+	
+	while (stream.fill(10000));
+	
+
+	string	line;
+	stream.get_line(line);
+}
+
+
+
+ConfigGlobal::~ConfigGlobal()
+{}
+
+
+const char*		ConfigGlobal::FileOpenError::what() const throw()
+{
+	return "config file open error";
+}
