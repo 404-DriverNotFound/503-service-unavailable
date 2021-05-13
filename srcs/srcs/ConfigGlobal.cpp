@@ -16,6 +16,7 @@ ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 	}
 	if (fd < 0)
 		throw FileOpenError();
+
 	Stream	stream(10000, fd);
 	
 	while (stream.fill(10000));
@@ -24,6 +25,8 @@ ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 	string	line;
 	stream.get_line(line);
 }
+
+
 
 
 

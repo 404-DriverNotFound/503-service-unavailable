@@ -4,12 +4,14 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <map>
+#include <deque>
 
 /*##############################################################################
 Config Global
 ##############################################################################*/
 
 using std::map;
+using std::deque;
 using std::string;
 
 class ConfigGlobal
@@ -36,6 +38,14 @@ class ConfigGlobal
 	public:
 		ConfigGlobal(int argc, char** argv, char** env);
 		~ConfigGlobal();
+
+		int				open_file(int argc, char** argv, char** env);
+		void			read_file(int fd, Stream& stream);
+		deque<string>	get_lines(Stream& stream);
+		deque<string>	extract_server_lines(deque<string>& lines);
+		deque<string>	extract_location_lines(deque<string>& lines);
+		ConfigServer	set_server(map<string, string>, string);
+		ConfigLocation	set_location(map<string, string>, string);
 
 	/*--------------------------------------------------------------------------
 	Setter
