@@ -1,5 +1,8 @@
 #pragma once
-#include "ClassModule.hpp"
+// #include "ClassModule.hpp"
+#include "ConfigServer.hpp"
+// #include "ConfigLocation.hpp"
+#include "Stream.hpp"
 #include <string>
 #include <unistd.h>
 #include <fcntl.h>
@@ -39,27 +42,37 @@ class ConfigGlobal
 		ConfigGlobal(int argc, char** argv, char** env);
 		~ConfigGlobal();
 
-		int				open_file(int argc, char** argv, char** env);
-		void			read_file(int fd, Stream& stream);
-		deque<string>	get_lines(Stream& stream);
-		deque<string>	extract_server_lines(deque<string>& lines);
-		deque<string>	extract_location_lines(deque<string>& lines);
-		ConfigServer	set_server(map<string, string>, string);
-		ConfigLocation	set_location(map<string, string>, string);
+		int					open_file(int argc, char** argv, char** env);
+		void				read_file(int fd, Stream& stream);
+		deque<string>		get_lines(Stream& stream);
+		void				parse(deque<string>& lines);
+		void				set_global_config(map<string, string>& token_map);
+
+		void				set_max_connection(string& val);
+		void				set_timeout(string& val);
+		void				set_temp_file_dir(string& val);
+
+
+		map<string, string>	tokenizer_map(deque<string>::iterator& it, const string& stop);
+		// ConfigLocation		set_location(map<string, string>, string);
 
 	/*--------------------------------------------------------------------------
 	Setter
 	--------------------------------------------------------------------------*/
 	public:
-		void			set_max_connection(map<string, string>, string& key);
-		void			set_timeout(map<string, string>, string& key);
-		void			set_temp_file_dir(map<string, string>, string& key);
+		// void				set_max_connection(map<string, string>, string& key);
+		// void				set_timeout(map<string, string>, string& key);
+		// void				set_temp_file_dir(map<string, string>, string& key);
 
 	/*--------------------------------------------------------------------------
 	Exception
 	--------------------------------------------------------------------------*/
 	private:
-		class FileOpenError: public std::exception
+		class ConfigFileOpenError: public std::exception
+		{
+			public: const char* what() const throw();	
+		};
+		class ConfigFileNoPort: public std::exception
 		{
 			public: const char* what() const throw();	
 		};

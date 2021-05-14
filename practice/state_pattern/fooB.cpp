@@ -1,7 +1,10 @@
 #include "fooB.hpp"
+#include "bar.hpp"
 
-void		fooB::handle(bar& x)
+fooB*	foo::foo_b = new fooB;
+
+void		fooB::handle(bar* x)
 {
 	cout << "b\n";
-	x.set_state(this->foo_c);
+	x->set_state(this->foo_c);
 }

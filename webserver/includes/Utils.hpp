@@ -5,6 +5,7 @@
 #include <sys/time.h>
 #include <iostream>
 #include <list>
+#include <map>
 #include <set>
 #include <dirent.h>
 #include <cstdlib>
@@ -25,6 +26,7 @@ using std::endl;
 using std::string;
 using std::list;
 using std::set;
+using std::map;
 typedef string::const_iterator str_citerator;
 
 namespace ft{
@@ -71,6 +73,29 @@ int				count_chr(string& str, char c);
 bool			is_dir(const char* path);
 bool			rm_df(const char* path);
 void			str_meta_key(string& str);
+
+template		<typename key_type, typename val_type, typename throw_type>
+val_type&		find_map(map<key_type, val_type> container, key_type& key)
+{
+	typename map<key_type, val_type>::iterator	it = container.find(key);
+	if (it == container.end())
+		throw throw_type();
+	return it->second;
+}
+
+template		<typename throw_type>
+string&			find_map(map<string, string> container, string& key)
+{
+	map<string, string>::iterator	it = container.find(key);
+	if (it == container.end())
+		throw throw_type();
+	return it->second;
+}
+
+
+
+
+
 }		// end ft
 
 #define STOP\

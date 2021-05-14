@@ -5,30 +5,32 @@
 #include "Utils.hpp"
 
 /*##############################################################################
-ConfigSet
+AConfig
 ##############################################################################*/
-class ConfigSet
+class AConfig
 {
 	/*--------------------------------------------------------------------------
 	Members
 	--------------------------------------------------------------------------*/
-	std::string							name;
-	std::string							root;
-	std::set<std::string>				error_page;
-	std::set<std::string>				index;
-	uint32_t							method;
-	uint32_t							head_length;
-	uint64_t							body_length;
-	bool								autoindex;
-	uint64_t							timeout;
+	private:
+		std::string							name;
+		std::string							root;
+		std::set<std::string>				error_page;
+		std::set<std::string>				index;
+		uint32_t							method;
+		uint32_t							head_length;
+		uint64_t							body_length;
+		bool								autoindex;
+		uint64_t							timeout;
 
 	/*--------------------------------------------------------------------------
 	Methods
 	--------------------------------------------------------------------------*/
-					ConfigSet();
-					ConfigSet(const ConfigSet& x);
-					~ConfigSet();
-	ConfigSet&		operator=(const ConfigSet& x);
+	public:
+		AConfig();
+		AConfig(const AConfig& x);
+		~AConfig();
+		AConfig& operator=(const AConfig& x);
 
 	/*--------------------------------------------------------------------------
 	Exceptions

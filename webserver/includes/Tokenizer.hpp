@@ -1,5 +1,5 @@
 #pragma once
-#include "ClassModule.hpp"
+// #include "ClassModule.hpp"
 #include <string>
 #include <list>
 
@@ -25,7 +25,6 @@ class Tokenizer
 		string			seq(const char* sep);
 		string			set(const char* sep);
 		string			chr(char sep);
-		string			chr2(char sep);
 		list<string>	chr_list(char sep);
 		void			iter();
 };

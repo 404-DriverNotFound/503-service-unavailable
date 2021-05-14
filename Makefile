@@ -11,29 +11,16 @@ ASAN = -fsanitize=address
 #	FILE NAMES
 #-------------------------------------------------------------------------------
 LIST_SRCS = \
-	Cgi\
-	Client\
-	ConfigSet\
-	FdSet\
-	Http\
-	HttpReq\
-	HttpRes\
-	Location\
+	ConfigGlobal\
+	ConfigServer\
 	main\
-	Method\
-	MethodGet\
-	MethodPost\
-	MethodPut\
-	Server\
-	Socket\
-	Stream\
-	Time\
+	Tokenizer\
 	Utils\
-	Webserver
+	Stream
 
 	
 	
-DIR_SRCS = ./srcs/srcs/
+DIR_SRCS = ./webserver/srcs/
 DIR_OBJS = ./objs/
 
 SRCS = $(addprefix $(DIR_SRCS), $(addsuffix .cpp, $(LIST_SRCS)))

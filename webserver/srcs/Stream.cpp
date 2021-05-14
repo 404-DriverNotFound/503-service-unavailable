@@ -339,6 +339,26 @@ bool		Stream::get_seq_token(string &token, const char* seq)
 	}
 	_token_factor = false;
 	return false;
+
+
+	// str_citerator	end = token.end();
+	// int						seq_len;
+
+	// seq_len = ft::strlen(seq);
+	// if (_token_factor)
+	// 	token.clear();
+	// token.reserve(reserve_size);
+	// while (it != end)
+	// {
+	// 	if (!ft::strncmp(it.base(), seq, seq_len))
+	// 	{
+	// 		it += seq_len;
+	// 		return true;
+	// 	}
+	// 	token.push_back(*it);
+	// 	++it;
+	// }
+	// return false;
 }
 
 //------------------------------------------------------------------------------

@@ -1,6 +1,4 @@
-// #include "ClassModule.hpp"
-#include "foo.hpp"
-#include "bar.hpp"
+#include "ClassModule.hpp"
 
 int		main()
 {
