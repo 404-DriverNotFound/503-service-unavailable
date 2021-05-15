@@ -12,6 +12,10 @@
 
 // #define DBG
 
+#define STOP\
+	char	buffff[10];\
+	read(0, buffff, 5);
+
 typedef u_int8_t	uint8_t;
 typedef u_int16_t	uint16_t;
 typedef u_int32_t	uint32_t;
@@ -74,6 +78,9 @@ bool			is_dir(const char* path);
 bool			rm_df(const char* path);
 void			str_meta_key(string& str);
 
+/*--------------------------------------------------------------------------
+Template functions
+--------------------------------------------------------------------------*/
 template		<typename key_type, typename val_type, typename throw_type>
 val_type&		find_map(map<key_type, val_type> container, key_type& key)
 {
@@ -92,12 +99,22 @@ string&			find_map(map<string, string> container, string& key)
 	return it->second;
 }
 
-
-
-
-
 }		// end ft
 
-#define STOP\
-	char	buffff[10];\
-	read(0, buffff, 5);
+
+template	<typename T>
+std::ostream&	operator<<(std::ostream& os, set<T> s)
+{
+	typename set<T>::iterator it = s.begin();
+	if (it == s.end())
+		return os ;
+	while (42)
+	{
+		cout << *it;
+		++it;
+		if (it == s.end())
+			break ;
+		cout << ' ';
+	}
+	return os;
+}

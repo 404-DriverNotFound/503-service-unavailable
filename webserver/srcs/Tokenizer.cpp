@@ -1,5 +1,4 @@
 #include "../includes/Tokenizer.hpp"
-#include "../includes/Utils.hpp"
 #include <iostream>
 #include <iomanip>
 using std::string;
@@ -39,6 +38,11 @@ Tokenizer&	Tokenizer::operator=(const Tokenizer& ref)
 // 최상의 성능을 내려면 문자열을 새로 선언할 것.
 // ex) string token = tokenizer.chr('s');
 
+string		Tokenizer::rest()
+{
+	return string(it, end);
+}
+
 string		Tokenizer::chr(char sep)
 {
 	const char*		start = it;
@@ -60,7 +64,7 @@ string		Tokenizer::seq(const char* seq)
 	string			token;
 	
 	size_t		idx = str.find(seq, it - str.begin().base());
-	if (idx != LONG_MAX)
+	if (idx != -1)
 		token.assign(it, it + idx);
 	it += idx + ft::strlen(seq);
 	return token;

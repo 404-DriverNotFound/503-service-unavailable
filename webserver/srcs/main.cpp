@@ -3,9 +3,16 @@
 
 int		main(int argc, char** argv, char** env)
 {
+	set<string>		s;
+
+	cout << s << endl;
+
+
 	try
 	{
 		ConfigGlobal	global_config(argc, argv, env);
+
+		cout << global_config << endl;
 		// Webserver		webserver(global_config);
 		
 		// webserver.start_server();

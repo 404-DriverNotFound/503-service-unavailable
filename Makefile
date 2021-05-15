@@ -11,8 +11,10 @@ ASAN = -fsanitize=address
 #	FILE NAMES
 #-------------------------------------------------------------------------------
 LIST_SRCS = \
+	AConfig\
 	ConfigGlobal\
 	ConfigServer\
+	ConfigLocation\
 	main\
 	Tokenizer\
 	Utils\

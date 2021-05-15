@@ -1,4 +1,8 @@
 #pragma once
+#include "AConfig.hpp"
+#include "ConfigLocation.hpp"
+#include <iostream>
+#include <iomanip>
 #include <string>
 #include <map>
 #include <set>
@@ -7,45 +11,57 @@ using std::string;
 using std::map;
 using std::set;
 
-class ConfigServer
-{
-	private:
-		uint32_t			_port;
-		string				_name;
-		string				_root;
-		set<string>			_error_page;
-		set<string>			_index_page;
-		set<string>			_method;
-		size_t				_head_max;
-		size_t				_body_max;
-		bool				_autoindex;
-		uint64_t			_timeout;
+/*##############################################################################
+Config Server
+##############################################################################*/
 
+class ConfigServer: public AConfig
+{
+	/*------------------------------------------------------------------
+	Member Types
+	------------------------------------------------------------------*/
+	public:
+		typedef map<string, ConfigLocation>			location_container;
+		typedef location_container::iterator		location_iterator;
+		typedef location_container::const_iterator	location_const_iterator;
+
+	/*------------------------------------------------------------------
+	Member
+	------------------------------------------------------------------*/
+	private:
+		uint32_t				_port;
+		location_container		_locations;
+
+	/*------------------------------------------------------------------
+	Constructor & Destructor
+	------------------------------------------------------------------*/
 	private:
 	public:
 		ConfigServer();
-		// ConfigServer(const ConfigServer& ref);
+		ConfigServer(const ConfigServer& ref);
 		ConfigServer(map<string, string>& config_server_map);
-		// ConfigServer& operator=(const ConfigServer& ref);
-		// ~ConfigServer();
+		ConfigServer& operator=(const ConfigServer& ref);
+		~ConfigServer();
 
-		void				set_name(string& val);
-		void				set_root(string& val);
+	/*------------------------------------------------------------------
+	Method
+	------------------------------------------------------------------*/
+	private:
 		void				set_set(set<string>& page, string& val);
-		void				set_index_page(string& val);
-		void				set_error_page(string& val);
-		void				set_method(string& val);
-		void				set_head_max(string& val);
-		void				set_body_max(string& val);
-		void				set_autoindex(string& val);
-		void				set_timeout(string& val);
 
-		class ConfigElementInvalid: public std::exception
-		{
-			public: const char* what() const throw();	
-		};
-		class ConfigElementEmpty: public std::exception
-		{
-			public: const char* what() const throw();	
-		};
+	/*------------------------------------------------------------------
+	Setter
+	------------------------------------------------------------------*/
+	public:
+		void				set_port(string& val);
+		void				set_location(string& name, ConfigLocation location);
+
+	/*------------------------------------------------------------------
+	Getter
+	------------------------------------------------------------------*/
+	public:
+		uint32_t					get_port() const;
+		const location_container&	get_locations() const;
 };
+
+std::ostream&		operator<<(std::ostream& os, const ConfigServer& conf);
