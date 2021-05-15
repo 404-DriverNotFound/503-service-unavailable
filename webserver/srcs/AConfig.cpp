@@ -194,8 +194,6 @@ const char*		AConfig::ConfigElementInvalid::what() const throw()
 
 std::ostream&		operator<<(std::ostream& os, const AConfig& conf)
 {
-	cout << "Server Configurations:" << endl;
-
 	cout << std::setw(16) << "name: " << conf.get_name() << endl;
 	cout << std::setw(16) << "root: " << conf.get_root() << endl;
 	cout << std::setw(16) << "index_page: " << conf.get_index_page() << endl;

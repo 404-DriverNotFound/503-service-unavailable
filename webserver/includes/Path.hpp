@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <list>
 #include <iomanip>
@@ -11,6 +12,7 @@ class Path
 {
 	enum flag_path
 	{
+		f_is_cgi,
 		f_is_file,
 		f_is_dir,
 		f_is_exist,

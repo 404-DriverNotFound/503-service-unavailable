@@ -1,6 +1,7 @@
 #pragma once
+#include "Http.hpp"
+#include "Path.hpp"
 
-#include "ClassModule.hpp"
 using std::string;
 
 class HttpReq : public Http

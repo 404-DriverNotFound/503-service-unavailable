@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ClassModule.hpp"
 
 class AMethod
 {

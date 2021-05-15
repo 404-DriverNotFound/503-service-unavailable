@@ -17,7 +17,6 @@ class Client
 		Path						_path;
 		ConfigServer*				_server;
 		ConfigLocation*				_location;
-		AMethod*					_method;
 		ClientState*				_state;
 		HttpReq						_req;
 		HttpRes						_res;

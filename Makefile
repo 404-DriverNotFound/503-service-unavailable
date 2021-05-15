@@ -15,10 +15,13 @@ LIST_SRCS = \
 	ConfigGlobal\
 	ConfigServer\
 	ConfigLocation\
+	FdSet\
 	main\
+	Socket\
 	Tokenizer\
 	Utils\
-	Stream
+	Stream\
+	Webserver
 
 	
 	

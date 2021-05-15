@@ -1,5 +1,6 @@
 // #include "../includes/ClassModule.hpp"
-#include "../includes/ConfigGlobal.hpp"
+// #include "../includes/ConfigGlobal.hpp"
+#include "../includes/Webserver.hpp"
 
 int		main(int argc, char** argv, char** env)
 {
@@ -10,12 +11,9 @@ int		main(int argc, char** argv, char** env)
 
 	try
 	{
-		ConfigGlobal	global_config(argc, argv, env);
-
-		cout << global_config << endl;
-		// Webserver		webserver(global_config);
+		Webserver::init_static_members(argc, argv, env);
+		cout << Webserver::config << endl;
 		
-		// webserver.start_server();
 	}
 	catch(const std::exception& e)
 	{

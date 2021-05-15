@@ -48,14 +48,12 @@ class ConfigGlobal
 	/*==========================================================================
 		Constructor & Destructor
 	==========================================================================*/
-	private:
-		ConfigGlobal();
-		ConfigGlobal(const ConfigGlobal& ref);
-		ConfigGlobal& operator=(const ConfigGlobal& ref);
-		
 	public:
+		ConfigGlobal();
 		ConfigGlobal(int argc, char** argv, char** env);
+		ConfigGlobal(const ConfigGlobal& ref);
 		~ConfigGlobal();
+		ConfigGlobal& operator=(const ConfigGlobal& ref);
 
 	/*==========================================================================
 		Method

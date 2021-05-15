@@ -3,6 +3,10 @@
 /*==============================================================================
 	Constructor & Destructor
 ==============================================================================*/
+ConfigGlobal::ConfigGlobal()
+{}
+
+//------------------------------------------------------------------------------
 
 ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 {
@@ -13,14 +17,32 @@ ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 	deque<string>	lines = get_lines(stream);
 	
 	parse(lines);
-
-
 }
+
+//------------------------------------------------------------------------------
+
+ConfigGlobal::ConfigGlobal(const ConfigGlobal& ref)
+: _max_connection(ref._max_connection),
+_timeout(ref._timeout),
+_temp_dir(ref._temp_dir),
+ports(ref.ports)
+{}
 
 //------------------------------------------------------------------------------
 
 ConfigGlobal::~ConfigGlobal()
 {}
+
+ConfigGlobal&	ConfigGlobal::operator=(const ConfigGlobal& ref)
+{
+	if (this == &ref)
+		return *this;
+	_max_connection = ref._max_connection;
+	_timeout = ref._timeout;
+	_temp_dir = ref._temp_dir;
+	ports = ref.ports;
+	return *this;
+}
 
 //------------------------------------------------------------------------------
 

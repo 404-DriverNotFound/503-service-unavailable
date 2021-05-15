@@ -1,6 +1,5 @@
 #pragma once
-
-#include "ClassModule.hpp"
+#include "Http.hpp"
 
 class HttpRes : public Http
 {
