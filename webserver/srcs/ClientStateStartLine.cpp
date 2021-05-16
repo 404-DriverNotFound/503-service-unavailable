@@ -1,6 +1,16 @@
 #include "../includes/ClientStateStartLine.hpp"
+#include "../includes/ClientStateHead.hpp"
 
-void	ClientStateStartLine::done(Client& ref)
+ClientStateStartLine::ClientStateStartLine() : ClientState()
 {
-	ref.getReq().set_start_line(ref.getReq().);
+}
+
+ClientStateStartLine::~ClientStateStartLine()
+{
+}
+
+ClientState* ClientStateStartLine::action(Client& ref)
+{
+	std::cout << "StartLine" << std::endl;
+	return head;
 }

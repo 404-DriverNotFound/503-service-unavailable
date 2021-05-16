@@ -1,24 +1,19 @@
-#include "../includes/HttpReq.hpp"
 #include "../includes/Client.hpp"
+#include "../includes/ClientState.hpp"
+#include "../includes/ClientStateStartLine.hpp"
 
 Client::Client(int accept_fd, map<string, ConfigServer>& ref)
 : _socket(accept_fd), _servers(ref)
 {
-	_state = &ClientState::startline;
+	_state = ClientState::startline;
 }
 
 Client::~Client()
 {
-	if (_method)
-		delete _method;
 }
 
 void	Client::routine()
 {
-	_state->done();
+	_state = _state->action(*this);
 }
 
-HttpReq&	Client::getReq(void)
-{
-	return (_req);
-}

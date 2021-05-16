@@ -1,5 +1,4 @@
 #pragma once
-#include "ClientState.hpp"
 #include "ConfigServer.hpp"
 #include "ConfigLocation.hpp"
 #include "HttpReq.hpp"
@@ -7,6 +6,8 @@
 #include "Path.hpp"
 #include "Socket.hpp"
 #include "Time.hpp"
+
+class ClientState;
 
 class Client
 {
@@ -17,17 +18,19 @@ class Client
 		Path						_path;
 		ConfigServer*				_server;
 		ConfigLocation*				_location;
-		ClientState*				_state;
 		HttpReq						_req;
 		HttpRes						_res;
+		ClientState*				_state;
 	public:
 		Client(int accept_fd, map<string, ConfigServer>& ref);
 		~Client();
 		void	routine();
-		/*----------------------- 
+		/*=======================
 		getter
-		-----------------------*/
-		HttpReq&	getReq(void);
+		=======================*/
+		/*=======================
+		setter
+		=======================*/
 };
 
 // enum	e_client_status

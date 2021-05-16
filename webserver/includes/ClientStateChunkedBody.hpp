@@ -8,5 +8,5 @@ class ClientStateChunkedBody : public ClientState
 	public:
 		ClientStateChunkedBody();
 		~ClientStateChunkedBody();
-		void	done(Client& ref);
+		ClientState*	action(Client& ref);
 };

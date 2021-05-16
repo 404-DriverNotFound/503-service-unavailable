@@ -2,11 +2,11 @@
 
 #include "ClientState.hpp"
 
-class ClientStateBody : public ClientState
+class ClientStateSet : public ClientState
 {
 	private:
 	public:
-		ClientStateBody();
-		~ClientStateBody();
+		ClientStateSet();
+		~ClientStateSet();
 		ClientState*	action(Client& ref);
 };
