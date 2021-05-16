@@ -8,5 +8,5 @@ class ClientStateMethod : public ClientState
 	public:
 		ClientStateMethod();
 		~ClientStateMethod();
-		void	done(Client& ref);
+		ClientState*	action(Client& ref);
 };

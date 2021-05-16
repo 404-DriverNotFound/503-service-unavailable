@@ -1,5 +1,4 @@
 #pragma once
-#include "ClientState.hpp"
 #include "ConfigServer.hpp"
 #include "ConfigLocation.hpp"
 #include "HttpReq.hpp"
@@ -8,26 +7,33 @@
 #include "Socket.hpp"
 #include "Time.hpp"
 
+class ClientState;
+
 class Client
 {
 	private:
-		Socket						_socket;
-		Time						_birth;
-		map<string, ConfigServer>&	_servers;	// 참조할 서버 목록(포트에 종속)
-		Path						_path;
-		ConfigServer*				_server;
-		ConfigLocation*				_location;
+		// Socket						_socket;
+		// Time						_birth;
+		// map<string, ConfigServer>&	_servers;	// 참조할 서버 목록(포트에 종속)
+		// Path						_path;
+		// ConfigServer*				_server;
+		// ConfigLocation*				_location;
+		// HttpReq						_req;
+		// HttpRes						_res;
 		ClientState*				_state;
-		HttpReq						_req;
-		HttpRes						_res;
 	public:
-		Client(int accept_fd, map<string, ConfigServer>& ref);
+		// Client(int accept_fd, map<string, ConfigServer>& ref);
+		Client();
 		~Client();
 		void	routine();
-		/*----------------------- 
+		/*=======================
 		getter
-		-----------------------*/
+		=======================*/
 		HttpReq&	getReq(void);
+		/*=======================
+		setter
+		=======================*/
+		void		setState(ClientState*);
 };
 
 // enum	e_client_status

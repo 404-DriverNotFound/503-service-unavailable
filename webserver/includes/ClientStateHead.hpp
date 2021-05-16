@@ -8,5 +8,5 @@ class ClientStateHead : public ClientState
 	public:
 		ClientStateHead();
 		~ClientStateHead();
-		void	done(Client& ref);
+		ClientState*	action(Client& ref);
 };
