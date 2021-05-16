@@ -124,7 +124,7 @@ void			Webserver::check_new_connection()
 			_clients.push_back(new Client((*it)->fd, config.get_ports()[htons((*it)->s_addr.sin_port)], _r_set, _w_set));
 			_o_set.set(_clients.back()->sock.fd);
 		}
-		if (_e_set.get((*it)->fd))
+		if (_e_set.is_set((*it)->fd))
 		{
 			cout << "Selet Error!" << endl;
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
@@ -144,14 +144,14 @@ void			Webserver::manage_clients()
 
 	for (client_iterator it = _clients.begin() ; it != _clients.end() ; ++it)
 	{
-		if (_e_set.get((*it)->sock.fd))
+		if (_e_set.is_set((*it)->get_socket().fd))
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
-		(*it)->process();
+		(*it)->routine();
 		if (/*client Done*/)
 		{
-			_o_set.del((*it)->sock.fd);
+			_o_set.clr((*it)->sock.fd);
 			delete *it;
 			it = _clients.erase(it);
 		}
