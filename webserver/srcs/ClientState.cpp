@@ -18,12 +18,14 @@ ClientStateChunkedBody*	ClientState::chunkedbody	=	new ClientStateChunkedBody();
 ClientStateMethod*		ClientState::method			=	new	ClientStateMethod();
 ClientStateDone*		ClientState::done			=	new	ClientStateDone();
 
+/*===================
+constructor
+===================*/
 ClientState::ClientState() {
 }
 
+/*===================
+destructor
+===================*/
 ClientState::~ClientState() {
 }
-
-// int		main() {
-// 	ClientState		state;
-// }

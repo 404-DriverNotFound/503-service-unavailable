@@ -8,5 +8,5 @@ class	bar;
 class	fooC : public foo
 {
 	public:
-		void		handle(bar* x);
+		foo*		handle(bar* x);
 };

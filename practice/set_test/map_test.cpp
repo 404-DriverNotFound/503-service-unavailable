@@ -42,14 +42,14 @@ int		main()
 	v.push_back("option");
 	v.push_back("trace");
 
-	size_t	memsize = 1000000;
-	char	tmp0[memsize];
-	char	tmp1[memsize];
+	size_t	memsize = 10000000;
+	char*	tmp0 = new char[memsize];
+	char*	tmp1 = new char[memsize];
 	{
 		Time	t0;
 		for (int i = 0 ; i < 1000 ; i++)
 		{
-			s.find("get");
+			s.find("head");
 			memset(tmp0, 0, memsize);
 		}
 		Time	t1;
@@ -61,7 +61,7 @@ int		main()
 		{
 			for (vector<string>::iterator it = v.begin() ; it != v.end() ; ++it)
 			{
-				if (*it == "get")
+				if (*it == "head")
 					break;
 			}
 			memset(tmp1, 0, memsize);

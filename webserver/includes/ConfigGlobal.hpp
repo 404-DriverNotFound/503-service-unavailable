@@ -5,6 +5,7 @@
 #include "Tokenizer.hpp"
 #include "Utils.hpp"
 #include "Stream.hpp"
+#include "Time.hpp"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -31,19 +32,19 @@ class ConfigGlobal
 	public:
 		typedef map<string, ConfigServer>			server_container;
 		typedef map<uint32_t, server_container>		port_container;
-		typedef server_container::iterator			server_iterator;
-		typedef port_container::iterator			port_iterator;
+		typedef server_container::const_iterator	server_iterator;
+		typedef port_container::const_iterator		port_iterator;
 
 	/*==========================================================================
 		Members
 	==========================================================================*/
 	private:
 		size_t										_max_connection;
-		long										_timeout;
+		Time										_timeout;
+		Time										_select_timeout;
 		string										_temp_dir;
-
-	public:
-		map<uint32_t, map<string, ConfigServer> >	ports;
+		int											_worker;
+		port_container								_ports;
 	
 	/*==========================================================================
 		Constructor & Destructor
@@ -73,15 +74,20 @@ class ConfigGlobal
 	public:
 		void				set_max_connection(string& val);
 		void				set_timeout(string& val);
+		void				set_select_timeout(string& val);
 		void				set_temp_dir(string& val);
+		void				set_worker(string& val);
 	
 	/*==========================================================================
 		Getter
 	==========================================================================*/
 	public:
-		size_t				get_max_connection();
-		long				get_timeout();
-		const string&		get_temp_dir();
+		size_t					get_max_connection() const;
+		const Time&				get_timeout() const;
+		const Time&				get_select_timeout() const;
+		const string&			get_temp_dir() const;
+		int						get_worker() const;
+		const port_container&	get_ports() const;
 	
 	/*==========================================================================
 		Exception

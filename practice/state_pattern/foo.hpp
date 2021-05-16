@@ -17,5 +17,5 @@ class	foo
 		static fooA*	get_a();
 		static fooB*	get_b();
 		static fooC*	get_c();
-		virtual void	handle(bar* x) = 0;
+		virtual foo*	handle(bar* x) = 0;
 };
