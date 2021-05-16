@@ -1,7 +1,7 @@
 #include "../includes/ClientStateStartLine.hpp"
 #include "../includes/ClientStateHead.hpp"
 
-ClientStateStartLine::ClientStateStartLine() : ClientState()
+ClientStateStartLine::ClientStateStartLine()
 {
 }
 
