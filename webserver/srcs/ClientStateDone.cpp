@@ -11,5 +11,5 @@ ClientStateDone::~ClientStateDone()
 ClientState* ClientStateDone::action(Client& ref)
 {
 	std::cout << "Done" << std::endl;
-	return (ClientState*)NULL;
+	return NULL;
 }
