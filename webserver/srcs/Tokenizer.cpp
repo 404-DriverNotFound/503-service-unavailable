@@ -59,6 +59,23 @@ string		Tokenizer::chr(char sep)
 	return token;
 }
 
+list<string>	Tokenizer::chr_list(char sep)
+{
+	list<string>	lines;
+	
+	while (*it == sep)
+	{
+		++it;
+	}
+	while (it != end)
+	{
+		string line = chr(sep);
+		lines.push_back(string());
+		lines.back().swap(line);
+	}
+	return lines;
+}
+
 string		Tokenizer::seq(const char* seq)
 {
 	string			token;
@@ -70,14 +87,14 @@ string		Tokenizer::seq(const char* seq)
 	return token;
 }
 
-/*
-int		main()
+
+/* int		main()
 {
-	string		str = make_str(n, k);
+	string		str = "000s111s222s333sss4";
 	Tokenizer	tokenizer(str);
 
-	string token0 = tokenizer.chr('s');
-	string token1 = tokenizer.chr('s');
-	string token2 = tokenizer.chr('s');
-}
-*/
+	list<string>	l = tokenizer.chr_list('s');
+
+	for (string s : l)
+		cout << s << endl;
+} */
