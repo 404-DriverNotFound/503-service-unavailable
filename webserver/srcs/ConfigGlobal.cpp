@@ -25,7 +25,8 @@ ConfigGlobal::ConfigGlobal(const ConfigGlobal& ref)
 : _max_connection(ref._max_connection),
 _timeout(ref._timeout),
 _temp_dir(ref._temp_dir),
-ports(ref.ports)
+_worker(ref._worker),
+_ports(ref._ports)
 {}
 
 //------------------------------------------------------------------------------
@@ -40,7 +41,8 @@ ConfigGlobal&	ConfigGlobal::operator=(const ConfigGlobal& ref)
 	_max_connection = ref._max_connection;
 	_timeout = ref._timeout;
 	_temp_dir = ref._temp_dir;
-	ports = ref.ports;
+	_worker = ref._worker;
+	_ports = ref._ports;
 	return *this;
 }
 
@@ -121,7 +123,7 @@ void			ConfigGlobal::parse(deque<string>& lines)
 				token_map["port"] = "80";
 			port = ft::atoi(token_map["port"]);
 			server_name = ft::find_map<ConfigServer::ConfigElementEmpty>(token_map, str_name);
-			ports[port][server_name] = ConfigServer(token_map);
+			_ports[port][server_name] = ConfigServer(token_map);
 			if (it == end)
 				break;
 		}
@@ -133,7 +135,7 @@ void			ConfigGlobal::parse(deque<string>& lines)
 			map<string, string>	token_map = tokenizer_map(it, end, "");
 			string	location_name
 			 = ft::find_map<ConfigServer::ConfigElementEmpty>(token_map, str_name);
-			ports[port][server_name].set_location(location_name, ConfigLocation(token_map));
+			_ports[port][server_name].set_location(location_name, ConfigLocation(token_map));
 			if (it == end)
 				break;
 		}
@@ -166,6 +168,7 @@ void				ConfigGlobal::set_global_config(map<string, string>& token_map)
 	set_max_connection(token_map["max_connection"]);
 	set_timeout(token_map["timeout"]);
 	set_temp_dir(token_map["temp_dir"]);
+	set_worker(token_map["worker"]);
 }
 
 //------------------------------------------------------------------------------
@@ -179,7 +182,14 @@ void				ConfigGlobal::set_max_connection(string& val)
 
 void				ConfigGlobal::set_timeout(string& val)
 {
-	_timeout = ft::atoi(val);
+	_timeout = Time(ft::atoi(val) * 1000000);
+}
+
+//------------------------------------------------------------------------------
+
+void				ConfigGlobal::set_select_timeout(string& val)
+{
+	_select_timeout = Time(ft::atoi(val) * 1000000);
 }
 
 //------------------------------------------------------------------------------
@@ -189,27 +199,55 @@ void				ConfigGlobal::set_temp_dir(string& val)
 	_temp_dir = val;
 }
 
+//------------------------------------------------------------------------------
+
+void				ConfigGlobal::set_worker(string& val)
+{
+	_worker = ft::atoi(val);
+}
+
 /*==============================================================================
 	Getter
 ==============================================================================*/
 
-size_t				ConfigGlobal::get_max_connection()
+size_t				ConfigGlobal::get_max_connection() const
 {
 	return _max_connection;
 }
 
 //------------------------------------------------------------------------------
 
-long				ConfigGlobal::get_timeout()
+const Time&			ConfigGlobal::get_timeout() const
 {
 	return _timeout;
 }
 
 //------------------------------------------------------------------------------
 
-const string&		ConfigGlobal::get_temp_dir()
+const Time&			ConfigGlobal::get_select_timeout() const
+{
+	return _select_timeout;
+}
+
+//------------------------------------------------------------------------------
+
+const string&		ConfigGlobal::get_temp_dir() const
 {
 	return _temp_dir;
+}
+
+//------------------------------------------------------------------------------
+
+int					ConfigGlobal::get_worker() const
+{
+	return _worker;
+}
+
+//------------------------------------------------------------------------------
+
+const ConfigGlobal::port_container&	ConfigGlobal::get_ports() const
+{
+	return _ports;
 }
 
 /*==============================================================================
@@ -240,9 +278,10 @@ std::ostream&		operator<<(std::ostream& os, ConfigGlobal& conf)
 	cout << std::setw(16) << "max connection: "	<< conf.get_max_connection()	<< endl;
 	cout << std::setw(16) << "temp dir: "		<< conf.get_temp_dir()			<< endl;
 	cout << std::setw(16) << "timeout: "		<< conf.get_timeout()			<< endl;
+	cout << std::setw(16) << "worker: "			<< conf.get_worker()			<< endl;
 
-	ConfigGlobal::port_iterator	it_port = conf.ports.begin();
-	while (it_port != conf.ports.end())
+	ConfigGlobal::port_iterator	it_port = conf.get_ports().begin();
+	while (it_port != conf.get_ports().end())
 	{
 		cout << "============================" << endl;
 		cout << "port:" << it_port->first << endl;

@@ -15,7 +15,7 @@ Method
 
 //------------------------------------------------------------------------------
 
-			Time::Time(Time& x)
+			Time::Time(const Time& x)
 {
 	tv_sec = x.tv_sec;
 	tv_usec = x.tv_usec;
@@ -28,7 +28,7 @@ Method
 
 //------------------------------------------------------------------------------
 
-Time&		Time::operator=(Time& x)
+Time&		Time::operator=(const Time& x)
 {
 	if (this == &x)
 		return *this;
@@ -39,7 +39,7 @@ Time&		Time::operator=(Time& x)
 
 //------------------------------------------------------------------------------
 
-Time&		Time::operator-=(Time& x)
+Time&		Time::operator-=(const Time& x)
 {
 	tv_sec -= x.tv_sec;
 	tv_usec -= x.tv_usec;
@@ -48,7 +48,7 @@ Time&		Time::operator-=(Time& x)
 
 //------------------------------------------------------------------------------
 
-Time		Time::operator-(Time& x)
+Time		Time::operator-(const Time& x)
 {
 	Time	a(*this);
 	return a -= x;

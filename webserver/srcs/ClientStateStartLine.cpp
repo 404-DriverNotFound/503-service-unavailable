@@ -2,5 +2,5 @@
 
 void	ClientStateStartLine::done(Client& ref)
 {
-	ref.getReq();
+	ref.getReq().set_start_line(ref.getReq().);
 }
