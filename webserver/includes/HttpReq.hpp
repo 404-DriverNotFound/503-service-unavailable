@@ -7,7 +7,7 @@ using std::string;
 class HttpReq : public Http
 {
 	private:
-		Path&	_path;
+		Path	_path;
 		string	query;
 		string	scheme;
 	public:

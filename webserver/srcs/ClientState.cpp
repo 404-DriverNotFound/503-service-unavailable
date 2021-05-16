@@ -21,11 +21,13 @@ ClientStateDone*		ClientState::done			=	new	ClientStateDone();
 /*===================
 constructor
 ===================*/
-ClientState::ClientState() {
+ClientState::ClientState()
+{
 }
 
 /*===================
 destructor
 ===================*/
-ClientState::~ClientState() {
+ClientState::~ClientState()
+{
 }
