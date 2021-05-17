@@ -12,7 +12,7 @@ static
 ===================*/
 ClientStateStartLine*	ClientState::startline		=	new ClientStateStartLine();
 ClientStateHead*		ClientState::head			=	new	ClientStateHead();
-ClientStateSet*			ClientState::set			=	new	ClientStateSet();
+ClientStateSet*			ClientState::bind			=	new	ClientStateSet();
 ClientStateBody*		ClientState::body			=	new	ClientStateBody();
 ClientStateChunkedBody*	ClientState::chunkedbody	=	new ClientStateChunkedBody();
 ClientStateMethod*		ClientState::method			=	new	ClientStateMethod();

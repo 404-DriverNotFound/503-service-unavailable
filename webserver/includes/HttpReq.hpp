@@ -8,13 +8,16 @@ class HttpReq : public Http
 {
 	private:
 		Path	_path;
-		string	query;
-		string	scheme;
+		string	_method;
+		string	_scheme;
 	public:
 		HttpReq();
 		HttpReq(const HttpReq& ref);
 		~HttpReq();
 		HttpReq		operator=(const HttpReq& ref);
 
-		void		set_start_line(string& line);
+		void			set_start_line();
+		bool			get_next_line();
+		const string&	get_method() const;
+		Path&			get_path();
 };

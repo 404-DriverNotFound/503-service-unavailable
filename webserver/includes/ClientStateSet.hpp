@@ -11,7 +11,11 @@ class ClientStateSet : public ClientState
 		ClientState*	action(Client& ref);
 		void			set_server(Client& ref);
 		void			set_location(Client& ref);
+		void			check_method(Client& ref);
 		void			check_auth(Client& ref);
-		void			set_path(Client& ref);
+		/*============
+		setter
+		============*/
+		void			set_file(Client& ref);
 		void			set_method(Client& ref);
 };

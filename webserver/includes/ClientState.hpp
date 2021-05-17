@@ -15,7 +15,7 @@ class ClientState
 	public:
 		static	ClientStateStartLine*	startline;
 		static	ClientStateHead*		head;
-		static	ClientStateSet*			set;
+		static	ClientStateSet*			bind;
 		static	ClientStateBody*		body;
 		static	ClientStateChunkedBody*	chunkedbody;
 		static	ClientStateMethod*		method;

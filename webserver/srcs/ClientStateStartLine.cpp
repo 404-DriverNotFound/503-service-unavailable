@@ -18,10 +18,18 @@ ClientStateStartLine::~ClientStateStartLine()
 
 ClientState* ClientStateStartLine::action(Client& ref)
 {
-	if (ref.get_next_line())
+	if (ref.get_httpreq().get_next_line())
 	{
-		ref.get_httpreq().set_start_line(ref.get_line());
-		return	head;
+		try
+		{
+			ref.get_httpreq().set_start_line();
+			return	head;
+		}
+		catch(int code)
+		{
+			ref.get_httpres().set_status_code(code);
+			return head;
+		}
 	}
 	return startline;
 }

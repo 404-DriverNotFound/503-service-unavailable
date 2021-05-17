@@ -15,8 +15,9 @@ Config Global
 class Path
 {
 	public:
-		enum flag_path
+		enum flag
 		{
+			flag_not_exist,
 			flag_cgi,
 			flag_dir,
 			flag_file,
@@ -26,7 +27,7 @@ class Path
 	==========================================================================*/
 	public:
 	// private:
-		int				_flag;
+		flag			_flag;
 		string			_path_info;
 		string			_query;
 		list<string>	_segments;
@@ -52,7 +53,9 @@ class Path
 		Setter
 	==========================================================================*/
 	public:
+		void			set_path(string& raw);
 		void			set_root(const string& root);
+		bool			set_index(const set<string>& pages);
 	private:
 		void			set_flag();
 		void			set_path_info();
@@ -66,10 +69,11 @@ class Path
 		const string&		get_path_info() const;
 		const string&		get_path_translated() const;
 		const list<string>&	get_segments() const;
-		bool				is_cgi() const;
-		bool				is_dir() const;
-		bool				is_file() const;
-		bool				is_exist() const;
+		flag				get_flag() const;
+		// bool				is_cgi() const;
+		// bool				is_dir() const;
+		// bool				is_file() const;
+		// bool				is_exist() const;
 };
 
 

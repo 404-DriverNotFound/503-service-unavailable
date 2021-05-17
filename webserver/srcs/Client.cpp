@@ -4,7 +4,6 @@
 
 Client::Client(int accept_fd, ServerMap& ref)
 : _socket(accept_fd),
-  _stream(0xffffff, accept_fd, accept_fd),
   _servers(ref),
   _state(ClientState::startline)
 {
@@ -16,7 +15,6 @@ Client::~Client()
 
 void	Client::routine()
 {
-	_stream.fill(0xfffff);
 	_state = _state->action(*this);
 }
 
@@ -26,11 +24,6 @@ getter
 Socket&				Client::get_socket()
 {
 	return	_socket;
-}
-
-Stream&				Client::get_stream()
-{
-	return	_stream;
 }
 
 Time&				Client::get_time()
@@ -43,17 +36,12 @@ Client::ServerMap&	Client::get_servers()
 	return	_servers;
 }
 
-Path&				Client::get_path()
-{
-	return	_path;
-}
-
-ConfigServer&		Client::get_server()
+const ConfigServer&		Client::get_server()
 {
 	return	*_server;
 }
 
-ConfigLocation&		Client::get_location()
+const ConfigLocation&	Client::get_location()
 {
 	return	*_location;
 }
@@ -67,21 +55,15 @@ HttpRes&			Client::get_httpres()
 {
 	return	_res;
 }
-
-string&				Client::get_line()
-{
-	return	_line;
-}
-
 /*=======================
 setter
 =======================*/
-void				Client::set_server(ConfigServer* svrp)
+void				Client::set_server(const ConfigServer& svrp)
 {
-	_server = svrp;
+	_server = &svrp;
 }
 
-bool				Client::get_next_line()
+void				Client::set_location(const ConfigLocation& locp)
 {
-	return get_stream().get_line(_line);
+	_location = &locp;
 }

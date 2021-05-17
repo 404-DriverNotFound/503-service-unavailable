@@ -90,7 +90,7 @@ void			Webserver::start_server()
 		_w_set = _o_set;
 		_e_set = _o_set;
 		select_timeout = config.get_select_timeout();
-		result = select(config.get_max_connection(), &_r_set.bits, &w_set.bits, &_e_set.bits, (&select_timeout));
+		result = select(config.get_max_connection(), &_r_set.bits, &_w_set.bits, &_e_set.bits, (&select_timeout));
 		if (result < 0)
 		{
 			perror("func: start server : ");

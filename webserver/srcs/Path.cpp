@@ -90,11 +90,44 @@ void				Path::assemble_path(string& x, const list<string>& segments)
 	Setter
 ==============================================================================*/
 
+void				Path::set_path(string& raw)
+{
+	_segments.clear();
+	
+	Tokenizer		tokenizer(raw);
+	string			path_tmp = tokenizer.chr(':');
+	string			query_tmp = tokenizer.rest();
+
+	_query.swap(query_tmp);
+
+	Tokenizer		tokenizer_path(path_tmp);
+	list<string>	segment_tmp = tokenizer_path.chr_list('/');
+
+	arrange_segment(segment_tmp);
+	set_extension(segment_tmp.back());
+	_segments.swap(segment_tmp);
+	set_path_info();	
+}
+
+//------------------------------------------------------------------------------
+
 void				Path::set_root(const string& root)
 {
 	_segments.front() = root;
 	set_path_translated();
 	set_flag();
+}
+
+//------------------------------------------------------------------------------
+
+bool				Path::set_index(const set<string>& pages)
+{
+	string	filename = ft::find(_path_translated, pages);
+	if (filename.empty())
+		return false;
+	_segments.push_back(filename);
+	_path_translated.append(filename);
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -110,21 +143,21 @@ void				Path::set_extension(string& segment)
 
 void				Path::set_flag()
 {
-	_flag = 0;
+	_flag = flag_not_exist;
 	struct stat		s;
 	if (!_extension.empty())
 	{
-		_flag |= (1 << flag_cgi);
+		_flag = flag_cgi;
 	}
 	else if (stat(_path_translated.c_str(), &s) == 0)
 	{
 		if (S_ISDIR(s.st_mode))
 		{
-			_flag |= (1 << flag_dir);
+			_flag = flag_dir;
 		}
 		else
 		{
-			_flag |= (1 << flag_file);
+			_flag = flag_file;
 		}
 	}
 	return;
@@ -169,33 +202,10 @@ const list<string>&	Path::get_segments() const
 
 //------------------------------------------------------------------------------
 
-bool				Path::is_cgi() const
-{
-	return _flag | (1 << flag_cgi);
-}
-
-//------------------------------------------------------------------------------
-
-bool				Path::is_dir() const
-{
-	return _flag | (1 << flag_dir);
-}
-
-//------------------------------------------------------------------------------
-
-bool				Path::is_file() const
-{
-	return _flag | (1 << flag_file);
-}
-
-//------------------------------------------------------------------------------
-
-bool				Path::is_exist() const
+Path::flag			Path::get_flag() const
 {
 	return _flag;
 }
-
-//------------------------------------------------------------------------------
 
 // int			main()
 // {
