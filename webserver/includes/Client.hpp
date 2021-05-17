@@ -45,6 +45,7 @@ class Client
 		/*=======================
 		setter
 		=======================*/
+		void				set_server(ConfigServer* svrp);
 		/*=======================
 		method
 		=======================*/

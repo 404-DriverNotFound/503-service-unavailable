@@ -73,6 +73,14 @@ string&				Client::get_line()
 	return	_line;
 }
 
+/*=======================
+setter
+=======================*/
+void				Client::set_server(ConfigServer* svrp)
+{
+	_server = svrp;
+}
+
 bool				Client::get_next_line()
 {
 	return get_stream().get_line(_line);
