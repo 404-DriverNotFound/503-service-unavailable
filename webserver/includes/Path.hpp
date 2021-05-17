@@ -14,41 +14,107 @@ Config Global
 
 class Path
 {
-	enum flag_path
-	{
-		f_is_cgi,
-		f_is_file,
-		f_is_dir,
-		f_is_exist,
-	};
+	public:
+		enum flag_path
+		{
+			flag_cgi,
+			flag_dir,
+			flag_file,
+		};
 	/*==========================================================================
 		Member
 	==========================================================================*/
 	public:
 	// private:
+		int				_flag;
 		string			_path_info;
+		string			_query;
 		list<string>	_segments;
 		string			_extension;
-		int				_flag;
 		string			_path_translated;
-
+	/*==========================================================================
+		Constructor & Destructor
+	==========================================================================*/
 	public:
 		Path();
-		Path(string& raw, string& query);
+		Path(string& raw);
 		Path(const string& ref);
 		~Path();
 		Path&	operator=(Path& ref);
-
-	public:
-		void			set_root();
-
-
-		bool			is_cgi();
-		bool			is_file();
-		bool			is_exist();
-		bool			is_dir();
-
+	/*==========================================================================
+		Method
+	==========================================================================*/
 	private:
+		void			assemble_path(string& x, const list<string>& segments);
 		void			arrange_segment(list<string>& segments);
+
+	/*==========================================================================
+		Setter
+	==========================================================================*/
+	public:
+		void			set_root(const string& root);
+	private:
+		void			set_flag();
+		void			set_path_info();
+		void			set_path_translated();
 		void			set_extension(string& segment);
+
+	/*==========================================================================
+		Getter
+	==========================================================================*/
+	public:
+		const string&		get_path_info() const;
+		const string&		get_path_translated() const;
+		const list<string>&	get_segments() const;
+		bool				is_cgi() const;
+		bool				is_dir() const;
+		bool				is_file() const;
+		bool				is_exist() const;
 };
+
+
+/*
+쿼리와 path_info 생성
+
+로케이션후보 = 경로조각.fornt()
+
+로케이션 목록에서 로케이션후보와 매치되는 것을 찾기
+찾으면 경로조각.front()를 해당 후보의 루트와 교체
+못찾으면 그대로
+---
+cgi이면 cgi 실행
+{
+	임시파일
+	임시파일
+}
+
+디렉로리이면 get
+{
+	임시파일
+	경로에 인덱스 추가
+}
+
+나머지 경우
+GET :
+없으면: 오토인덱스면: 오토인덱스 페이지, 오토인덱스 아니면 에러페이지
+있으면: 파일 전송
+{
+	임시파일
+	경로 그대로
+}
+
+POST : 파일 이어쓰기
+{
+	경로 그대로
+	임시파일
+}
+PUT : 파일 덮어쓰기
+{
+	경로 그대로
+	임시파일
+}
+DELETE : 
+
+
+
+*/
