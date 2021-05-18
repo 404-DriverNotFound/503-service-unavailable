@@ -582,6 +582,42 @@ bool		ft::rm_df(const char *path)
 	return (true);
 }
 
+//------------------------------------------------------------------------------
+
+void		ft::make_dir_list(const string& path, int fd)
+{
+	DIR				*dir_ptr		=	NULL;
+	struct dirent	*file			=	NULL;
+	int				fd;
+
+	if (ft::is_dir(path.c_str()))
+	{
+		dir_ptr = opendir(path.c_str());
+		while ((file = readdir(dir_ptr)) != NULL)
+		{
+			string	total;
+			string	dfname;
+			string	url = path.c_str();
+			url += '/';
+			if (ft::strcmp(file->d_name, ".") == 0)
+			{
+				continue;
+			}
+			total += "<A href = \"";
+			url += file->d_name;
+			total += url;
+			total += "\" target = \"self\">";
+			total += file->d_name;
+			total += "</A>";
+			total += "<br>";
+			write(fd, total.c_str(), strlen(total.c_str()));
+		}
+		close(fd);
+		closedir(dir_ptr);
+	}
+}
+
+
 // #include <fcntl.h>
 
 // int		main(int argc, char** argv, char** env)

@@ -120,7 +120,7 @@ void				Path::set_root(const string& root)
 
 //------------------------------------------------------------------------------
 
-bool				Path::set_index(const set<string>& pages)
+bool				Path::set_index_page(const set<string>& pages)
 {
 	string	filename = ft::find(_path_translated, pages);
 	if (filename.empty())

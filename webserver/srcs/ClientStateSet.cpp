@@ -1,6 +1,7 @@
 #include "../includes/ClientStateSet.hpp"
 #include "../includes/ClientStateBody.hpp"
 #include "../includes/ClientStateChunkedBody.hpp"
+#include "../includes/ClientStateMethod.hpp"
 #include "../includes/Path.hpp"
 #include "../includes/Utils.hpp"
 
@@ -8,6 +9,7 @@
 
 ClientStateSet::ClientStateSet()
 {
+	len = 0xffff;
 }
 
 //------------------------------------------------
@@ -33,14 +35,23 @@ ClientState*	ClientStateSet::action(Client& ref)
 		std::cerr << e.what() << '\n';
 	}
 	
-	map<string, string>::iterator	it_header = ref.get_httpreq().get_headers().find("TRANSFER_ENCODING");
-	if (it_header != ref.get_httpreq().get_headers().end() && it_header->second.find("chunked"))
+	const string&	trf = ref.get_httpreq().get_header("TRANSFER_ENCODING");
+	if (trf == "chunked")
 	{
 		return	chunkedbody;
 	}
 	else
 	{
-		return	body;
+		const string&	tmp = ref.get_httpreq().get_header("CONTENT_LENGTH");
+		if (tmp.empty())
+		{
+			return method;
+		}
+		else
+		{
+			ref.get_httpreq().get_stream().set_pass_remain(ft::atoi(tmp));
+			return	body;
+		}
 	}
 }
 
@@ -131,66 +142,93 @@ void	ClientStateSet::set_file(Client& ref)
 	const ConfigLocation&	location = ref.get_location();
 	HttpReq&				req = ref.get_httpreq();
 	HttpRes&				res = ref.get_httpres();
-	// Path&					path = req.get_path();
-
+	const string&			path = req.get_path().get_path_translated();
 
 	switch(ref.get_httpreq().get_path().get_flag())
 	{
 		case Path::flag::flag_cgi:
-			req.set_file(File::flag::o_create);
-			res.set_file(File::flag::o_create);
+			req.set_file(File::flag::o_create);	// req: temp file
+			res.set_file(File::flag::o_create);	// res: temp file
 			break;
+
 		case Path::flag::flag_dir:
-			// ref.get_httpreq().set_file(File::flag::o_create);
-			
-			if (req.get_path().set_index(ref.get_location().get_index_page())) // 인덱스 찾기 실패
+			req.set_file(File::flag::o_create);	// req: temp file
+
+			bool	is_index_page = req.set_index_page(location.get_index_page());
+			if (is_index_page == false) // index page not found
 			{
-				if (location.get_autoindex() == true)
+				if (location.get_autoindex() == true)	// autoindex on?
 				{
-					/* 오토인덱스 페이지 생성 */
+					res.set_file(File::flag::o_create);	// temp file && autoindex
+					res.set_autoindex_page(path);
+				}
+				else // autoindex off
+				{
+					bool	is_error_page = req.set_index_page(location.get_error_page());
+					res.set_status_code(404);
+					if (is_error_page == false)	// error page not found
+					{
+						res.set_file(File::flag::o_create);
+					}
+					else
+					{
+						res.set_file(path);
+					}
+				}
+			}
+			else
+			{
+				res.set_file(path);
+			}
+			break;
+
+		case Path::flag::flag_file:
+			if (req.get_method() == "GET")
+			{
+				res.set_file(path, File::flag::o_read);
+			}
+			else if (req.get_method() == "PUT")
+			{
+				req.set_file(path, File::flag::o_create);
+			}
+			else if (req.get_method() == "POST")
+			{
+				req.set_file(path, File::flag::o_append);
+			}
+			else if (req.get_method() == "DELETE")
+			{
+				ft::rm_df(path.c_str());
+			}
+			else if (req.get_method() == "HEAD")
+			{
+			}
+			break;
+
+		case Path::flag::flag_not_exist:
+			if (req.get_method() == "PUT")
+			{
+				req.set_file(path, File::flag::o_create);
+			}
+			else if (req.get_method() == "POST")
+			{
+				req.set_file(path, File::flag::o_append);
+			}
+			else
+			{
+				res.set_status_code(404);
+				bool	is_error_page = req.set_index_page(location.get_error_page());
+				if (is_error_page == false)	// error page not found
+				{
+					res.set_file(File::flag::o_create);
 				}
 				else
 				{
-					/* 에러페이지 */
+					res.set_file(path);
 				}
-
 			}
-
-			ref.get_httpres().set_file(ref.get_httpreq().get_path().get_path_translated());
-
-			break;
-		case Path::flag::flag_file:
-			
-			ref.get_httpreq().set_file();
-			ref.get_httpres().set_file();
-			break;
-		case Path::flag::flag_not_exist:
-			ref.get_httpreq().set_file();
-			ref.get_httpres().set_file();
 			break;
 		default:
 			break;
-	}
-	if (ref.get_httpreq().get_path().is_cgi() == true)
-	{
-		// 임시파일
-	}
-	else if (ref.get_httpreq().get_path().is_dir() == true)
-	{
-		// get 요청 처럼 처리
-		// 오토인덱스 : on 일때 index.html이 없으면 디렉토리 리스트
-		
-	}
-	else if (ref.get_httpreq().get_path().is_file() == true)
-	{
-		// 메서드별로 처리
-	}
-	else
-	{
-		// get ? (오토인덱스 on ? 오토인덱스페이지 : 404) : 404
-		// put ? (덮어쓰기로 생성)
-		// post ? (이어쓰기로 생성)
-		// delete 404
 	}
 }
 

@@ -1,10 +1,12 @@
 #include "../includes/ClientStateBody.hpp"
+#include "../includes/ClientStateMethod.hpp"
 
 /*===================
 constructor
 ===================*/
 ClientStateBody::ClientStateBody()
 {
+	len = 0xffff;
 }
 
 /*===================
@@ -17,6 +19,8 @@ ClientStateBody::~ClientStateBody()
 //--------------------
 ClientState* ClientStateBody::action(Client& ref)
 {
-	std::cout << "Body" << std::endl;
-	return (ClientState*)this->method;
+	if (ref.read_chunked())
+		return method;
+	else
+		return this;
 }

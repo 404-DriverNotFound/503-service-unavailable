@@ -55,7 +55,7 @@ class Path
 	public:
 		void			set_path(string& raw);
 		void			set_root(const string& root);
-		bool			set_index(const set<string>& pages);
+		bool			set_index_page(const set<string>& pages);
 	private:
 		void			set_flag();
 		void			set_path_info();

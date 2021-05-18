@@ -77,7 +77,7 @@ int				count_chr(string& str, char c);
 bool			is_dir(const char* path);
 bool			rm_df(const char* path);
 void			str_meta_key(string& str);
-
+void			make_dir_list(const string& path, int fd);
 /*--------------------------------------------------------------------------
 Template functions
 --------------------------------------------------------------------------*/

@@ -1,16 +1,60 @@
 #include "../includes/HttpReq.hpp"
+/*##############################################################################
+	
+	Http Request
 
-HttpReq::HttpReq()
+##############################################################################*/
+
+/*==============================================================================
+	Constructor & Destructor
+==============================================================================*/
+HttpReq::HttpReq(int fd)
+: Http(fd)
 {
-}
 
-HttpReq::HttpReq(const HttpReq& ref)
-{
 }
-
+//------------------------------------------------------------------------------
 HttpReq::~HttpReq()
 {
 }
+
+/*==============================================================================
+	Method
+==============================================================================*/
+
+bool	HttpReq::set_chunked_length()
+{
+	if (_stream.get_line(_line))
+	{
+		_stream.set_pass_remain(ft::atoi_hex(_line));
+		return true;
+	}
+	else
+		return false;
+}
+//------------------------------------------------------------------------------
+
+bool	HttpReq::stream_to_body()
+{
+	_stream.pass(_stream.get_pass_remain());
+	if (_stream.get_pass_remain() == 0)
+		return true;
+	else
+		return false;
+}
+//------------------------------------------------------------------------------
+
+bool	HttpReq::read_crlf()
+{
+	if (_stream.get_line(_line))
+		return true;
+	else
+		return false;
+}
+
+/*==============================================================================
+	Setter
+==============================================================================*/
 
 void	HttpReq::set_start_line()
 {
@@ -34,16 +78,33 @@ void	HttpReq::set_start_line()
 		throw 400;
 }
 
-bool	HttpReq::get_next_line()
+
+//------------------------------------------------------------------------------
+
+void			HttpReq::set_stream_fd(int fd)
 {
-	return _stream.get_line(_line);
+	_stream.set_fd_in(fd);
 }
+//------------------------------------------------------------------------------
+void			HttpReq::set_stream_file_fd()
+{
+	_stream.set_fd_out(_file->get_fd());
+}
+//------------------------------------------------------------------------------
+bool			HttpReq::set_index_page(const set<string>& pages)
+{
+	_path.set_index_page(pages);
+}
+
+/*==============================================================================
+	Getter
+==============================================================================*/
 
 Path&	HttpReq::get_path()
 {
 	return	_path;
 }
-
+//------------------------------------------------------------------------------
 const string&	HttpReq::get_method() const
 {
 	return _method;

@@ -5,6 +5,7 @@
 
 ClientStateStartLine::ClientStateStartLine()
 {
+	len = 0x2000;
 }
 
 //---------------------------------------------------------

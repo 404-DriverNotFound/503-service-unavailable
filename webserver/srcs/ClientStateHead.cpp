@@ -5,6 +5,7 @@
 
 ClientStateHead::ClientStateHead()
 {
+	len = 0x2000;
 }
 
 

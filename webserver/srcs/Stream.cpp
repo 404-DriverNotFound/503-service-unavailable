@@ -228,23 +228,6 @@ size_t		Stream::pass(size_t s)
 }
 
 //------------------------------------------------------------------------------
-
-void		Stream::print()
-{
-	list<Buffer>::iterator it = _buffers.begin();
-	list<Buffer>::iterator end = _buffers.end();
-	while (it != end)
-	{
-		::write(1, it->start, it->end - _it_buffer);
-		++it;
-	}
-}
-void		Stream::print_line()
-{
-	::write(1, _it_buffer,  _buffers.front().end - _it_buffer);
-}
-
-//------------------------------------------------------------------------------
 size_t		Stream::pass()
 {
 	uint8_t*	end = _buffers.front().end;
@@ -262,6 +245,23 @@ size_t		Stream::pass()
 		delete_buffer();
 	}
 	return len;
+}
+//------------------------------------------------------------------------------
+
+void		Stream::print()
+{
+	list<Buffer>::iterator it = _buffers.begin();
+	list<Buffer>::iterator end = _buffers.end();
+	while (it != end)
+	{
+		::write(1, it->start, it->end - _it_buffer);
+		++it;
+	}
+}
+//------------------------------------------------------------------------------
+void		Stream::print_line()
+{
+	::write(1, _it_buffer,  _buffers.front().end - _it_buffer);
 }
 //------------------------------------------------------------------------------
 bool		Stream::get_chr_token(string &token, const char c)
@@ -339,26 +339,6 @@ bool		Stream::get_seq_token(string &token, const char* seq)
 	}
 	_token_factor = false;
 	return false;
-
-
-	// str_citerator	end = token.end();
-	// int						seq_len;
-
-	// seq_len = ft::strlen(seq);
-	// if (_token_factor)
-	// 	token.clear();
-	// token.reserve(reserve_size);
-	// while (it != end)
-	// {
-	// 	if (!ft::strncmp(it.base(), seq, seq_len))
-	// 	{
-	// 		it += seq_len;
-	// 		return true;
-	// 	}
-	// 	token.push_back(*it);
-	// 	++it;
-	// }
-	// return false;
 }
 
 //------------------------------------------------------------------------------
@@ -446,7 +426,41 @@ size_t		Stream::size()
 	}
 	return len;
 }
-
+//------------------------------------------------------------------------------
+void		Stream::set_fd_in(int fd)
+{
+	_fd_in = fd;
+}
+//------------------------------------------------------------------------------
+void		Stream::set_fd_out(int fd)
+{
+	_fd_out = fd;
+}
+//------------------------------------------------------------------------------
+void		Stream::set_pass_remain(size_t s)
+{
+	_pass_remain = s;
+}
+//------------------------------------------------------------------------------
+int			Stream::get_fd_in()
+{
+	return _fd_in;
+}
+//------------------------------------------------------------------------------
+int			Stream::get_fd_out()
+{
+	return _fd_out;
+}
+//------------------------------------------------------------------------------
+int			Stream::get_token_factor()
+{
+	return _token_factor;
+}
+//------------------------------------------------------------------------------
+size_t		Stream::get_pass_remain()
+{
+	return _pass_remain;
+}
 
 /* 
 #include <fcntl.h>

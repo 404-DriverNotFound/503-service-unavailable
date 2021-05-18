@@ -149,7 +149,7 @@ void			Webserver::manage_clients()
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
 		(*it)->routine();
-		if (/*client Done*/)
+		if ((*it)->get_clientstate() == NULL)
 		{
 			_o_set.clr((*it)->sock.fd);
 			delete *it;

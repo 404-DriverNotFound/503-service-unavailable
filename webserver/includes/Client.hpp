@@ -7,43 +7,72 @@
 #include "ConfigLocation.hpp"
 #include "HttpReq.hpp"
 #include "HttpRes.hpp"
+#include "FdSet.hpp"
 
 class ClientState;
-
+/*##############################################################################
+	Client
+##############################################################################*/
 class Client
 {
-	typedef	map<string, ConfigServer>	ServerMap;
+	/*==========================================================================
+		Member Type
+	==========================================================================*/
+	public:
+		typedef	map<string, ConfigServer>	ServerMap;
+	/*==========================================================================
+		Member
+	==========================================================================*/
 	private:
 		Socket						_socket;
-		Time						_birth;
 		ServerMap&					_servers;	// 참조할 서버 목록(포트에 종속)
+		FdSet&						_r_set;
+		FdSet&						_w_set;
+		Time						_birth;
 		const ConfigServer*			_server;
 		const ConfigLocation*		_location;
+		ClientState*				_state;
 		HttpReq						_req;
 		HttpRes						_res;
-		ClientState*				_state;
+	/*==========================================================================
+		Constructor & Destructor
+	==========================================================================*/
+	private:
+		Client();
+		Client(const Client&);
+		Client& operator=(const Client&);
 	public:
-		Client(int accept_fd, ServerMap& ref);
+		Client(int accept_fd, ServerMap& ref, FdSet& r_set, FdSet& w_set);
 		~Client();
-		void	routine();
-		/*=======================
-		getter
-		=======================*/
-		Socket&					get_socket();
-		Time&					get_time();
-		ServerMap&				get_servers();
-		const ConfigServer&		get_server();
-		const ConfigLocation&	get_location();
-		HttpReq&				get_httpreq();
-		HttpRes&				get_httpres();
-		/*=======================
-		setter
-		=======================*/
-		void				set_server(const ConfigServer& svrp);
-		void				set_location(const ConfigLocation& locp);
-		/*=======================
-		method
-		=======================*/
+	/*==========================================================================
+		Method
+	==========================================================================*/	
+		void						routine();
+		void						recv_socket(size_t len);
+		void						send_socket(size_t len);
+		bool						get_next_line();
+	/*==========================================================================
+		Getter
+	==========================================================================*/
+	public:
+		Socket&						get_socket();
+		Time&						get_time();
+		ServerMap&					get_servers();
+		const ConfigServer&			get_server();
+		const ConfigLocation&		get_location();
+		HttpReq&					get_httpreq();
+		HttpRes&					get_httpres();
+		ClientState*				get_clientstate();
+	/*==========================================================================
+		Setter
+	==========================================================================*/
+	public:
+		void						set_server(const ConfigServer& svrp);
+		void						set_location(const ConfigLocation& locp);
+		// chunked
+		bool						set_chunked_length();
+		bool						read_chunked();
+		bool						read_crlf();
 };
 
 // enum	e_client_status
