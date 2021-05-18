@@ -1,17 +1,18 @@
 #include "../includes/ClientStateChunkedBodyEnd.hpp"
+#include "../includes/ClientStateChunkedBodyLen.hpp"
 #include "../includes/ClientStateChunkedBody.hpp"
 #include "../includes/ClientStateMethod.hpp"
 
-ClientStateChunkedBody::ClientStateChunkedBody()
+ClientStateChunkedBodyLen::ClientStateChunkedBodyLen()
 {
 	len = 0xffff;
 }
 
-ClientStateChunkedBody::~ClientStateChunkedBody()
+ClientStateChunkedBodyLen::~ClientStateChunkedBodyLen()
 {
 }
 
-ClientState* ClientStateChunkedBody::action(Client& ref)
+ClientState* ClientStateChunkedBodyLen::action(Client& ref)
 {
 	if (ref.set_chunked_length())
 	{
@@ -21,7 +22,7 @@ ClientState* ClientStateChunkedBody::action(Client& ref)
 		}
 		else if (ref.get_httpreq().get_stream().get_pass_remain() == 0)
 		{
-			return chunkend_end;
+			return chunkedbody_end;
 		}
 		return chunkedbody;
 	}

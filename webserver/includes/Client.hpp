@@ -19,13 +19,13 @@ class Client
 		Member Type
 	==========================================================================*/
 	public:
-		typedef	map<string, ConfigServer>	ServerMap;
+		typedef	map<string, ConfigServer>	server_container;
 	/*==========================================================================
 		Member
 	==========================================================================*/
 	private:
 		Socket						_socket;
-		ServerMap&					_servers;	// 참조할 서버 목록(포트에 종속)
+		const server_container&		_servers;	// 참조할 서버 목록(포트에 종속)
 		FdSet&						_r_set;
 		FdSet&						_w_set;
 		Time						_birth;
@@ -42,7 +42,7 @@ class Client
 		Client(const Client&);
 		Client& operator=(const Client&);
 	public:
-		Client(int accept_fd, ServerMap& ref, FdSet& r_set, FdSet& w_set);
+		Client(int accept_fd, const server_container& ref, FdSet& r_set, FdSet& w_set);
 		~Client();
 	/*==========================================================================
 		Method
@@ -50,14 +50,16 @@ class Client
 		void						routine();
 		void						recv_socket(size_t len);
 		void						send_socket(size_t len);
+		void						update_birth();
 		bool						get_next_line();
+		bool						is_expired();
 	/*==========================================================================
 		Getter
 	==========================================================================*/
 	public:
 		Socket&						get_socket();
 		Time&						get_time();
-		ServerMap&					get_servers();
+		const server_container&		get_servers() const;
 		const ConfigServer&			get_server();
 		const ConfigLocation&		get_location();
 		HttpReq&					get_httpreq();
@@ -69,7 +71,6 @@ class Client
 	public:
 		void						set_server(const ConfigServer& svrp);
 		void						set_location(const ConfigLocation& locp);
-		// chunked
 		bool						set_chunked_length();
 		bool						read_chunked();
 		bool						read_crlf();

@@ -588,7 +588,6 @@ void		ft::make_dir_list(const string& path, int fd)
 {
 	DIR				*dir_ptr		=	NULL;
 	struct dirent	*file			=	NULL;
-	int				fd;
 
 	if (ft::is_dir(path.c_str()))
 	{

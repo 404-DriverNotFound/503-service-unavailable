@@ -1,5 +1,5 @@
 #include "../includes/ClientStateChunkedBodyCRLF.hpp"
-#include "../includes/ClientStateChunkedBodyLEN.hpp"
+#include "../includes/ClientStateChunkedBodyLen.hpp"
 
 ClientStateChunkedBodyCRLF::ClientStateChunkedBodyCRLF()
 {
@@ -12,7 +12,7 @@ ClientStateChunkedBodyCRLF::~ClientStateChunkedBodyCRLF()
 
 ClientState* ClientStateChunkedBodyCRLF::action(Client& ref)
 {
-	if (ref.read_crlf)
+	if (ref.read_crlf())
 	{
 		return chunkedbody_len;
 	}

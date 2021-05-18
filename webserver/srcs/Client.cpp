@@ -1,9 +1,10 @@
+#include "../includes/Webserver.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/ClientState.hpp"
 #include "../includes/ClientStateStartLine.hpp"
 #include "../includes/ClientStateDone.hpp"
 
-Client::Client(int accept_fd, ServerMap& ref, FdSet& r_set, FdSet& w_set)
+Client::Client(int accept_fd, const server_container& ref, FdSet& r_set, FdSet& w_set)
 : _socket(accept_fd),
   _servers(ref),
   _r_set(r_set),
@@ -20,8 +21,14 @@ Client::~Client()
 
 void	Client::routine()
 {
+	if (is_expired())
+	{
+		_state = 0;
+		return;
+	}
 	recv_socket(_state->len);
-	_state = _state->action(*this);
+	if(_state)
+		_state = _state->action(*this);
 	send_socket(_state->len);
 }
 
@@ -38,7 +45,7 @@ Time&				Client::get_time()
 	return	_birth;
 }
 
-Client::ServerMap&	Client::get_servers()
+const Client::server_container&	Client::get_servers() const
 {
 	return	_servers;
 }
@@ -95,11 +102,33 @@ void				Client::recv_socket(size_t len)
 {
 	if(_req.get_stream().fill(len) == 0)
 	{
-		_state = ClientState::done;
+		_state = NULL;
 	}
 }
 
 void				Client::send_socket(size_t len)
 {
 	_res.get_stream().pass();
+}
+
+bool				Client::read_chunked()
+{
+	return	_req.stream_to_body();
+}
+
+bool				Client::read_crlf()
+{
+	return	_req.read_crlf();
+}
+
+void				Client::update_birth()
+{
+	_birth.set_current();
+}
+
+bool				Client::is_expired()
+{
+	if ((Time() - _birth).get_time_usec() > Webserver::config.get_timeout().get_time_usec())
+		return true;
+	return false;
 }

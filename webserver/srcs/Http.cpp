@@ -14,7 +14,6 @@ Http::Http(int fd)
   _stream(0xffff, 0, 0),
   _content_length(0)
 {
-	set_stream_fd(fd);
 }
 //------------------------------------------------------------------------------
 Http::~Http()
@@ -57,10 +56,11 @@ int						Http::get_file_fd()
 //------------------------------------------------------------------------------
 const string&			Http::get_header(const string& key)
 {
+	static		string	empty_str;
 	map<string, string>::iterator	it = _headers.find(key);
 	if (it == _headers.end())
 	{
-		return string();
+		return empty_str;
 	}
 	else
 	{
@@ -72,12 +72,12 @@ const string&			Http::get_header(const string& key)
 	Setter
 ==============================================================================*/
 
-void					Http::set_file(File::flag f = File::flag::o_create)
+void					Http::set_file(File::flag f)
 {
 	_file = new File(f);
 }
 //------------------------------------------------------------------------------
-void					Http::set_file(const string& path, File::flag f = File::flag::o_read)
+void					Http::set_file(const string& path, File::flag f)
 {
 	_file = new File(path, f);
 }
@@ -86,4 +86,15 @@ void					Http::del_file()
 {
 	delete _file;
 	_file = 0;
+}
+//------------------------------------------------------------------------------
+void					Http::clear()
+{
+	_headers.clear();
+	_protocol.clear();
+	_line.clear();
+	_stream.clear();
+	del_file();
+	_content_length = 0;
+	_scheme.clear();
 }

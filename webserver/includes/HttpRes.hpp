@@ -14,7 +14,7 @@ class HttpRes : public Http
 	==========================================================================*/
 	private:
 		int		_status_code;
-		string	_scheme;
+		
 	/*==========================================================================
 		Constructor & Destructor
 	==========================================================================*/
@@ -28,9 +28,9 @@ class HttpRes : public Http
 	/*==========================================================================
 		Method
 	==========================================================================*/
-		string		get_allow(uint32_t method);
+		string		get_allow(set<string>& method_set);
 		string		get_content_language(const string& accept_language = string());
-		string		get_content_length(size_t size);
+		string		get_content_length();
 		string		get_last_modified(const char* path);
 		string		get_location(const string& redirected);
 		string		get_retry_after(Time time);
@@ -38,6 +38,9 @@ class HttpRes : public Http
 		string		get_server();
 		string		get_transfer_encoding();
 		string		get_www_authenticate(const string& realm);
+		string		get_start_line();
+
+		void		clear();
 
 	/*==========================================================================
 		Setter
@@ -50,5 +53,4 @@ class HttpRes : public Http
 	/*==========================================================================
 		Getter
 	==========================================================================*/
-		void		get_start_line(string& line);
 };

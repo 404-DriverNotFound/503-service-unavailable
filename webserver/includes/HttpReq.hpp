@@ -14,9 +14,8 @@ class HttpReq : public Http
 		Member
 	==========================================================================*/
 	private:
-		Path	_path;
-		string	_method;
-		string	_scheme;
+		Path			_path;
+		string			_method;
 
 	/*==========================================================================
 		Constructor & Destructor
@@ -35,11 +34,13 @@ class HttpReq : public Http
 		bool			set_chunked_length();
 		bool			stream_to_body();
 		bool			read_crlf();
+		void			clear();
 	/*==========================================================================
 		Setter
 	==========================================================================*/
 	public:
 		void			set_start_line();
+		void			set_header(string& line);
 		void			set_stream_fd(int fd);
 		void			set_stream_file_fd();
 		bool			set_index_page(const set<string>& pages);

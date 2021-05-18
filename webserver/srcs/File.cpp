@@ -22,10 +22,6 @@ File::~File()
 	close();
 }
 
-File&			File::operator=(const File& ref)
-{
-}
-
 void			File::temp_name() 
 {
 	static int	serial = 0;

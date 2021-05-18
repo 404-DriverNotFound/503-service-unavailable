@@ -1,5 +1,6 @@
 #include "../includes/ClientStateBody.hpp"
 #include "../includes/ClientStateMethod.hpp"
+#include "../includes/Client.hpp"
 
 /*===================
 constructor

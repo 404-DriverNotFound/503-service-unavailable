@@ -70,7 +70,8 @@ void	ClientStateSet::set_server(Client& ref)
 	string						host;
 	string::const_iterator		it_string = it_header->second.begin();
 	ft::get_chr_token(it_header->second, it_string, host, ':');
-	map<string, ConfigServer>::iterator	it_server = ref.get_servers().find(host);
+	// Webserver::port_iterator = ref.get_servers().find(host);
+	map<string, ConfigServer>::const_iterator	it_server = ref.get_servers().find(host);
 	if (it_server == ref.get_servers().end())
 	{
 		cout << "Server Not Found" << endl;
@@ -86,14 +87,17 @@ void	ClientStateSet::set_location(Client& ref)
 {
 	typedef map<string, ConfigLocation>::const_iterator	location_iterator;
 
-	const string&		location_name = ref.get_httpreq().get_path().get_segments().front();
+	string				location_name = "/";
+	location_name += ref.get_httpreq().get_path().get_segments().front();
 	location_iterator	it_location = ref.get_server().get_locations().find(location_name);
 
 	if (it_location == ref.get_server().get_locations().end())
 	{
 		if ((it_location = ref.get_server().get_locations().find("/")) == ref.get_server().get_locations().end())
+		{
 			ref.get_httpres().set_status_code(404);
 			return ;
+		}
 	}
 	ref.set_location(it_location->second);
 	ref.get_httpreq().get_path().set_root(it_location->second.get_root());
@@ -112,7 +116,7 @@ void	ClientStateSet::check_auth(Client& ref)
 	string					client_auth;
 
 	ft::get_chr_token(line_auth, it, client_auth_type, ' ');
-	if (ref.get_location().get_auth_type != client_auth_type)
+	if (ref.get_location().get_auth_type() != client_auth_type)
 	{
 		ref.get_httpres().set_status_code(401);
 		return ;
@@ -146,29 +150,26 @@ void	ClientStateSet::set_file(Client& ref)
 
 	switch(ref.get_httpreq().get_path().get_flag())
 	{
-		case Path::flag::flag_cgi:
-			req.set_file(File::flag::o_create);	// req: temp file
-			res.set_file(File::flag::o_create);	// res: temp file
+		case Path::flag_cgi:
+			req.set_file(File::o_create);	// req: temp file
+			res.set_file(File::o_create);	// res: temp file
 			break;
 
-		case Path::flag::flag_dir:
-			req.set_file(File::flag::o_create);	// req: temp file
-
-			bool	is_index_page = req.set_index_page(location.get_index_page());
-			if (is_index_page == false) // index page not found
+		case Path::flag_dir:
+			req.set_file(File::o_create);	// req: temp file
+			if (req.set_index_page(location.get_index_page()) == false) // index page not found
 			{
 				if (location.get_autoindex() == true)	// autoindex on?
 				{
-					res.set_file(File::flag::o_create);	// temp file && autoindex
+					res.set_file(File::o_create);	// temp file && autoindex
 					res.set_autoindex_page(path);
 				}
 				else // autoindex off
 				{
-					bool	is_error_page = req.set_index_page(location.get_error_page());
 					res.set_status_code(404);
-					if (is_error_page == false)	// error page not found
+					if (req.set_index_page(location.get_error_page()) == false)	// error page not found
 					{
-						res.set_file(File::flag::o_create);
+						res.set_file(File::o_create);
 					}
 					else
 					{
@@ -182,18 +183,18 @@ void	ClientStateSet::set_file(Client& ref)
 			}
 			break;
 
-		case Path::flag::flag_file:
+		case Path::flag_file:
 			if (req.get_method() == "GET")
 			{
-				res.set_file(path, File::flag::o_read);
+				res.set_file(path, File::o_read);
 			}
 			else if (req.get_method() == "PUT")
 			{
-				req.set_file(path, File::flag::o_create);
+				req.set_file(path, File::o_create);
 			}
 			else if (req.get_method() == "POST")
 			{
-				req.set_file(path, File::flag::o_append);
+				req.set_file(path, File::o_append);
 			}
 			else if (req.get_method() == "DELETE")
 			{
@@ -204,30 +205,27 @@ void	ClientStateSet::set_file(Client& ref)
 			}
 			break;
 
-		case Path::flag::flag_not_exist:
+		case Path::flag_not_exist:
 			if (req.get_method() == "PUT")
 			{
-				req.set_file(path, File::flag::o_create);
+				req.set_file(path, File::o_create);
 			}
 			else if (req.get_method() == "POST")
 			{
-				req.set_file(path, File::flag::o_append);
+				req.set_file(path, File::o_append);
 			}
 			else
 			{
 				res.set_status_code(404);
-				bool	is_error_page = req.set_index_page(location.get_error_page());
-				if (is_error_page == false)	// error page not found
+				if (req.set_index_page(location.get_error_page()) == false)	// error page not found
 				{
-					res.set_file(File::flag::o_create);
+					res.set_file(File::o_create);
 				}
 				else
 				{
 					res.set_file(path);
 				}
 			}
-			break;
-		default:
 			break;
 	}
 }

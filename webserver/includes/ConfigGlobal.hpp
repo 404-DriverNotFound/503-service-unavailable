@@ -45,7 +45,8 @@ class ConfigGlobal
 		string										_temp_dir;
 		int											_worker;
 		port_container								_ports;
-	
+		map<int, string>							_status_code;
+
 	/*==========================================================================
 		Constructor & Destructor
 	==========================================================================*/
@@ -77,6 +78,7 @@ class ConfigGlobal
 		void				set_select_timeout(string& val);
 		void				set_temp_dir(string& val);
 		void				set_worker(string& val);
+		void				set_status_code_map();
 	
 	/*==========================================================================
 		Getter
@@ -88,7 +90,9 @@ class ConfigGlobal
 		const string&			get_temp_dir() const;
 		int						get_worker() const;
 		const port_container&	get_ports() const;
-	
+		const string&			get_status_code(int code) const;
+		const server_container&	get_server(int port) const;
+
 	/*==========================================================================
 		Exception
 	==========================================================================*/

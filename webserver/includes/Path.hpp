@@ -48,6 +48,8 @@ class Path
 	private:
 		void			assemble_path(string& x, const list<string>& segments);
 		void			arrange_segment(list<string>& segments);
+	public:
+		void			clear();
 
 	/*==========================================================================
 		Setter

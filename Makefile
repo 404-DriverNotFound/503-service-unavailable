@@ -12,15 +12,34 @@ ASAN = -fsanitize=address
 #-------------------------------------------------------------------------------
 LIST_SRCS = \
 	AConfig\
+	Client\
+	ClientState\
+	ClientStateBody\
+	ClientStateChunkedBody\
+	ClientStateChunkedBodyLen\
+	ClientStateChunkedBodyCRLF\
+	ClientStateChunkedBodyEnd\
+	ClientStateMethod\
+	ClientStateHead\
+	ClientStateSet\
+	ClientStateStartLine\
+	ClientStateDone\
+	ClientStateWait\
 	ConfigGlobal\
 	ConfigServer\
 	ConfigLocation\
 	FdSet\
+	File\
+	Http\
+	HttpReq\
+	HttpRes\
 	main\
+	Path\
 	Socket\
+	Stream\
+	Time\
 	Tokenizer\
 	Utils\
-	Stream\
 	Webserver
 
 	

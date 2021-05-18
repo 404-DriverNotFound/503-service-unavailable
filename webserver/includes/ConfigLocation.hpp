@@ -30,7 +30,7 @@ class ConfigLocation: public AConfig
 	public:
 		ConfigLocation();
 		ConfigLocation(const ConfigLocation& ref);
-		ConfigLocation(map<string, string>& config_map);
+		ConfigLocation(map<string, string>& config_map, const string& root);
 		~ConfigLocation();	
 		ConfigLocation& operator=(const ConfigLocation& ref);
 

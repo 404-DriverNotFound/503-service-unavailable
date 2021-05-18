@@ -86,6 +86,17 @@ void				Path::assemble_path(string& x, const list<string>& segments)
 	}
 }
 
+//------------------------------------------------------------------------------
+
+void				Path::clear()
+{
+	_path_info.clear();
+	_query.clear();
+	_segments.clear();
+	_extension.clear();
+	_path_translated.clear();
+}
+
 /*==============================================================================
 	Setter
 ==============================================================================*/
@@ -106,7 +117,7 @@ void				Path::set_path(string& raw)
 	arrange_segment(segment_tmp);
 	set_extension(segment_tmp.back());
 	_segments.swap(segment_tmp);
-	set_path_info();	
+	set_path_info();
 }
 
 //------------------------------------------------------------------------------

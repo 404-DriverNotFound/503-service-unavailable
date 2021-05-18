@@ -84,12 +84,13 @@ void			Webserver::start_server()
 	{
 		#ifdef __BONUS__
 		pthread_mutex_lock(&select_mutex);
-		#endif;
+		#endif
 
 		_r_set = _o_set;
 		_w_set = _o_set;
 		_e_set = _o_set;
 		select_timeout = config.get_select_timeout();
+		cout << "select_timeout  " << select_timeout << endl;
 		result = select(config.get_max_connection(), &_r_set.bits, &_w_set.bits, &_e_set.bits, (&select_timeout));
 		if (result < 0)
 		{
@@ -103,7 +104,7 @@ void			Webserver::start_server()
 
 		#ifdef __BONUS__
 		pthread_mutex_unlock(&select_mutex);
-		#endif;
+		#endif
 
 		check_new_connection();
 		manage_clients();
@@ -121,8 +122,8 @@ void			Webserver::check_new_connection()
 	{
 		if (_r_set.is_set((*it)->fd))
 		{
-			_clients.push_back(new Client((*it)->fd, config.get_ports()[htons((*it)->s_addr.sin_port)], _r_set, _w_set));
-			_o_set.set(_clients.back()->sock.fd);
+			_clients.push_back(new Client((*it)->fd, config.get_server(htons((*it)->s_addr.sin_port)), _r_set, _w_set));
+			_o_set.set(_clients.back()->get_socket().get_fd());
 		}
 		if (_e_set.is_set((*it)->fd))
 		{
@@ -151,7 +152,7 @@ void			Webserver::manage_clients()
 		(*it)->routine();
 		if ((*it)->get_clientstate() == NULL)
 		{
-			_o_set.clr((*it)->sock.fd);
+			_o_set.clr((*it)->get_socket().get_fd());
 			delete *it;
 			it = _clients.erase(it);
 		}

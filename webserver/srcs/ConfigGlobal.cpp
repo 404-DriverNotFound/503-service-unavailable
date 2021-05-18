@@ -24,6 +24,7 @@ ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 ConfigGlobal::ConfigGlobal(const ConfigGlobal& ref)
 : _max_connection(ref._max_connection),
 _timeout(ref._timeout),
+_select_timeout(ref._select_timeout),
 _temp_dir(ref._temp_dir),
 _worker(ref._worker),
 _ports(ref._ports)
@@ -40,6 +41,7 @@ ConfigGlobal&	ConfigGlobal::operator=(const ConfigGlobal& ref)
 		return *this;
 	_max_connection = ref._max_connection;
 	_timeout = ref._timeout;
+	_select_timeout = ref._select_timeout;
 	_temp_dir = ref._temp_dir;
 	_worker = ref._worker;
 	_ports = ref._ports;
@@ -135,7 +137,8 @@ void			ConfigGlobal::parse(deque<string>& lines)
 			map<string, string>	token_map = tokenizer_map(it, end, "");
 			string	location_name
 			 = ft::find_map<ConfigServer::ConfigElementEmpty>(token_map, str_name);
-			_ports[port][server_name].set_location(location_name, ConfigLocation(token_map));
+			ConfigServer&	server = _ports[port][server_name];
+			server.set_location(location_name, ConfigLocation(token_map, server.get_root()));
 			if (it == end)
 				break;
 		}
@@ -167,6 +170,7 @@ void				ConfigGlobal::set_global_config(map<string, string>& token_map)
 {
 	set_max_connection(token_map["max_connection"]);
 	set_timeout(token_map["timeout"]);
+	set_select_timeout(token_map["select_timeout"]);
 	set_temp_dir(token_map["temp_dir"]);
 	set_worker(token_map["worker"]);
 }
@@ -204,6 +208,66 @@ void				ConfigGlobal::set_temp_dir(string& val)
 void				ConfigGlobal::set_worker(string& val)
 {
 	_worker = ft::atoi(val);
+}
+
+//------------------------------------------------------------------------------
+
+void				ConfigGlobal::set_status_code_map()
+{
+	_status_code[100] = "Continue";
+	_status_code[101] = "Switching Protocols";
+	_status_code[103] = "Early Hints";
+	_status_code[200] = "OK";
+	_status_code[201] = "Created";
+	_status_code[202] = "Accepted";
+	_status_code[203] = "Non-Authoritative Information";
+	_status_code[204] = "No Content";
+	_status_code[205] = "Reset Content";
+	_status_code[206] = "Partial Content";
+	_status_code[300] = "Multiple Choices";
+	_status_code[301] = "Moved Permanently";
+	_status_code[302] = "Found";
+	_status_code[303] = "See Other";
+	_status_code[304] = "Not Modified";
+	_status_code[307] = "Temporary Redirect";
+	_status_code[308] = "Permanent Redirect";
+	_status_code[400] = "Bad Request";
+	_status_code[401] = "Unauthorized";
+	_status_code[402] = "Payment Required";
+	_status_code[403] = "Forbidden";
+	_status_code[404] = "Not Found";
+	_status_code[405] = "Method Not Allowed";
+	_status_code[406] = "Not Acceptable";
+	_status_code[407] = "Proxy Authentication Required";
+	_status_code[408] = "Request Timeout";
+	_status_code[409] = "Conflict";
+	_status_code[410] = "Gone";
+	_status_code[411] = "Length Required";
+	_status_code[412] = "Precondition Failed";
+	_status_code[413] = "Payload Too Large";
+	_status_code[414] = "URI Too Long";
+	_status_code[415] = "Unsupported Media Type";
+	_status_code[416] = "Range Not Satisfiable";
+	_status_code[417] = "Expectation Failed";
+	_status_code[418] = "I'm a teapot";
+	_status_code[422] = "Unprocessable Entity";
+	_status_code[425] = "Too Early";
+	_status_code[426] = "Upgrade Required";
+	_status_code[428] = "Precondition Required";
+	_status_code[429] = "Too Many Requests";
+	_status_code[431] = "Request Header Fields Too Large";
+	_status_code[451] = "Unavailable For Legal Reasons";
+	_status_code[500] = "Internal Server Error";
+	_status_code[501] = "Not Implemented";
+	_status_code[502] = "Bad Gateway";
+	_status_code[503] = "Service Unavailable";
+	_status_code[504] = "Gateway Timeout";
+	_status_code[505] = "HTTP Version Not Supported";
+	_status_code[506] = "Variant Also Negotiates";
+	_status_code[507] = "Insufficient Storage";
+	_status_code[508] = "Loop Detected";
+	_status_code[510] = "Not Extended";
+	_status_code[511] = "Network Authentication Required";
 }
 
 /*==============================================================================
@@ -250,6 +314,20 @@ const ConfigGlobal::port_container&	ConfigGlobal::get_ports() const
 	return _ports;
 }
 
+//------------------------------------------------------------------------------
+
+const ConfigGlobal::server_container&	ConfigGlobal::get_server(int port) const
+{
+	return _ports.find(port)->second;
+}
+
+//------------------------------------------------------------------------------
+
+const string&		ConfigGlobal::get_status_code(int code) const
+{
+	return _status_code.find(code)->second;
+}
+
 /*==============================================================================
 Exceptions
 ==============================================================================*/
@@ -279,6 +357,7 @@ std::ostream&		operator<<(std::ostream& os, ConfigGlobal& conf)
 	cout << std::setw(16) << "temp dir: "		<< conf.get_temp_dir()			<< endl;
 	cout << std::setw(16) << "timeout: "		<< conf.get_timeout()			<< endl;
 	cout << std::setw(16) << "worker: "			<< conf.get_worker()			<< endl;
+	cout << std::setw(16) << "sel timeout: "	<< conf.get_select_timeout()	<< endl;
 
 	ConfigGlobal::port_iterator	it_port = conf.get_ports().begin();
 	while (it_port != conf.get_ports().end())

@@ -11,7 +11,7 @@
 HttpReq::HttpReq(int fd)
 : Http(fd)
 {
-
+	set_stream_fd(fd);
 }
 //------------------------------------------------------------------------------
 HttpReq::~HttpReq()
@@ -51,6 +51,13 @@ bool	HttpReq::read_crlf()
 	else
 		return false;
 }
+//------------------------------------------------------------------------------
+void	HttpReq::clear()
+{
+	Http::clear();
+	_path.clear();
+	_method.clear();
+}
 
 /*==============================================================================
 	Setter
@@ -78,6 +85,16 @@ void	HttpReq::set_start_line()
 		throw 400;
 }
 
+//------------------------------------------------------------------------------
+
+void	HttpReq::set_header(string& line)
+{
+	list<string>::iterator	it;
+	list<string>			pair;
+	pair = ft::get_set_token(line, ": ");
+	it = pair.begin();
+	_headers.insert(make_pair(*it,*++it));
+}
 
 //------------------------------------------------------------------------------
 
@@ -93,7 +110,7 @@ void			HttpReq::set_stream_file_fd()
 //------------------------------------------------------------------------------
 bool			HttpReq::set_index_page(const set<string>& pages)
 {
-	_path.set_index_page(pages);
+	return _path.set_index_page(pages);
 }
 
 /*==============================================================================

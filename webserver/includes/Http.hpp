@@ -24,6 +24,7 @@ class Http
 		Stream					_stream;
 		File*					_file;
 		ssize_t					_content_length;
+		string					_scheme;
 	/*==========================================================================
 		Constructor & Destructor
 	==========================================================================*/
@@ -38,14 +39,14 @@ class Http
 		Method
 	==========================================================================*/
 		bool			get_next_line();
+		void			clear();
 	/*==========================================================================
 		Setter
 	==========================================================================*/
 		void					set_start_line(string& line);
-		void					set_header(string& line);
 		string					get_start_line(int code);
-		void					set_file(File::flag flag = File::flag::o_create);
-		void					set_file(const string& path, File::flag f = File::flag::o_read);
+		void					set_file(File::flag flag = File::o_create);
+		void					set_file(const string& path, File::flag f = File::o_read);
 		void					del_file();
 		virtual void			set_stream_fd(int fd) = 0;
 		virtual void			set_stream_file_fd() = 0;
