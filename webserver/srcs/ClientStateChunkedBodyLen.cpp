@@ -14,6 +14,7 @@ ClientStateChunkedBodyLen::~ClientStateChunkedBodyLen()
 
 ClientState* ClientStateChunkedBodyLen::action(Client& ref)
 {
+	cout << "body len : " << __func__ << endl;
 	if (ref.set_chunked_length())
 	{
 		if (ref.get_httpreq().get_stream().get_pass_remain() > ref.get_location().get_body_max())

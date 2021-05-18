@@ -22,9 +22,11 @@ ClientStateSet::~ClientStateSet()
 
 ClientState*	ClientStateSet::action(Client& ref)
 {
+	cout << "Set : " << __func__ << endl;
 	try
 	{
 		set_server(ref);
+		cout << "where is host-server ?" << endl;
 		set_location(ref);
 		check_auth(ref);
 		check_method(ref);
@@ -70,7 +72,6 @@ void	ClientStateSet::set_server(Client& ref)
 	string						host;
 	string::const_iterator		it_string = it_header->second.begin();
 	ft::get_chr_token(it_header->second, it_string, host, ':');
-	// Webserver::port_iterator = ref.get_servers().find(host);
 	map<string, ConfigServer>::const_iterator	it_server = ref.get_servers().find(host);
 	if (it_server == ref.get_servers().end())
 	{
@@ -85,6 +86,7 @@ void	ClientStateSet::set_server(Client& ref)
 
 void	ClientStateSet::set_location(Client& ref)
 {
+	cout << __func__ << endl;
 	typedef map<string, ConfigLocation>::const_iterator	location_iterator;
 
 	string				location_name = "/";
@@ -99,8 +101,10 @@ void	ClientStateSet::set_location(Client& ref)
 			return ;
 		}
 	}
-	ref.set_location(it_location->second);
-	ref.get_httpreq().get_path().set_root(it_location->second.get_root());
+	const ConfigLocation&	location = it_location->second;
+	ref.set_location(location);
+	ref.get_httpreq().get_path().set_root(location.get_root(), location.get_cgi_extensions());
+	cout << "path translated: " << ref.get_httpreq().get_path().get_path_translated() << endl;
 }
 
 //------------------------------------------------
@@ -148,6 +152,8 @@ void	ClientStateSet::set_file(Client& ref)
 	HttpRes&				res = ref.get_httpres();
 	const string&			path = req.get_path().get_path_translated();
 
+	cout << "state::: " << ref.get_httpreq().get_path().get_flag() << endl;
+	cout << "state::: " << ref.get_httpreq().get_path().get_path_translated() << endl;
 	switch(ref.get_httpreq().get_path().get_flag())
 	{
 		case Path::flag_cgi:
@@ -179,6 +185,7 @@ void	ClientStateSet::set_file(Client& ref)
 			}
 			else
 			{
+				cout << "herererer" << endl;
 				res.set_file(path);
 			}
 			break;
@@ -186,6 +193,8 @@ void	ClientStateSet::set_file(Client& ref)
 		case Path::flag_file:
 			if (req.get_method() == "GET")
 			{
+				// req.set_file(File::o_create);
+				cout << "GET!!!! " << path << endl;
 				res.set_file(path, File::o_read);
 			}
 			else if (req.get_method() == "PUT")

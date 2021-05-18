@@ -87,17 +87,6 @@ void	HttpReq::set_start_line()
 
 //------------------------------------------------------------------------------
 
-void	HttpReq::set_header(string& line)
-{
-	list<string>::iterator	it;
-	list<string>			pair;
-	pair = ft::get_set_token(line, ": ");
-	it = pair.begin();
-	_headers.insert(make_pair(*it,*++it));
-}
-
-//------------------------------------------------------------------------------
-
 void			HttpReq::set_stream_fd(int fd)
 {
 	_stream.set_fd_in(fd);

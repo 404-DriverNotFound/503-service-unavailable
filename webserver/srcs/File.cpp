@@ -13,7 +13,6 @@ File::File(const string& path, flag f)	// 경로로 열기
 : _name(path),
   _is_temp(false)
 {
-	temp_name();
 	_fd = open(path.c_str(), f, 0644);
 }
 
@@ -25,7 +24,7 @@ File::~File()
 void			File::temp_name() 
 {
 	static int	serial = 0;
-	_name.append("temp");
+	_name.append("/temp");
 	_name.append(ft::itoa(serial));
 }
 

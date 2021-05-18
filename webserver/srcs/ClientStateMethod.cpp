@@ -3,6 +3,7 @@
 
 ClientStateMethod::ClientStateMethod()
 {
+	len = 0xffff;
 }
 
 ClientStateMethod::~ClientStateMethod()
@@ -11,6 +12,7 @@ ClientStateMethod::~ClientStateMethod()
 
 ClientState* ClientStateMethod::action(Client& ref)
 {
+	cout << "Method : " <<  __func__ << endl;
 	const string&	method = ref.get_httpreq().get_method();
 
 	if (ref.get_httpreq().get_path().get_flag() == Path::flag_cgi)

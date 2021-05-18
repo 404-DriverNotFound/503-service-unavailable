@@ -22,7 +22,7 @@ ConfigLocation::ConfigLocation(map<string, string>& config_map, const string& ro
 	set_auth_type(config_map["auth_type"]);
 	set_auth(config_map["auth"]);
 	set_cgi_extensions(config_map["cgi_extension"]);
-	_root += root;
+	_root = root + _root;
 }
 
 //------------------------------------------------------------------------------

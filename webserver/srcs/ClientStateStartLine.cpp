@@ -19,6 +19,7 @@ ClientStateStartLine::~ClientStateStartLine()
 
 ClientState* ClientStateStartLine::action(Client& ref)
 {
+	cout << "StartLine : " << __func__ << endl;
 	if (ref.get_httpreq().get_next_line())
 	{
 		try

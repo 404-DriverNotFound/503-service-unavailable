@@ -62,6 +62,7 @@ void		Socket::bind(uint32_t port, uint32_t ip)
 	ft::memset(&s_addr, 0, sizeof(s_addr));
 	if ((fd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 		throw socket_failed_exception();
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 	s_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	s_addr.sin_family = AF_INET;
 	s_addr.sin_port = htons(port);

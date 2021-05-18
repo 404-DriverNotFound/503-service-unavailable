@@ -50,11 +50,13 @@ ssize_t		Stream::fill(size_t s)
 		add_buffer(s);
 	}
 	Buffer&		tmp = _buffers.back();
+	cout << "block? : " << s << endl;
 	ssize_t len = ::read(_fd_in, tmp.end, s);
 	if (len < 0)
 		return -1;
 	// if (len < 0)
 	// 	throw 500;
+	cout << "escape block?" << endl;
 	tmp.end += len;
 	tmp.remain -= len;
 	return len;

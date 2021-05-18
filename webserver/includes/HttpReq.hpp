@@ -40,7 +40,6 @@ class HttpReq : public Http
 	==========================================================================*/
 	public:
 		void			set_start_line();
-		void			set_header(string& line);
 		void			set_stream_fd(int fd);
 		void			set_stream_file_fd();
 		bool			set_index_page(const set<string>& pages);

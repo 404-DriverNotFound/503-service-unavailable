@@ -12,6 +12,7 @@ ClientStateChunkedBodyCRLF::~ClientStateChunkedBodyCRLF()
 
 ClientState* ClientStateChunkedBodyCRLF::action(Client& ref)
 {
+	cout << "body crlf : " << __func__ << endl;
 	if (ref.read_crlf())
 	{
 		return chunkedbody_len;

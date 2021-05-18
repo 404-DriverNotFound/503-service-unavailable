@@ -54,6 +54,11 @@ int						Http::get_file_fd()
 	return	_file->get_fd();
 }
 //------------------------------------------------------------------------------
+const string&			Http::get_file_name()
+{
+	return	_file->get_name();
+}
+//------------------------------------------------------------------------------
 const string&			Http::get_header(const string& key)
 {
 	static		string	empty_str;
@@ -97,4 +102,22 @@ void					Http::clear()
 	del_file();
 	_content_length = 0;
 	_scheme.clear();
+}
+
+//------------------------------------------------------------------------------
+
+void	Http::set_header(string& line)
+{
+	string::const_iterator	it_line = line.begin();
+	string::const_iterator	it_end = line.end();
+	string					key;
+	string					val;
+
+	ft::get_chr_token(line, it_line, key, ':');
+	while (it_line != it_end && *it_line == ' ')
+	{
+		++it_line;
+	}
+	ft::str_meta_key(key);
+	_headers[key] = string(it_line, it_end);
 }

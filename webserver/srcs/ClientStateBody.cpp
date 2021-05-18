@@ -20,6 +20,7 @@ ClientStateBody::~ClientStateBody()
 //--------------------
 ClientState* ClientStateBody::action(Client& ref)
 {
+	cout << "Body : " <<  __func__ << endl;
 	if (ref.read_chunked())
 		return method;
 	else

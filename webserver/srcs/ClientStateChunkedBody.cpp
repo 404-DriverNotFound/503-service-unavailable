@@ -14,6 +14,7 @@ ClientStateChunkedBody::~ClientStateChunkedBody()
 
 ClientState* ClientStateChunkedBody::action(Client& ref)
 {
+	cout << "ChunkedBody : " << __func__ << endl;
 	if (ref.read_chunked())
 		return chunkedbody_crlf;
 	else

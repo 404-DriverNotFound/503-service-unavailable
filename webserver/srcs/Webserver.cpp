@@ -38,7 +38,9 @@ void		Webserver::init_static_members(int argc, char** argv, char** env)
 {
 	config = ConfigGlobal(argc, argv, env);
 	init_server_sockets(config.get_ports());
+	#ifdef __BONUS__
 	pthread_mutex_init(&select_mutex, 0);
+	#endif
 }
 
 //------------------------------------------------------------------------------
@@ -86,11 +88,12 @@ void			Webserver::start_server()
 		pthread_mutex_lock(&select_mutex);
 		#endif
 
+		cout << "####################################################################\n";
+
 		_r_set = _o_set;
 		_w_set = _o_set;
 		_e_set = _o_set;
 		select_timeout = config.get_select_timeout();
-		cout << "select_timeout  " << select_timeout << endl;
 		result = select(config.get_max_connection(), &_r_set.bits, &_w_set.bits, &_e_set.bits, (&select_timeout));
 		if (result < 0)
 		{
@@ -117,12 +120,13 @@ void			Webserver::check_new_connection()
 {
 	socket_iterator		it = sockets.begin();
 	socket_iterator		end = sockets.end();
-	// cout << '\n' <<  __func__ << "\n======================================"<< endl;
+
 	while (it != end)
 	{
 		if (_r_set.is_set((*it)->fd))
 		{
 			_clients.push_back(new Client((*it)->fd, config.get_server(htons((*it)->s_addr.sin_port)), _r_set, _w_set));
+			cout << "new connection: " << (*it)->fd << " -> " << _clients.back()->get_socket().get_fd() << endl;
 			_o_set.set(_clients.back()->get_socket().get_fd());
 		}
 		if (_e_set.is_set((*it)->fd))
@@ -138,9 +142,9 @@ void			Webserver::check_new_connection()
 
 void			Webserver::manage_clients()
 {
-	// #ifdef DBG
-	// cout << '\n' << __func__ << "\n======================================"<< endl;
-	// #endif
+	#ifdef DBG
+	#endif
+
 	char	temp[1];
 
 	for (client_iterator it = _clients.begin() ; it != _clients.end() ; ++it)
@@ -149,6 +153,9 @@ void			Webserver::manage_clients()
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
+		cout << "\n======================================"<< endl;
+		cout << "socket: " << (*it)->get_socket().fd << endl;
+		cout << "\n--------------------------------------"<< endl;
 		(*it)->routine();
 		if ((*it)->get_clientstate() == NULL)
 		{

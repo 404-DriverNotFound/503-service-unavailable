@@ -1,31 +1,111 @@
-max_connection 300
-server
-	root ./root
-	temp_file_dir /Users/minckim/goinfre
-	server_name localhost
-	port 9191
-	error_page error.html
-	index index.html
-	head_length 8000
-	body_length 10000000
-	autoindex on
-	timeout 10
-	location /
-		method GET
-		index index.html index.php index.txt
-	location /put_test
-		root /
-		index index.html index.php index.txt
-		method PUT
-		cgi_extension .php .bla
-	location /post_body
-		root /
-		index index.html index.php index.txt
-		method POST PUT GET
-		cgi_extension .php .bla
-		body_length 100
-	location /directory
-		root /YoupiBanane
-		index youpi.bad_extension
-		method GET POST
-		cgi_extension .php .bla
+[global]
+max_connection	300
+temp_dir		./root
+cgi_bin			.py root
+timeout			10
+select_timeout	2
+worker			4
+
+[server]
+root			./root
+name			localhost
+port			9190
+error_page		error.html
+index_page		index.html
+head_max		8000
+body_max		1000000
+autoindex		on
+
+[location]
+name			/
+root			/
+index_page		index.html index.php index.txt
+method			POST PUT GET
+body_max		100
+cgi_extension	.bla .py .php
+
+[location]
+name			/def
+root			/d_directory
+error_page		d_error.html
+auth			authtest1
+
+
+
+[server]
+root			./root
+name			ohyeah
+port			9190
+error_page		error.html
+index_page		index.html
+head_max		8000
+body_max		1000000
+autoindex		on
+
+[location]
+name			/abc
+root			/a_directory
+index_page		index.html index.php index.txt
+method			POST PUT GET
+body_max		100
+cgi_extension	.bla .py .php
+
+[location]
+name			/def
+root			/d_directory
+error_page		d_error.html
+auth			authtest1
+
+
+
+[server]
+root			./root
+name			localhost
+port			9191
+error_page		error.html
+index_page		index.html
+head_max		8000
+body_max		1000000
+autoindex		on
+
+[location]
+name			/abc
+root			/a_directory
+index_page		index.html index.php index.txt
+method			POST PUT GET
+body_max		100
+cgi_extension	.bla .py .php
+auth			authtest0
+
+[location]
+name			/def
+root			/d_directory
+error_page		d_error.html
+auth			authtest1
+
+
+
+[server]
+root			./root
+name			localhost
+port			9192
+error_page  	error.html
+index_page		index.html
+head_max		8000
+body_max		1000000
+autoindex		on
+
+[location]
+name			/abc
+root			/a_directory
+index_page		index.html index.php index.txt
+method			POST PUT GET
+body_max		100
+cgi_extension	.bla .py .php
+auth			authtest0
+
+[location]
+name			/def
+root			/d_directory
+error_page		d_error.html
+auth			authtest1

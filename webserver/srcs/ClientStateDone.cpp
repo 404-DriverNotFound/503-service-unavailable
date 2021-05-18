@@ -3,6 +3,7 @@
 
 ClientStateDone::ClientStateDone()
 {
+	len = 0xffff;
 }
 
 ClientStateDone::~ClientStateDone()
@@ -11,6 +12,7 @@ ClientStateDone::~ClientStateDone()
 
 ClientState* ClientStateDone::action(Client& ref)
 {
+	cout << "Done : " <<  __func__ << endl;
 	/*clear*/
 	ref.update_birth();
 	ref.get_httpreq().clear();

@@ -79,7 +79,10 @@ void				Path::arrange_segment(list<string>& segments)
 
 void				Path::assemble_path(string& x, const list<string>& segments)
 {
-	for (list<string>::const_iterator it = _segments.begin() ; it != _segments.end() ; ++it)
+	list<string>::const_iterator it = _segments.begin();
+	x.append(*it);
+	++it;
+	for (; it != _segments.end() ; ++it)
 	{
 		x.append("/");
 		x.append(*it);
@@ -122,11 +125,16 @@ void				Path::set_path(string& raw)
 
 //------------------------------------------------------------------------------
 
-void				Path::set_root(const string& root)
+void				Path::set_root(const string& root, const set<string>& location_extensions)
 {
-	_segments.front() = root;
+	cout << __func__ << endl;
+	cout << "root : " << root << endl;
+	if (root != "/")
+		_segments.front() = root;
+	else
+		_segments.push_front(root);
 	set_path_translated();
-	set_flag();
+	set_flag(location_extensions);
 }
 
 //------------------------------------------------------------------------------
@@ -152,11 +160,11 @@ void				Path::set_extension(string& segment)
 
 //------------------------------------------------------------------------------
 
-void				Path::set_flag()
+void				Path::set_flag(const set<string>& location_extentions)
 {
 	_flag = flag_not_exist;
 	struct stat		s;
-	if (!_extension.empty())
+	if (!_extension.empty() && location_extentions.find(_extension) != location_extentions.end())
 	{
 		_flag = flag_cgi;
 	}
@@ -186,6 +194,7 @@ void				Path::set_path_info()
 void				Path::set_path_translated()
 {
 	assemble_path(_path_translated, _segments);
+	cout << "_path_translated : " << _path_translated << endl;
 }
 
 /*==============================================================================

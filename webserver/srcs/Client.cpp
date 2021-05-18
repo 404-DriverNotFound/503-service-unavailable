@@ -100,15 +100,27 @@ void				Client::set_location(const ConfigLocation& locp)
 
 void				Client::recv_socket(size_t len)
 {
-	if(_req.get_stream().fill(len) == 0)
+	if (_r_set.is_set(_socket.fd) == false)
+		return ;
+	std::cout << __func__ << std::endl;
+	size_t test;
+	if((test = _req.get_stream().fill(len)) == 0)
 	{
 		_state = NULL;
 	}
+	std::cout << "--------------" << std::endl;
+	std::cout << "recv_byte: " << test << "state_len: " << len << std::endl;
+	_req.get_stream().print();
 }
 
 void				Client::send_socket(size_t len)
 {
-	_res.get_stream().pass();
+	std::cout << __func__ << std::endl;
+	size_t	test;
+	test = _res.get_stream().pass();
+	_res.get_stream().print();
+	std::cout << "--------------" << std::endl;
+	std::cout << "send_byte: " << test << std::endl;
 }
 
 bool				Client::read_chunked()
