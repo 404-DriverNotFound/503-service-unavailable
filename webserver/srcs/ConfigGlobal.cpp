@@ -17,6 +17,7 @@ ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 	deque<string>	lines = get_lines(stream);
 	
 	parse(lines);
+	set_status_code_map();
 }
 
 //------------------------------------------------------------------------------
@@ -27,8 +28,10 @@ _timeout(ref._timeout),
 _select_timeout(ref._select_timeout),
 _temp_dir(ref._temp_dir),
 _worker(ref._worker),
-_ports(ref._ports)
-{}
+_ports(ref._ports),
+_status_code(ref._status_code)
+{
+}
 
 //------------------------------------------------------------------------------
 
@@ -45,6 +48,7 @@ ConfigGlobal&	ConfigGlobal::operator=(const ConfigGlobal& ref)
 	_temp_dir = ref._temp_dir;
 	_worker = ref._worker;
 	_ports = ref._ports;
+	_status_code = ref._status_code;
 	return *this;
 }
 

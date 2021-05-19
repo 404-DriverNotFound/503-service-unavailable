@@ -56,13 +56,14 @@ class Path
 	==========================================================================*/
 	public:
 		void			set_path(string& raw);
-		void			set_root(const string& root, const set<string>& location_extensions);
+		void			set_root(const string& root, const set<string>& extensions);
+		void			set_root_front(const string& root, const set<string>& extensions);
 		bool			set_index_page(const set<string>& pages);
 	private:
 		void			set_flag(const set<string>& location_extensions);
 		void			set_path_info();
 		void			set_path_translated();
-		void			set_extension(string& segment);
+		void			set_extension(list<string>& segments);
 
 	/*==========================================================================
 		Getter

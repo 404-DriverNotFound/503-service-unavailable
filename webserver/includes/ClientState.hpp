@@ -11,6 +11,7 @@ class ClientStateChunkedBody;
 class ClientStateChunkedBodyCRLF;
 class ClientStateChunkedBodyEnd;
 class ClientStateMethod;
+class ClientStateLoadBody;
 class ClientStateWait;
 class ClientStateDone;
 
@@ -26,6 +27,7 @@ class ClientState
 		static	ClientStateChunkedBodyCRLF*	chunkedbody_crlf;
 		static	ClientStateChunkedBodyEnd*	chunkedbody_end;
 		static	ClientStateMethod*			method;
+		static	ClientStateLoadBody*		loadbody;
 		static	ClientStateWait*			waiting;
 		static	ClientStateDone*			done;
 		size_t	len;

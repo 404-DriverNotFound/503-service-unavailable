@@ -25,9 +25,9 @@ ClientState* ClientStateHead::action(Client& ref)
 	{
 		if (ref.get_httpreq().get_string().empty())
 		{
-			break;
+			return bind;
 		}
 		ref.get_httpreq().set_header(ref.get_httpreq().get_string());
 	}
-	return bind;
+	return head;
 }

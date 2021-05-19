@@ -21,6 +21,7 @@ Client::~Client()
 
 void	Client::routine()
 {
+	// usleep(1000000);
 	if (is_expired())
 	{
 		_state = 0;
@@ -28,13 +29,21 @@ void	Client::routine()
 	}
 	recv_socket(_state->len);
 	if(_state)
-		_state = _state->action(*this);
+	{
+		ClientState*	prev;
+		do
+		{
+			prev = _state;
+			_state = _state->action(*this);
+		}
+		while (_state && prev != _state);
+	}
 	send_socket(_state->len);
 }
 
-/*=======================
+/*==============================================================================
 getter
-=======================*/
+==============================================================================*/
 Socket&				Client::get_socket()
 {
 	return	_socket;
@@ -85,9 +94,9 @@ bool				Client::set_chunked_length()
 	return _req.set_chunked_length();
 }
 
-/*=======================
+/*==============================================================================
 setter
-=======================*/
+==============================================================================*/
 void				Client::set_server(const ConfigServer& svrp)
 {
 	_server = &svrp;
@@ -109,18 +118,26 @@ void				Client::recv_socket(size_t len)
 		_state = NULL;
 	}
 	std::cout << "--------------" << std::endl;
-	std::cout << "recv_byte: " << test << "state_len: " << len << std::endl;
 	_req.get_stream().print();
+	std::cout << "recv_byte: " << test << endl << "state_len: " << len << std::endl;
 }
 
 void				Client::send_socket(size_t len)
 {
-	std::cout << __func__ << std::endl;
-	size_t	test;
-	test = _res.get_stream().pass();
+	if (_w_set.is_set(_socket.fd) == false)
+		return ;
+	// std::cout << __func__ << std::endl;
+	// size_t	test;
+	// test = _res.get_stream().pass();
+	// _res.get_stream().print();
+	// std::cout << "--------------" << std::endl;
+	// std::cout << "send_byte: " << test << std::endl;
+
 	_res.get_stream().print();
-	std::cout << "--------------" << std::endl;
-	std::cout << "send_byte: " << test << std::endl;
+	if (get_httpres().load_body())
+	{
+		_state = ClientState::done;
+	}
 }
 
 bool				Client::read_chunked()

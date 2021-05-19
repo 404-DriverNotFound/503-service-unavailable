@@ -101,7 +101,28 @@ bool			HttpReq::set_index_page(const set<string>& pages)
 {
 	return _path.set_index_page(pages);
 }
-
+//------------------------------------------------------------------------------
+void			HttpReq::set_root(const string& root, const set<string>& ex)
+{
+	_path.set_root(root, ex);
+}
+//------------------------------------------------------------------------------
+void			HttpReq::set_root_front(const string& root, const set<string>& ex)
+{
+	_path.set_root_front(root, ex);
+}
+//------------------------------------------------------------------------------
+void			HttpReq::set_file(File::flag f)
+{
+	_file = new File(f);
+	_stream.set_fd_out(_file->get_fd());
+}
+//------------------------------------------------------------------------------
+void			HttpReq::set_file(const string& path, File::flag f)
+{
+	_file = new File(path, f);
+	_stream.set_fd_out(_file->get_fd());
+}
 /*==============================================================================
 	Getter
 ==============================================================================*/

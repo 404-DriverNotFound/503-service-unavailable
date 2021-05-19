@@ -1,4 +1,3 @@
-// #define __BONUS__
-#ifdef __BONUS__
+#if __BONUS__ == 1
 #include <pthread.h>
 #endif

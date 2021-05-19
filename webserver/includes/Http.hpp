@@ -43,14 +43,14 @@ class Http
 	/*==========================================================================
 		Setter
 	==========================================================================*/
-		void					set_start_line(string& line);
-		string					get_start_line(int code);
-		void					set_file(File::flag flag = File::o_create);
-		void					set_file(const string& path, File::flag f = File::o_read);
-		void					del_file();
-		void					set_header(string& line);
-		virtual void			set_stream_fd(int fd) = 0;
-		virtual void			set_stream_file_fd() = 0;
+		void			set_start_line(string& line);
+		string			get_start_line(int code);
+		virtual void	set_file(File::flag flag = File::o_create) = 0;
+		virtual void	set_file(const string& path, File::flag f = File::o_read) = 0;
+		void			del_file();
+		void			set_header(string& line);
+		virtual void	set_stream_fd(int fd) = 0;
+		virtual void	set_stream_file_fd() = 0;
 	/*==========================================================================
 		Getter
 	==========================================================================*/
@@ -60,4 +60,5 @@ class Http
 		string&					get_string();
 		int						get_file_fd();
 		const string&			get_file_name();
+		size_t					get_file_size();
 };

@@ -6,6 +6,7 @@
 #include "Socket.hpp"
 #include <vector>
 #include <list>
+#include <cstdio>
 
 using std::list;
 using std::vector;
@@ -33,8 +34,10 @@ class Webserver
 		static ConfigGlobal						config;
 		static vector<Socket*>					sockets;
 		static FdSet							l_set;
-		#ifdef __BONUS__
+		#if __BONUS__ == 1
 		static pthread_mutex_t					select_mutex;
+		int										worker_serial;
+		static int								prev_worker;
 		#endif
 
 	/*==========================================================================
@@ -59,7 +62,7 @@ class Webserver
 		/*------------------------
 		getter
 		------------------------*/
-
+		static const string&	get_status_code(int code);
 		/*------------------------
 		setter
 		------------------------*/

@@ -8,6 +8,7 @@
 #include "../includes/ClientStateChunkedBodyCRLF.hpp"
 #include "../includes/ClientStateChunkedBodyEnd.hpp"
 #include "../includes/ClientStateMethod.hpp"
+#include "../includes/ClientStateLoadBody.hpp"
 #include "../includes/ClientStateWait.hpp"
 #include "../includes/ClientStateDone.hpp"
 
@@ -23,6 +24,7 @@ ClientStateChunkedBody*		ClientState::chunkedbody		= new ClientStateChunkedBody(
 ClientStateChunkedBodyCRLF*	ClientState::chunkedbody_crlf	= new ClientStateChunkedBodyCRLF();
 ClientStateChunkedBodyEnd*	ClientState::chunkedbody_end	= new ClientStateChunkedBodyEnd();
 ClientStateMethod*			ClientState::method				= new ClientStateMethod();
+ClientStateLoadBody*		ClientState::loadbody			= new ClientStateLoadBody();
 ClientStateWait*			ClientState::waiting			= new ClientStateWait();
 ClientStateDone*			ClientState::done				= new ClientStateDone();
 

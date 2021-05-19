@@ -19,6 +19,7 @@ LIST_SRCS = \
 	ClientStateChunkedBodyLen\
 	ClientStateChunkedBodyCRLF\
 	ClientStateChunkedBodyEnd\
+	ClientStateLoadBody\
 	ClientStateMethod\
 	ClientStateHead\
 	ClientStateSet\
@@ -50,6 +51,8 @@ DIR_OBJS = ./objs/
 SRCS = $(addprefix $(DIR_SRCS), $(addsuffix .cpp, $(LIST_SRCS)))
 OBJS = $(addprefix $(DIR_OBJS), $(addsuffix .o, $(LIST_SRCS)))
 
+BONUS = 0
+
 #-------------------------------------------------------------------------------
 #	OTHER
 #-------------------------------------------------------------------------------
@@ -71,11 +74,20 @@ $(DIR_OBJS):
 $(NAME) : disk $(DIR_OBJS) $(OBJS)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME)
 
+bonus : disk $(DIR_OBJS) set_bonus $(OBJS)
+	$(CC) $(CFLAG) $(OBJS) -o $(NAME) -lpthread
+	rm -rf bonus_file
+
+set_bonus:
+	touch bonus_file
+
+
 asan : $(DIR_OBJS) $(OBJS)
-	$(CC) $(ASAN) $(CFLAG) $(OBJS) -o $(NAME)
+	$(CC) $(ASAN) $(CFLAG) $(OBJS) -o $(NAME) 
 
 $(DIR_OBJS)%.o : $(DIR_SRCS)%.cpp
-	$(CC) $(CFLAG) -c $< -o $@
+	@if [ $$(find -name bonus_file) ]; then $(CC) $(CFLAG) -c $< -o $@ -D __BONUS__=1; else $(CC) $(CFLAG) -c $< -o $@ -D __BONUS__=0; fi
+	@echo compile: $<
 
 clean:
 	$(RM) $(OBJS)

@@ -1,6 +1,10 @@
 #include "../includes/File.hpp"
 #include "../includes/Webserver.hpp"
 
+#if __BONUS__ == 1
+pthread_mutex_t		File::mutex_temp_name;
+#endif
+
 File::File(flag f)
 : _name(Webserver::config.get_temp_dir()),
   _is_temp(true)
@@ -25,7 +29,15 @@ void			File::temp_name()
 {
 	static int	serial = 0;
 	_name.append("/temp");
-	_name.append(ft::itoa(serial));
+	#if __BONUS__ == 1
+	pthread_mutex_lock(&mutex_temp_name);
+	#endif
+
+	_name.append(ft::itoa(serial++));
+
+	#if __BONUS__ == 1
+	pthread_mutex_unlock(&mutex_temp_name);
+	#endif
 }
 
 int				File::get_fd() const
@@ -83,5 +95,13 @@ size_t			File::size()
 	struct stat		s;
 	if (fstat(_fd, &s))
 		return -1;
+		cout << "filesize = " << s.st_size << endl;
 	return s.st_size;
+}
+
+void			File::mutex_init_tempname()
+{
+	#if __BONUS__ == 1
+	pthread_mutex_init(&mutex_temp_name, 0);
+	#endif
 }

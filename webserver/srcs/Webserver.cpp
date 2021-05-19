@@ -6,8 +6,9 @@
 ConfigGlobal		Webserver::config;
 vector<Socket*>		Webserver::sockets;
 FdSet				Webserver::l_set;
-#ifdef __BONUS__
+#if __BONUS__ == 1
 pthread_mutex_t		Webserver::select_mutex;
+int					Webserver::prev_worker = 0;
 #endif
 
 /*==============================================================================
@@ -30,6 +31,13 @@ Webserver::~Webserver()
 	}
 }
 
+
+const string&		Webserver::get_status_code(int code)
+{
+	return config.get_status_code(code);
+}
+
+
 /*==============================================================================
 	Static Member Manager
 ==============================================================================*/
@@ -38,8 +46,9 @@ void		Webserver::init_static_members(int argc, char** argv, char** env)
 {
 	config = ConfigGlobal(argc, argv, env);
 	init_server_sockets(config.get_ports());
-	#ifdef __BONUS__
+	#if __BONUS__ == 1
 	pthread_mutex_init(&select_mutex, 0);
+	File::mutex_init_tempname();
 	#endif
 }
 
@@ -84,16 +93,28 @@ void			Webserver::start_server()
 	}
 	while (42)
 	{
-		#ifdef __BONUS__
-		pthread_mutex_lock(&select_mutex);
-		#endif
 
+		#if __BONUS__ == 1
+		pthread_mutex_lock(&select_mutex);
+		if (prev_worker == worker_serial)
+		{
+			pthread_mutex_unlock(&select_mutex);
+			usleep(100);
+			continue;
+		}
 		cout << "####################################################################\n";
+		prev_worker = worker_serial;
+
+		cout << "Worker " << worker_serial << endl;
+		#else
+		cout << "####################################################################\n";
+		#endif
 
 		_r_set = _o_set;
 		_w_set = _o_set;
 		_e_set = _o_set;
 		select_timeout = config.get_select_timeout();
+
 		result = select(config.get_max_connection(), &_r_set.bits, &_w_set.bits, &_e_set.bits, (&select_timeout));
 		if (result < 0)
 		{
@@ -102,14 +123,18 @@ void			Webserver::start_server()
 		}
 		if (result == 0)	// timeout
 		{
+			#if __BONUS__ == 1
+			pthread_mutex_unlock(&select_mutex);
+			#endif
+
 			continue;
 		}
+		check_new_connection();
 
-		#ifdef __BONUS__
+		#if __BONUS__ == 1
 		pthread_mutex_unlock(&select_mutex);
 		#endif
 
-		check_new_connection();
 		manage_clients();
 	}
 }
@@ -128,6 +153,7 @@ void			Webserver::check_new_connection()
 			_clients.push_back(new Client((*it)->fd, config.get_server(htons((*it)->s_addr.sin_port)), _r_set, _w_set));
 			cout << "new connection: " << (*it)->fd << " -> " << _clients.back()->get_socket().get_fd() << endl;
 			_o_set.set(_clients.back()->get_socket().get_fd());
+			// _r_set.clr((*it)->fd);
 		}
 		if (_e_set.is_set((*it)->fd))
 		{
@@ -153,9 +179,9 @@ void			Webserver::manage_clients()
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
-		cout << "\n======================================"<< endl;
-		cout << "socket: " << (*it)->get_socket().fd << endl;
-		cout << "\n--------------------------------------"<< endl;
+		cout << "\n======================"<< endl;
+		cout << "  socket: " << (*it)->get_socket().fd << endl;
+		cout << "----------------------"<< endl;
 		(*it)->routine();
 		if ((*it)->get_clientstate() == NULL)
 		{

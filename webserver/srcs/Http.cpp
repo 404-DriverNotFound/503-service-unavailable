@@ -59,6 +59,11 @@ const string&			Http::get_file_name()
 	return	_file->get_name();
 }
 //------------------------------------------------------------------------------
+size_t				Http::get_file_size()
+{
+	return	_file->size();
+}
+//------------------------------------------------------------------------------
 const string&			Http::get_header(const string& key)
 {
 	static		string	empty_str;
@@ -77,16 +82,6 @@ const string&			Http::get_header(const string& key)
 	Setter
 ==============================================================================*/
 
-void					Http::set_file(File::flag f)
-{
-	_file = new File(f);
-}
-//------------------------------------------------------------------------------
-void					Http::set_file(const string& path, File::flag f)
-{
-	_file = new File(path, f);
-}
-//------------------------------------------------------------------------------
 void					Http::del_file()
 {
 	delete _file;

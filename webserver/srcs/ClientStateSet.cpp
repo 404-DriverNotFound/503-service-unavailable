@@ -26,7 +26,6 @@ ClientState*	ClientStateSet::action(Client& ref)
 	try
 	{
 		set_server(ref);
-		cout << "where is host-server ?" << endl;
 		set_location(ref);
 		check_auth(ref);
 		check_method(ref);
@@ -90,7 +89,8 @@ void	ClientStateSet::set_location(Client& ref)
 	typedef map<string, ConfigLocation>::const_iterator	location_iterator;
 
 	string				location_name = "/";
-	location_name += ref.get_httpreq().get_path().get_segments().front();
+	if (ref.get_httpreq().get_path().get_segments().empty() == false)
+		location_name += ref.get_httpreq().get_path().get_segments().front();
 	location_iterator	it_location = ref.get_server().get_locations().find(location_name);
 
 	if (it_location == ref.get_server().get_locations().end())
@@ -98,19 +98,28 @@ void	ClientStateSet::set_location(Client& ref)
 		if ((it_location = ref.get_server().get_locations().find("/")) == ref.get_server().get_locations().end())
 		{
 			ref.get_httpres().set_status_code(404);
+
+			//TODO: path translated == server's error page
+
 			return ;
 		}
+		const ConfigLocation&	location = it_location->second;
+		ref.set_location(location);
+		ref.get_httpreq().set_root_front(location.get_root(), location.get_cgi_extensions());
 	}
 	const ConfigLocation&	location = it_location->second;
 	ref.set_location(location);
-	ref.get_httpreq().get_path().set_root(location.get_root(), location.get_cgi_extensions());
-	cout << "path translated: " << ref.get_httpreq().get_path().get_path_translated() << endl;
+	if (location_name == "/")
+		ref.get_httpreq().set_root_front(location.get_root(), location.get_cgi_extensions());
+	else
+		ref.get_httpreq().set_root(location.get_root(), location.get_cgi_extensions());
 }
 
 //------------------------------------------------
 
 void	ClientStateSet::check_auth(Client& ref)
 {
+	cout << __func__ << endl;
 	if (ref.get_location().get_auth().empty())
 		return;
 	
@@ -137,6 +146,7 @@ void	ClientStateSet::check_auth(Client& ref)
 
 void	ClientStateSet::check_method(Client& ref)
 {
+	cout << __func__ << endl;
 	const set<string>&	method = ref.get_location().get_method();
 	set<string>::const_iterator	it = method.find(ref.get_httpreq().get_method());
 	if (it == method.end())
@@ -147,13 +157,12 @@ void	ClientStateSet::check_method(Client& ref)
 
 void	ClientStateSet::set_file(Client& ref)
 {
+	cout << __func__ << endl;
 	const ConfigLocation&	location = ref.get_location();
 	HttpReq&				req = ref.get_httpreq();
 	HttpRes&				res = ref.get_httpres();
 	const string&			path = req.get_path().get_path_translated();
 
-	cout << "state::: " << ref.get_httpreq().get_path().get_flag() << endl;
-	cout << "state::: " << ref.get_httpreq().get_path().get_path_translated() << endl;
 	switch(ref.get_httpreq().get_path().get_flag())
 	{
 		case Path::flag_cgi:
@@ -185,7 +194,6 @@ void	ClientStateSet::set_file(Client& ref)
 			}
 			else
 			{
-				cout << "herererer" << endl;
 				res.set_file(path);
 			}
 			break;

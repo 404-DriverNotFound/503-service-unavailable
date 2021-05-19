@@ -11,7 +11,9 @@
 	Constructor & Destructor
 ==============================================================================*/
 HttpRes::HttpRes(int fd)
-: Http(fd)
+: Http(fd),
+  _len_msg(0),
+  _len_send(0)
 {
 	set_stream_fd(fd);
 }
@@ -42,6 +44,29 @@ void			HttpRes::set_stream_file_fd()
 {
 	_stream.set_fd_in(_file->get_fd());
 }
+//------------------------------------------------------------------------------
+void			HttpRes::set_file(File::flag f)
+{
+	_file = new File(f);
+	_stream.set_fd_in(_file->get_fd());
+}
+//------------------------------------------------------------------------------
+void			HttpRes::set_file(const string& path, File::flag f)
+{
+	_file = new File(path, f);
+	_stream.set_fd_in(_file->get_fd());
+}
+//------------------------------------------------------------------------------
+void			HttpRes::set_len_msg(size_t size)
+{
+	_len_msg = size;
+}
+//------------------------------------------------------------------------------
+void			HttpRes::set_len_send(size_t size)
+{
+	_len_send = size;
+}
+
 /*==============================================================================
 	Getter
 ==============================================================================*/
@@ -49,6 +74,20 @@ void			HttpRes::set_stream_file_fd()
 /*==============================================================================
 	Method
 ==============================================================================*/
+
+//------------------------------------------------------------------------------
+bool			HttpRes::load_body()
+{
+	if (!_len_msg)
+		return false;
+	_len_send += _stream.pass();
+
+	cout << "send msg: " << _len_send << " / " << _len_msg << endl;
+	
+	if (_len_send >= _len_msg)
+		return true;
+	return false;
+}
 //------------------------------------------------------------------------------
 
 string		HttpRes::get_start_line()
@@ -57,7 +96,9 @@ string		HttpRes::get_start_line()
 	startline = string("HTTP/1.1 ");
 	startline += ft::itoa(_status_code);
 	startline += " ";
-	startline += Webserver::config.get_status_code(_status_code);
+	cout << "hh----------------------------------------------\n";
+	startline += Webserver::get_status_code(_status_code);
+	cout << "hh----------------------------------------------\n";
 	startline += "\r\n";
 	return startline;
 }
@@ -170,6 +211,8 @@ void		HttpRes::clear()
 {
 	Http::clear();
 	_status_code = 200;
+	_len_msg = 0;
+	_len_send = 0;
 }
 
 // void		HttpRes::clear()

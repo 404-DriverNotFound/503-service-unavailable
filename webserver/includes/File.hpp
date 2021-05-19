@@ -1,4 +1,5 @@
 #pragma once
+#include "Bonus.hpp"
 #include <unistd.h>
 #include <fcntl.h>
 #include <string>
@@ -25,6 +26,9 @@ class	File
 		int		_fd;
 		string	_name;
 		bool	_is_temp;
+		#if __BONUS__ == 1
+		static pthread_mutex_t	mutex_temp_name;
+		#endif
 
 	/*==========================================================================
 		Constructor & Destructor
@@ -61,4 +65,5 @@ class	File
 	public:
 		void			set_file(flag flag = o_create);
 		void			set_file(const string& path, flag flag = o_read);
+		static void		mutex_init_tempname();
 };

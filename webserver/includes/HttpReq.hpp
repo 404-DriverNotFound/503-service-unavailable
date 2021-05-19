@@ -43,7 +43,10 @@ class HttpReq : public Http
 		void			set_stream_fd(int fd);
 		void			set_stream_file_fd();
 		bool			set_index_page(const set<string>& pages);
-
+		void			set_root(const string& root, const set<string>& ex);
+		void			set_root_front(const string& root, const set<string>& ex);
+		void			set_file(File::flag flag = File::o_create);
+		void			set_file(const string& path, File::flag f = File::o_read);
 
 	/*==========================================================================
 		Getter

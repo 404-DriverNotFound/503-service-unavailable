@@ -14,7 +14,8 @@ class HttpRes : public Http
 	==========================================================================*/
 	private:
 		int		_status_code;
-		
+		ssize_t	_len_msg;
+		ssize_t	_len_send;
 	/*==========================================================================
 		Constructor & Destructor
 	==========================================================================*/
@@ -41,6 +42,7 @@ class HttpRes : public Http
 		string		get_start_line();
 
 		void		clear();
+		bool		load_body();
 
 	/*==========================================================================
 		Setter
@@ -49,6 +51,10 @@ class HttpRes : public Http
 		void		set_autoindex_page(const string& path);
 		void		set_stream_fd(int fd);
 		void		set_stream_file_fd();
+		void		set_file(File::flag flag = File::o_create);
+		void		set_file(const string& path, File::flag f = File::o_read);
+		void		set_len_msg(size_t size);
+		void		set_len_send(size_t size);
 
 	/*==========================================================================
 		Getter

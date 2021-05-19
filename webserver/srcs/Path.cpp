@@ -21,7 +21,7 @@ Path::Path(string& raw)
 	list<string>	segment_tmp = tokenizer_path.chr_list('/');
 
 	arrange_segment(segment_tmp);
-	set_extension(segment_tmp.back());
+	set_extension(segment_tmp);
 	_segments.swap(segment_tmp);
 	set_path_info();
 }
@@ -118,7 +118,7 @@ void				Path::set_path(string& raw)
 	list<string>	segment_tmp = tokenizer_path.chr_list('/');
 
 	arrange_segment(segment_tmp);
-	set_extension(segment_tmp.back());
+	set_extension(segment_tmp);
 	_segments.swap(segment_tmp);
 	set_path_info();
 }
@@ -127,12 +127,16 @@ void				Path::set_path(string& raw)
 
 void				Path::set_root(const string& root, const set<string>& location_extensions)
 {
-	cout << __func__ << endl;
-	cout << "root : " << root << endl;
-	if (root != "/")
-		_segments.front() = root;
-	else
-		_segments.push_front(root);
+	_segments.front() = root;
+	set_path_translated();
+	set_flag(location_extensions);
+}
+
+//------------------------------------------------------------------------------
+
+void				Path::set_root_front(const string& root, const set<string>& location_extensions)
+{
+	_segments.push_front(root);
 	set_path_translated();
 	set_flag(location_extensions);
 }
@@ -151,22 +155,31 @@ bool				Path::set_index_page(const set<string>& pages)
 
 //------------------------------------------------------------------------------
 
-void				Path::set_extension(string& segment)
+void				Path::set_extension(list<string>& segments)
 {
+	if (segments.empty())
+		return;
+	string& segment = segments.back();
 	size_t	idx = segment.rfind('.');
 	if (idx != -1)
+	{
 		_extension = &segment[idx];
+	}
 }
 
 //------------------------------------------------------------------------------
 
-void				Path::set_flag(const set<string>& location_extentions)
+void				Path::set_flag(const set<string>& location_extensions)
 {
+	cout << __func__ << endl;
 	_flag = flag_not_exist;
 	struct stat		s;
-	if (!_extension.empty() && location_extentions.find(_extension) != location_extentions.end())
+	if (!_extension.empty())
 	{
-		_flag = flag_cgi;
+		if (location_extensions.find(_extension) != location_extensions.end())
+		{
+			_flag = flag_cgi;
+		}
 	}
 	else if (stat(_path_translated.c_str(), &s) == 0)
 	{
@@ -194,7 +207,6 @@ void				Path::set_path_info()
 void				Path::set_path_translated()
 {
 	assemble_path(_path_translated, _segments);
-	cout << "_path_translated : " << _path_translated << endl;
 }
 
 /*==============================================================================
