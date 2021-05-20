@@ -1,4 +1,5 @@
 #pragma once
+#include "Cgi.hpp"
 #include "Socket.hpp"
 #include "Stream.hpp"
 #include "Time.hpp"
@@ -34,6 +35,7 @@ class Client
 		State*						_state;
 		HttpReq						_req;
 		HttpRes						_res;
+		Cgi*						_cgi;
 	/*==========================================================================
 		Constructor & Destructor
 	==========================================================================*/
@@ -54,6 +56,8 @@ class Client
 		void						update_birth();
 		bool						get_next_line();
 		bool						is_expired();
+		void						make_meta_variable();
+		void						run_cgi();
 	/*==========================================================================
 		Getter
 	==========================================================================*/
@@ -66,6 +70,7 @@ class Client
 		HttpReq&					get_httpreq();
 		HttpRes&					get_httpres();
 		State*						get_state();
+		const string&				get_method();
 	/*==========================================================================
 		Setter
 	==========================================================================*/
@@ -75,6 +80,8 @@ class Client
 		bool						set_chunked_length();
 		bool						read_chunked();
 		bool						read_crlf();
+		void						set_cgi();
+		bool						check_cgi_exit();
 };
 
 // enum	e_client_status

@@ -151,83 +151,115 @@ void	StateSet::check_method(Client& ref)
 void	StateSet::set_file(Client& ref)
 {
 	cout << __func__ << ": flag: " << ref.get_httpreq().get_path().get_flag() <<  endl;
-	const ConfigLocation&	location = ref.get_location();
-	HttpReq&				req = ref.get_httpreq();
-	HttpRes&				res = ref.get_httpres();
-	const string&			path = req.get_path().get_path_translated();
 
 	switch(ref.get_httpreq().get_path().get_flag())
 	{
 		case Path::flag_cgi:
-			req.set_file(File::o_create);	// req: temp file
-			res.set_file(File::o_create);	// res: temp file
+			case_cgi(ref);
 			break;
 
 		case Path::flag_dir:
-			req.set_file(File::o_create);	// req: temp file
-			if (req.set_index_page(location.get_index_page()) == false) // index page not found
-			{
-				if (location.get_autoindex() == true)	// autoindex on?
-				{
-					res.set_file(File::o_create);	// temp file && autoindex
-					res.set_autoindex_page(path);
-				}
-				else // autoindex off
-				{
-					throw 404;
-				}
-			}
-			else
-			{
-				res.set_file(path);
-			}
+			case_dir(ref);
 			break;
 
 		case Path::flag_file:
-			if (req.get_method() == "GET")
-			{
-				// req.set_file(File::o_create);
-				cout << "GET!!!! " << path << endl;
-				res.set_file(path, File::o_read);
-			}
-			else if (req.get_method() == "PUT")
-			{
-				req.set_file(path, File::o_create);
-			}
-			else if (req.get_method() == "POST")
-			{
-				req.set_file(path, File::o_append);
-			}
-			else if (req.get_method() == "DELETE")
-			{
-				ft::rm_df(path.c_str());
-			}
-			else if (req.get_method() == "HEAD")
-			{
-			}
+			case_file(ref);
 			break;
 
 		case Path::flag_not_exist:
-			cout << "Path: " << path << endl;
-			if (req.get_method() == "PUT")
-			{
-				req.set_file(path, File::o_create);
-			}
-			else if (req.get_method() == "POST")
-			{
-				req.set_file(path, File::o_append);
-			}
-			else
-			{
-				throw 404;
-			}
+			case_not_exist(ref);
 			break;
 	}
 }
 
 //------------------------------------------------------------------------------
 
-// void	StateSet::set_method(Client& ref)
-// {
-// 	if (!(ref.get_location().get_method() & (1 << ref.get_
-// }
+void	StateSet::case_cgi(Client& ref)
+{
+	const ConfigLocation&	location = ref.get_location();
+	HttpReq&				req = ref.get_httpreq();
+	HttpRes&				res = ref.get_httpres();
+	const string&			path = req.get_path().get_path_translated();
+	
+	req.set_file(File::o_create);	// req: temp file
+	res.set_file(File::o_create);	// res: temp file
+}
+
+void	StateSet::case_dir(Client& ref)
+{
+	const ConfigLocation&	location = ref.get_location();
+	HttpReq&				req = ref.get_httpreq();
+	HttpRes&				res = ref.get_httpres();
+	const string&			path = req.get_path().get_path_translated();
+
+	req.set_file(File::o_create);	// req: temp file
+	if (req.set_index_page(location.get_index_page()) == false) // index page not found
+	{
+		if (location.get_autoindex() == true)	// autoindex on?
+		{
+			res.set_file(File::o_create);	// temp file && autoindex
+			res.set_autoindex_page(path);
+		}
+		else // autoindex off
+		{
+			throw 404;
+		}
+	}
+	else
+	{
+		res.set_file(path);
+	}
+}
+
+void	StateSet::case_file(Client& ref)
+{
+	HttpReq&				req = ref.get_httpreq();
+	HttpRes&				res = ref.get_httpres();
+	const string&			path = req.get_path().get_path_translated();
+	
+	if (req.get_method() == "GET")
+	{
+		res.set_file(path, File::o_read);
+	}
+	else if (req.get_method() == "PUT")
+	{
+		req.set_file(path, File::o_create);
+		res.set_file(File::o_create);
+	}
+	else if (req.get_method() == "POST")
+	{
+		req.set_file(path, File::o_append);
+		res.set_file(File::o_create);
+	}
+	else if (req.get_method() == "DELETE")
+	{
+		ft::rm_df(path.c_str());
+	}
+	else if (req.get_method() == "HEAD")
+	{
+		res.set_file(path, File::o_read);
+	}
+
+}
+
+void	StateSet::case_not_exist(Client& ref)
+{
+	HttpReq&				req = ref.get_httpreq();
+	HttpRes&				res = ref.get_httpres();
+	const string&			path = req.get_path().get_path_translated();
+
+	cout << "Path: " << path << endl;
+	if (req.get_method() == "PUT")
+	{
+		req.set_file(path, File::o_create);
+		res.set_file(File::o_create);
+	}
+	else if (req.get_method() == "POST")
+	{
+		req.set_file(path, File::o_append);
+	}
+	else
+	{
+		throw 404;
+	}
+}

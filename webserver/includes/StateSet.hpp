@@ -19,4 +19,11 @@ class StateSet : public State
 		============*/
 		void			set_file(Client& ref);
 		void			set_method(Client& ref);
+		/*============
+		method
+		============*/
+		void	case_cgi(Client& ref);
+		void	case_dir(Client& ref);
+		void	case_file(Client& ref);
+		void	case_not_exist(Client& ref);
 };

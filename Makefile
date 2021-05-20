@@ -13,8 +13,10 @@ ASAN = -fsanitize=address
 LIST_SRCS = \
 	AConfig\
 	Client\
+	Cgi\
 	State\
 	StateBody\
+	StateCgi\
 	StateChunkedBody\
 	StateChunkedBodyLen\
 	StateChunkedBodyCRLF\

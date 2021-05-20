@@ -82,10 +82,12 @@ void				Path::assemble_path(string& x, const list<string>& segments)
 	list<string>::const_iterator it = _segments.begin();
 	x.append(*it);
 	++it;
-	for (; it != _segments.end() ; ++it)
+	while (it != _segments.end())
 	{
-		x.append("/");
 		x.append(*it);
+		++it;
+		if (it != _segments.end())
+			x.append("/");
 	}
 }
 
@@ -175,17 +177,16 @@ void				Path::set_flag(const set<string>& location_extensions)
 	cout << __func__ << endl;
 	_flag = flag_not_exist;
 	struct stat		s;
-	if (!_extension.empty())
+	if (!_extension.empty() && location_extensions.find(_extension) != location_extensions.end())
 	{
-		if (location_extensions.find(_extension) != location_extensions.end())
-		{
-			_flag = flag_cgi;
-		}
+		_flag = flag_cgi;
+		return;
 	}
 	else if (stat(_path_translated.c_str(), &s) == 0)
 	{
 		if (S_ISDIR(s.st_mode))
 		{
+			_path_translated.append("/");
 			_flag = flag_dir;
 		}
 		else
@@ -253,26 +254,34 @@ string				Path::get_location_name() const
 
 // int			main()
 // {
-// 	string	path = "../aa/bb/cc/dd/../.././file.exe:123";
+// 	// string	path = "../aa/bb/cc/dd/../.././file.exe:123";
 
-// 	Path	p(path);
+// 	// Path	p(path);
 
 
-// 	cout << "path info : " << p._path_info << endl;
-// 	cout << "query : " << p._query << endl;
-// 	cout << "segment : ";
-// 	for (string& s : p._segments)
-// 		cout << s << " ";
-// 	cout << endl;
-// 	cout << "extension: " << p._extension << endl;
+// 	// cout << "path info : " << p._path_info << endl;
+// 	// cout << "query : " << p._query << endl;
+// 	// cout << "segment : ";
+// 	// for (string& s : p._segments)
+// 	// 	cout << s << " ";
+// 	// cout << endl;
+// 	// cout << "extension: " << p._extension << endl;
 
-// 	p.set_root("hello");
+// 	// p.set_root("hello");
 
-// 	cout << "segment : ";
-// 	for (string& s : p._segments)
-// 		cout << s << " ";
-// 	cout << endl;
-// 	cout << "translated: " << p._path_translated << endl;
+// 	// cout << "segment : ";
+// 	// for (string& s : p._segments)
+// 	// 	cout << s << " ";
+// 	// cout << endl;
+// 	// cout << "translated: " << p._path_translated << endl;
+
+// 	set<string>		exe;
+
+// 	exe.insert(".bla");
+// 	exe.insert(".py");
+// 	exe.insert(".php");
+
+// 	Path			p("asdf");
 
 
 // }

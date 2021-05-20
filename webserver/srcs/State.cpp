@@ -1,4 +1,5 @@
 #include "../includes/State.hpp"
+#include "../includes/StateCgi.hpp"
 #include "../includes/StateStartLine.hpp"
 #include "../includes/StateHead.hpp"
 #include "../includes/StateSet.hpp"
@@ -27,6 +28,7 @@ StateMethod*			State::method			= new StateMethod();
 StateLoadBody*			State::loadbody			= new StateLoadBody();
 StateWait*				State::waiting			= new StateWait();
 StateDone*				State::done				= new StateDone();
+StateCgi*				State::cgi				= new StateCgi();
 
 /*===================
 constructor

@@ -1,0 +1,51 @@
+#include "../includes/StateCgi.hpp"
+#include "../includes/StateLoadBody.hpp"
+
+StateCgi::StateCgi()
+{
+}
+
+StateCgi::~StateCgi()
+{
+}
+
+State*	StateCgi::action(Client& ref)
+{
+	cout << "CGI : " << __func__ << endl;
+	if (ref.check_cgi_exit())
+	{
+		terminate_cgi(ref);
+		return loadbody;
+	}
+	return cgi;
+}
+
+void	StateCgi::terminate_cgi(Client& ref)
+{
+	cout << "terminal : " << __func__ << endl;
+	HttpRes&	res = ref.get_httpres();
+	Stream		stream(8000, res.get_file_fd());
+
+	stream.fill(8000);
+	
+	size_t		cgi_header_size = stream.size();
+	string		line;
+
+	while (stream.get_line(line))
+	{
+		if (line.empty())
+			break ;
+		res.set_header(line);
+	}
+	cgi_header_size -= stream.size();
+
+	size_t		content_length = ft::file_size(res.get_file_name().c_str()) - cgi_header_size;
+
+	lseek(res.get_file_fd(), SEEK_CUR, -cgi_header_size);
+	res.set_status_code(ft::atoi(res.get_header("STATUS")));
+
+	res.get_stream() << res.get_start_line();
+	res.get_stream() << "Content-Length: " << ft::itoa(content_length) << "\r\n";
+	res.get_stream() << "\r\n";
+	res.set_len_msg(res.get_stream().size() + content_length);
+}

@@ -215,6 +215,11 @@ void		HttpRes::clear()
 	_len_send = 0;
 }
 
+int			HttpRes::get_status_code()
+{
+	return	_status_code;
+}
+
 // void		HttpRes::clear()
 // {
 // 	#ifdef DBG

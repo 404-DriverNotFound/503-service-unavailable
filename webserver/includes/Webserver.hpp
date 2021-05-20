@@ -63,6 +63,7 @@ class Webserver
 		getter
 		------------------------*/
 		static const string&	get_status_code(int code);
+		static const string&	get_cgi_bin(const string& extension);
 		/*------------------------
 		setter
 		------------------------*/

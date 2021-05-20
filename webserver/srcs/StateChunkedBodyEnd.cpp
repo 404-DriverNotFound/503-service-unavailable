@@ -3,7 +3,7 @@
 
 StateChunkedBodyEnd::StateChunkedBodyEnd()
 {
-	len = 0xffff;
+	len = 0xfffff;
 }
 
 StateChunkedBodyEnd::~StateChunkedBodyEnd()

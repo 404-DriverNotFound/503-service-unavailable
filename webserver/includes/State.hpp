@@ -14,6 +14,7 @@ class StateMethod;
 class StateLoadBody;
 class StateWait;
 class StateDone;
+class StateCgi;
 
 class State
 {
@@ -30,6 +31,7 @@ class State
 		static	StateLoadBody*		loadbody;
 		static	StateWait*			waiting;
 		static	StateDone*			done;
+		static	StateCgi*			cgi;
 		size_t	len;
 	public:
 		State();

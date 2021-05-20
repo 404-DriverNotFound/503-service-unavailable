@@ -5,7 +5,7 @@
 
 StateChunkedBody::StateChunkedBody()
 {
-	len = 0xffff;
+	len = 0xfffff;
 }
 
 StateChunkedBody::~StateChunkedBody()

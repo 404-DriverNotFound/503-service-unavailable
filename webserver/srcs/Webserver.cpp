@@ -37,6 +37,11 @@ const string&		Webserver::get_status_code(int code)
 	return config.get_status_code(code);
 }
 
+const string&	Webserver::get_cgi_bin(const string& extension)
+{
+	return config.get_cgi_bin(extension);
+}
+
 
 /*==============================================================================
 	Static Member Manager

@@ -18,6 +18,7 @@ ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 	
 	parse(lines);
 	set_status_code_map();
+	set_path_cgi_bin(env);
 }
 
 //------------------------------------------------------------------------------
@@ -29,7 +30,8 @@ _select_timeout(ref._select_timeout),
 _temp_dir(ref._temp_dir),
 _worker(ref._worker),
 _ports(ref._ports),
-_status_code(ref._status_code)
+_status_code(ref._status_code),
+_cgi_bin(ref._cgi_bin)
 {
 }
 
@@ -49,6 +51,7 @@ ConfigGlobal&	ConfigGlobal::operator=(const ConfigGlobal& ref)
 	_worker = ref._worker;
 	_ports = ref._ports;
 	_status_code = ref._status_code;
+	_cgi_bin = ref._cgi_bin;
 	return *this;
 }
 
@@ -273,6 +276,17 @@ void				ConfigGlobal::set_status_code_map()
 	_status_code[510] = "Not Extended";
 	_status_code[511] = "Network Authentication Required";
 }
+//------------------------------------------------------------------------------
+void			ConfigGlobal::set_path_cgi_bin(char** env)
+{
+	_cgi_bin[".php"] = ft::which("php", env);
+	_cgi_bin[".py"] = ft::which("python3", env);
+	#ifdef __APPLE__
+	_cgi_bin[".bla"] = "./test/cgi_tester";
+	#else
+	_cgi_bin[".bla"] = "./test/ubuntu_cgi_tester";
+	#endif
+}
 
 /*==============================================================================
 	Getter
@@ -330,6 +344,17 @@ const ConfigGlobal::server_container&	ConfigGlobal::get_server(int port) const
 const string&		ConfigGlobal::get_status_code(int code) const
 {
 	return _status_code.find(code)->second;
+}
+
+//------------------------------------------------------------------------------
+
+const string&		ConfigGlobal::get_cgi_bin(const string& extension) const
+{
+	static string	tmp;
+	map<string, string>::const_iterator it = _cgi_bin.find(extension);
+	if (it != _cgi_bin.end())
+		return it->second;
+	return tmp;
 }
 
 /*==============================================================================

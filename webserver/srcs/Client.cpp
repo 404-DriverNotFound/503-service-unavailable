@@ -36,7 +36,12 @@ void				Client::recv_socket(size_t len)
 	}
 
 	cout <<   "vvvvvvvvvvv recv vvvvvvvvvvvvvv" << endl;
-	_req.get_stream().print();
+	if (_req.get_stream().size() < 1000)
+		_req.get_stream().print();
+	else
+	{
+		cout << "len: " << _req.get_stream().size() << endl;
+	}
 	cout << "\n^^^^^^^^^^^ recv ^^^^^^^^^^^^^^" << endl;
 
 	// cout << "recv_byte: " << test << endl << "state_len: " << len << endl;
@@ -49,7 +54,12 @@ void				Client::send_socket(size_t len)
 		return ;
 
 	cout <<   "vvvvvvvvvvv send vvvvvvvvvvvvvv" << endl;
-	_res.get_stream().print_line();
+	if (_res.get_stream().size() < 1000)
+		_res.get_stream().print_line();
+	else
+	{
+		cout << "len: " << _res.get_stream().size() << endl;
+	}
 	cout << "\n^^^^^^^^^^^ send ^^^^^^^^^^^^^^" << endl;
 
 	if (get_httpres().load_body())
@@ -72,7 +82,7 @@ bool				Client::is_expired()
 //------------------------------------------------------------------------------
 void	Client::routine()
 {
-	usleep(500000);
+	// usleep(300000);
 	if (is_expired())
 	{
 		_state = 0;
@@ -124,6 +134,12 @@ int					Client::client_action()
 	}
 }
 //------------------------------------------------------------------------------
+void			Client::run_cgi()
+{
+	_cgi->start_cgi();
+}
+
+
 /*==============================================================================
 setter
 ==============================================================================*/
@@ -153,6 +169,60 @@ bool				Client::set_chunked_length()
 {
 	return _req.set_chunked_length();
 }
+
+void				Client::set_cgi()
+{
+	_cgi = new Cgi(_req.get_path()._path_translated, _req.get_path()._extension, _req.get_file_fd(), _res.get_file_fd());
+}
+
+void				Client::make_meta_variable()
+{
+	#ifdef DBG
+	cout << __func__ << endl;
+	#endif
+
+	_cgi->meta_variables.reserve(17 + _req.get_headers().size());
+	_cgi->meta_variables.assign(17, string());
+
+	_cgi->meta_variables[0] = string("AUTH_TYPE="		).append(_location->get_auth_type());
+	_cgi->meta_variables[1] = string("CONTENT_LENGTH="	).append(_req.get_header("CONTNET_LENGTH"));
+	_cgi->meta_variables[2] = string("CONTENT_TYPE="		).append(_req.get_header("CONTNET_TYPE"));
+	_cgi->meta_variables[3] = string("GATEWAY_INTERFACE=").append("CGI/1.1");
+	_cgi->meta_variables[4] = string("PATH_INFO="		).append(_req.get_path().get_path_info());
+	_cgi->meta_variables[5] = string("PATH_TRANSLATED="	).append(_req.get_path().get_path_translated());
+	_cgi->meta_variables[6] = string("QUERY_STRING="		).append(_req.get_path()._query);
+	_cgi->meta_variables[7] = string("REMOTE_ADDR="		).append("");
+	_cgi->meta_variables[8] = string("REMOTE_IDENT="		).append(_req.get_header("AUTHORIZATION"));
+	_cgi->meta_variables[9] = string("REMOTE_USER="		).append("");
+	_cgi->meta_variables[10] = string("REQUEST_METHOD="	).append(get_method());
+	_cgi->meta_variables[11] = string("REQUEST_URI="		).append(_req.get_path().get_path_info());
+	_cgi->meta_variables[12] = string("SCRIPT_NAME="		).append(Webserver::get_cgi_bin(_req.get_path()._extension));
+	_cgi->meta_variables[13] = string("SERVER_NAME="		).append(_server->get_name());
+	_cgi->meta_variables[14] = string("SERVER_PORT="		).append(ft::itoa(_server->get_port()));
+	_cgi->meta_variables[15] = string("SERVER_PROTOCOL="	).append("HTTP/1.1");
+	_cgi->meta_variables[16] = string("SERVER_SOFTWARE="	).append("Webserver42/1.0.0");
+
+	map<string, string>::iterator	it_header = _req.get_headers().begin();
+	map<string, string>::iterator	it_header_end = _req.get_headers().end();
+
+	while (it_header != it_header_end)
+	{
+		_cgi->meta_variables.push_back(string());
+		_cgi->meta_variables.back().reserve(100);
+		_cgi->meta_variables.back() += "HTTP_";
+		_cgi->meta_variables.back() += it_header->first;
+		_cgi->meta_variables.back() += "=";
+		_cgi->meta_variables.back() += it_header->second;
+		++it_header;
+	}
+
+	// for (vector<string>::iterator it = _cgi->meta_variables.begin(); it != _cgi->meta_variables.end() ; ++it)
+	// {
+	// 	cout << *it << endl;
+	// }
+}
+
+
 
 /*==============================================================================
 getter
@@ -201,4 +271,14 @@ State*		Client::get_state()
 bool				Client::get_next_line()
 {
 	return _req.get_next_line();
+}
+//------------------------------------------------------------------------------
+const string&		Client::get_method()
+{
+	return _req.get_method();
+}
+
+bool				Client::check_cgi_exit()
+{
+	return	_cgi->check_exit();
 }

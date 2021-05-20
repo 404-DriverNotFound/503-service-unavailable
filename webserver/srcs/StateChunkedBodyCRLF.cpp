@@ -3,7 +3,7 @@
 
 StateChunkedBodyCRLF::StateChunkedBodyCRLF()
 {
-	len = 0xffff;
+	len = 0xfffff;
 }
 
 StateChunkedBodyCRLF::~StateChunkedBodyCRLF()

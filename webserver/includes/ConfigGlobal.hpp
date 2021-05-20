@@ -46,6 +46,7 @@ class ConfigGlobal
 		int											_worker;
 		port_container								_ports;
 		map<int, string>							_status_code;
+		map<string, string>							_cgi_bin;
 
 	/*==========================================================================
 		Constructor & Destructor
@@ -79,7 +80,7 @@ class ConfigGlobal
 		void				set_temp_dir(string& val);
 		void				set_worker(string& val);
 		void				set_status_code_map();
-	
+		void				set_path_cgi_bin(char** env);
 	/*==========================================================================
 		Getter
 	==========================================================================*/
@@ -92,6 +93,7 @@ class ConfigGlobal
 		const port_container&	get_ports() const;
 		const string&			get_status_code(int code) const;
 		const server_container&	get_server(int port) const;
+		const string&			get_cgi_bin(const string& extension) const;
 
 	/*==========================================================================
 		Exception
