@@ -128,6 +128,7 @@ void				Path::set_path(string& raw)
 void				Path::set_root(const string& root, const set<string>& location_extensions)
 {
 	_segments.front() = root;
+	_segments.front().append("/");
 	set_path_translated();
 	set_flag(location_extensions);
 }
@@ -192,6 +193,7 @@ void				Path::set_flag(const set<string>& location_extensions)
 			_flag = flag_file;
 		}
 	}
+	cout << "flag: " << _path_translated << endl;
 	return;
 }
 
@@ -237,6 +239,16 @@ const list<string>&	Path::get_segments() const
 Path::flag			Path::get_flag() const
 {
 	return _flag;
+}
+
+//------------------------------------------------------------------------------
+
+string				Path::get_location_name() const
+{
+	if (_segments.empty())
+		return "/";
+	else
+		return "/" + _segments.front();
 }
 
 // int			main()

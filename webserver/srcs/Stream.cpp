@@ -50,13 +50,13 @@ ssize_t		Stream::fill(size_t s)
 		add_buffer(s);
 	}
 	Buffer&		tmp = _buffers.back();
-	cout << "block? : " << s << endl;
+	// cout << "block? : " << s << endl;
 	ssize_t len = ::read(_fd_in, tmp.end, s);
 	if (len < 0)
 		return -1;
 	// if (len < 0)
 	// 	throw 500;
-	cout << "escape block?" << endl;
+	// cout << "escape block?" << endl;
 	tmp.end += len;
 	tmp.remain -= len;
 	return len;
@@ -256,7 +256,10 @@ void		Stream::print()
 	list<Buffer>::iterator end = _buffers.end();
 	while (it != end)
 	{
-		::write(1, it->start, it->end - _it_buffer);
+		if (it->end - _it_buffer)
+		{
+			::write(1, it->start, it->end - _it_buffer);
+		}
 		++it;
 	}
 }

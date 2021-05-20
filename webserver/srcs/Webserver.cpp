@@ -46,9 +46,12 @@ void		Webserver::init_static_members(int argc, char** argv, char** env)
 {
 	config = ConfigGlobal(argc, argv, env);
 	init_server_sockets(config.get_ports());
+	listen_server_sockets();
 	#if __BONUS__ == 1
 	pthread_mutex_init(&select_mutex, 0);
 	File::mutex_init_tempname();
+	string val = "0";
+	config.set_select_timeout(val);
 	#endif
 }
 
@@ -71,7 +74,19 @@ void		Webserver::init_server_sockets(const ConfigGlobal::port_container ports)
 		sockets.push_back(new Socket(it->first, INADDR_ANY));
 		l_set.set(sockets.back()->fd);
 		++it;
-	}	
+	}
+}
+
+void		Webserver::listen_server_sockets()
+{
+	socket_iterator	it = sockets.begin();
+	socket_iterator	end = sockets.end();
+
+	while (it != end)
+	{
+		(*it)->listen(config.get_max_connection());
+		++it;
+	}
 }
 
 /*==============================================================================
@@ -80,66 +95,47 @@ void		Webserver::init_server_sockets(const ConfigGlobal::port_container ports)
 
 void			Webserver::start_server()
 {
-	int		result;
 
-	socket_iterator	it = sockets.begin();
-	socket_iterator	end = sockets.end();
-	Time			select_timeout;
 
-	while (it != end)
-	{
-		(*it)->listen(config.get_max_connection());
-		++it;
-	}
 	while (42)
 	{
+		// #if __BONUS__ == 1
+		// pthread_mutex_lock(&select_mutex);
+		// cout << "####################################################################\n";
+		// prev_worker = worker_serial;
 
-		#if __BONUS__ == 1
-		pthread_mutex_lock(&select_mutex);
-		if (prev_worker == worker_serial)
-		{
-			pthread_mutex_unlock(&select_mutex);
-			usleep(100);
-			continue;
-		}
+		// cout << "Worker " << worker_serial << endl;
+		// #else
+		// #endif
+
+
 		cout << "####################################################################\n";
-		prev_worker = worker_serial;
-
-		cout << "Worker " << worker_serial << endl;
-		#else
-		cout << "####################################################################\n";
-		#endif
-
-		_r_set = _o_set;
-		_w_set = _o_set;
-		_e_set = _o_set;
-		select_timeout = config.get_select_timeout();
-
-		result = select(config.get_max_connection(), &_r_set.bits, &_w_set.bits, &_e_set.bits, (&select_timeout));
-		if (result < 0)
+		if (select_routine() == 0)	// timeout
 		{
-			perror("func: start server : ");
-			throw SelectFailed();
-		}
-		if (result == 0)	// timeout
-		{
-			#if __BONUS__ == 1
-			pthread_mutex_unlock(&select_mutex);
-			#endif
-
 			continue;
 		}
 		check_new_connection();
-
-		#if __BONUS__ == 1
-		pthread_mutex_unlock(&select_mutex);
-		#endif
-
 		manage_clients();
 	}
 }
 
 //------------------------------------------------------------------------------
+
+int				Webserver::select_routine()
+{
+	Time	select_timeout;
+	_r_set = _o_set;
+	_w_set = _o_set;
+	_e_set = _o_set;
+	select_timeout = config.get_select_timeout();
+	int result = select(config.get_max_connection(), &_r_set.bits, &_w_set.bits, &_e_set.bits, (&select_timeout));
+	if (result < 0)
+	{
+		perror("func: start server : ");
+		throw SelectFailed();
+	}
+	return result;
+}
 
 void			Webserver::check_new_connection()
 {
@@ -179,12 +175,15 @@ void			Webserver::manage_clients()
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
-		cout << "\n======================"<< endl;
+		cout << "======================"<< endl;
 		cout << "  socket: " << (*it)->get_socket().fd << endl;
 		cout << "----------------------"<< endl;
+
 		(*it)->routine();
-		if ((*it)->get_clientstate() == NULL)
+
+		if ((*it)->get_state() == NULL)
 		{
+			cout << "delete socket: " << (*it)->get_socket().fd << endl;
 			_o_set.clr((*it)->get_socket().get_fd());
 			delete *it;
 			it = _clients.erase(it);

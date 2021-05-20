@@ -13,19 +13,37 @@ port			9191
 error_page		error.html
 index_page		index.html
 head_max		8000
-body_max		1000000
+body_max		10000000
 autoindex		on
 
 [location]
 name			/
 root			/
+method			GET
 index_page		index.html index.php index.txt
-method			POST PUT GET
-body_max		100
-cgi_extension	.bla .py .php
+error_page		error.html
 
 [location]
-name			/def
-root			/d_directory
-error_page		d_error.html
-auth			authtest1
+name			/put_test
+root			/
+index_page		index.html index.php index.txt
+error_page		error.html
+method			PUT
+cgi_extension	.php .bla
+
+[location]
+name			/post_body
+root			/
+index_page		index.html index.php index.txt
+error_page		error.html
+method			POST PUT GET
+cgi_extension	.php .bla
+body_max		100
+
+[location]
+name			/directory
+root			/YoupiBanane
+index_page		youpi.bad_extension
+error_page		error.html
+method			GET POST
+cgi_extension 	.php .bla

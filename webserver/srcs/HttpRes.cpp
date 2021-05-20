@@ -13,7 +13,8 @@
 HttpRes::HttpRes(int fd)
 : Http(fd),
   _len_msg(0),
-  _len_send(0)
+  _len_send(0),
+  _status_code(200)
 {
 	set_stream_fd(fd);
 }
@@ -26,7 +27,8 @@ HttpRes::~HttpRes()
 ==============================================================================*/
 void		HttpRes::set_status_code(int code)
 {
-	_status_code = code;
+	if (_status_code < code)
+		_status_code = code;
 }
 //------------------------------------------------------------------------------
 
@@ -96,9 +98,7 @@ string		HttpRes::get_start_line()
 	startline = string("HTTP/1.1 ");
 	startline += ft::itoa(_status_code);
 	startline += " ";
-	cout << "hh----------------------------------------------\n";
 	startline += Webserver::get_status_code(_status_code);
-	cout << "hh----------------------------------------------\n";
 	startline += "\r\n";
 	return startline;
 }

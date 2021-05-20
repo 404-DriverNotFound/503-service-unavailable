@@ -13,19 +13,19 @@ ASAN = -fsanitize=address
 LIST_SRCS = \
 	AConfig\
 	Client\
-	ClientState\
-	ClientStateBody\
-	ClientStateChunkedBody\
-	ClientStateChunkedBodyLen\
-	ClientStateChunkedBodyCRLF\
-	ClientStateChunkedBodyEnd\
-	ClientStateLoadBody\
-	ClientStateMethod\
-	ClientStateHead\
-	ClientStateSet\
-	ClientStateStartLine\
-	ClientStateDone\
-	ClientStateWait\
+	State\
+	StateBody\
+	StateChunkedBody\
+	StateChunkedBodyLen\
+	StateChunkedBodyCRLF\
+	StateChunkedBodyEnd\
+	StateLoadBody\
+	StateMethod\
+	StateHead\
+	StateSet\
+	StateStartLine\
+	StateDone\
+	StateWait\
 	ConfigGlobal\
 	ConfigServer\
 	ConfigLocation\
@@ -64,17 +64,13 @@ RM = rm -rf
 
 all : $(NAME)
 
-disk: 
-	rm -rf ~/Library/Caches
-	rm -rf ./.temp*
-
 $(DIR_OBJS):
 	mkdir $(DIR_OBJS)
 
-$(NAME) : disk $(DIR_OBJS) $(OBJS)
+$(NAME) : $(DIR_OBJS) $(OBJS)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME)
 
-bonus : disk $(DIR_OBJS) set_bonus $(OBJS)
+bonus : $(DIR_OBJS) set_bonus $(OBJS)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME) -lpthread
 	rm -rf bonus_file
 
@@ -86,7 +82,10 @@ asan : $(DIR_OBJS) $(OBJS)
 	$(CC) $(ASAN) $(CFLAG) $(OBJS) -o $(NAME) 
 
 $(DIR_OBJS)%.o : $(DIR_SRCS)%.cpp
-	@if [ $$(find -name bonus_file) ]; then $(CC) $(CFLAG) -c $< -o $@ -D __BONUS__=1; else $(CC) $(CFLAG) -c $< -o $@ -D __BONUS__=0; fi
+	@if [ $$(find . -name bonus_file) ];\
+	 then $(CC) $(CFLAG) -c $< -o $@ -D __BONUS__=1;\
+	 else $(CC) $(CFLAG) -c $< -o $@ -D __BONUS__=0;\
+	fi
 	@echo compile: $<
 
 clean:

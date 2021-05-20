@@ -9,7 +9,7 @@
 #include "HttpRes.hpp"
 #include "FdSet.hpp"
 
-class ClientState;
+class State;
 /*##############################################################################
 	Client
 ##############################################################################*/
@@ -31,7 +31,7 @@ class Client
 		Time						_birth;
 		const ConfigServer*			_server;
 		const ConfigLocation*		_location;
-		ClientState*				_state;
+		State*						_state;
 		HttpReq						_req;
 		HttpRes						_res;
 	/*==========================================================================
@@ -46,7 +46,8 @@ class Client
 		~Client();
 	/*==========================================================================
 		Method
-	==========================================================================*/	
+	==========================================================================*/
+		int							client_action();
 		void						routine();
 		void						recv_socket(size_t len);
 		void						send_socket(size_t len);
@@ -64,7 +65,7 @@ class Client
 		const ConfigLocation&		get_location();
 		HttpReq&					get_httpreq();
 		HttpRes&					get_httpres();
-		ClientState*				get_clientstate();
+		State*						get_state();
 	/*==========================================================================
 		Setter
 	==========================================================================*/
@@ -88,9 +89,9 @@ class Client
 // 	client_done,
 // };
 
-// class ClientStateSet : public ClientState
+// class tStateSet : public tState
 // {
-// 	ClientState&		handle()
+// 	tState&		handle()
 // 	{
 // 		if (상태 끝)
 // 		{
@@ -103,57 +104,57 @@ class Client
 // 	}
 // };
 
-// class ClientStateMethod : public ClientState
+// class tStateMethod : public tState
 // {
 	
 // };
 
-// class ClientStateMethodGet : public ClientStateMethod
+// class tStateMethodGet : public tStateMethod
 // {
 	
 // };
 
-// class ClientStateMethodHead : public ClientStateMethod
+// class tStateMethodHead : public tStateMethod
 // {
 	
 // };
 
-// class ClientStateMethodPut : public ClientStateMethod
+// class tStateMethodPut : public tStateMethod
 // {
 	
 // };
 
-// class ClientStateMethodPost : public ClientStateMethod
+// class tStateMethodPost : public tStateMethod
 // {
 	
 // };
 
-// class ClientStateMethodDelete : public ClientStateMethod
+// class tStateMethodDelete : public tStateMethod
 // {
 	
 // };
 
-// class ClientStateMethodOption : public ClientStateMethod
+// class tStateMethodOption : public tStateMethod
 // {
 	
 // };
 
-// class ClientStateLoadHeader : public ClientState
+// class tStateLoadHeader : public tState
 // {
 	
 // };
 
-// class ClientStateLoadBody : public ClientState
+// class tStateLoadBody : public tState
 // {
 	
 // };
 
-// class ClientStateSend : public ClientState
+// class tStateSend : public tState
 // {
 	
 // };
 
-// class ClientStateDone : public ClientState
+// class tStateDone : public tState
 // {
 	
 // };

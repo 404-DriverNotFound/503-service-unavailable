@@ -73,6 +73,7 @@ class Path
 		const string&		get_path_translated() const;
 		const list<string>&	get_segments() const;
 		flag				get_flag() const;
+		string				get_location_name() const;
 		// bool				is_cgi() const;
 		// bool				is_dir() const;
 		// bool				is_file() const;

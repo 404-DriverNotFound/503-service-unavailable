@@ -95,7 +95,6 @@ size_t			File::size()
 	struct stat		s;
 	if (fstat(_fd, &s))
 		return -1;
-		cout << "filesize = " << s.st_size << endl;
 	return s.st_size;
 }
 

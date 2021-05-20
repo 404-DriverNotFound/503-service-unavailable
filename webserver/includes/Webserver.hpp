@@ -76,6 +76,7 @@ class Webserver
 	private:
 		void			check_new_connection();
 		void			manage_clients();
+		int				select_routine();
 
 	/*==========================================================================
 		Static Member Manager
@@ -85,7 +86,7 @@ class Webserver
 		static void		destroy_static_members();
 	private:
 		static void		init_server_sockets(const ConfigGlobal::port_container ports);
-
+		static void		listen_server_sockets();
 	/*==========================================================================
 		Exceptions
 	==========================================================================*/

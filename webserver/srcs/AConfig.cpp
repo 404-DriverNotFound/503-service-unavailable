@@ -73,6 +73,7 @@ void			AConfig::set_name(string& val)
 {
 	if (val.empty())
 	{
+		cout << _name;
 		cout << "<name> ";
 		throw ConfigElementEmpty();
 	}
@@ -84,7 +85,8 @@ void			AConfig::set_root(string& val)
 {
 	if (val.empty())
 	{
-		cout << "<root> ";
+		cout << _name;
+		cout << ": <root> ";
 		throw ConfigElementEmpty();
 	}
 	_root.swap(val);
