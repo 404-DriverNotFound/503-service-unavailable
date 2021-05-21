@@ -63,7 +63,7 @@ class ConfigGlobal
 	==========================================================================*/
 	private:
 		int					open_file(int argc, char** argv, char** env);
-		void				read_file(int fd, Stream& stream);
+		void				read_file(Stream& stream);
 		deque<string>		get_lines(Stream& stream);
 		void				parse(deque<string>& lines);
 		void				set_global_config(map<string, string>& token_map);

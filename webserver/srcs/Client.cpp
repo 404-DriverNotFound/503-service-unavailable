@@ -49,7 +49,7 @@ void				Client::recv_socket(size_t len)
 	// cout << "recv_byte: " << test << endl << "state_len: " << len << endl;
 }
 //------------------------------------------------------------------------------
-void				Client::send_socket(size_t len)
+void				Client::send_socket()
 {
 	// cout << __func__ << endl;
 	if (_w_set.is_set(_socket.fd) == false)
@@ -117,7 +117,7 @@ void	Client::routine()
 		}
 		_state = StateSet::check_transfer_type(*this);
 	}
-	send_socket(_state->len);
+	send_socket();
 }
 //------------------------------------------------------------------------------
 int					Client::client_action()

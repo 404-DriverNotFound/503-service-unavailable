@@ -3,29 +3,18 @@
 // #define DBG
 
 //------------------------------------------------------------------------------
-			Stream::Stream()
-{}
-//------------------------------------------------------------------------------
 			Stream::Stream(size_t default_capacity, int fd_in, int fd_out)
 :
-_pass_remain(0),
 _fd_in(fd_in),
 _fd_out(fd_out),
 _default_capacity(default_capacity),
-_token_factor(false)
-{}
-//------------------------------------------------------------------------------
-			Stream::Stream(const Stream& x)
+_token_factor(false),
+_pass_remain(0)
 {}
 //------------------------------------------------------------------------------
 			Stream::~Stream()
 {
 	clear();
-}
-//------------------------------------------------------------------------------
-Stream&		Stream::operator=(const Stream& x)
-{
-	return *this;
 }
 //------------------------------------------------------------------------------
 void		Stream::init(size_t capacity, int in, int out)
@@ -106,46 +95,46 @@ void		Stream::write(const string& str)
 	}
 }
 
-void		Stream::write(uint8_t*	buff, size_t s)
-{
-	if (_buffers.empty())
-	{
-		add_buffer(s);
-		_it_buffer = _buffers.front().start;
-	}
-	uint8_t*	it = buff;
-	uint8_t*	it_end = buff + s;
-	uint8_t*	end = _buffers.back().end;
+// void		Stream::write(uint8_t*	buff, size_t s)
+// {
+// 	if (_buffers.empty())
+// 	{
+// 		add_buffer(s);
+// 		_it_buffer = _buffers.front().start;
+// 	}
+// 	uint8_t*	it = buff;
+// 	uint8_t*	it_end = buff + s;
+// 	uint8_t*	end = _buffers.back().end;
 	
-	if (_buffers.back().remain >= s)
-	{
-		// 쭉복사
-		_buffers.back().remain -= s;
-		while (it != it_end)
-		{
-			*end++ = *it++;
-		}
-		_buffers.back().end = end;
-	}
-	else
-	{
-		// remain만큼만 복사
-		it_end = it + _buffers.back().remain;
-		while (it != it_end)
-		{
-			*end++ = *it++;
-		}
-		// 새로 할당해서 나머지 복사
-		add_buffer(it_end - it_end);
-		end = _buffers.back().end;
-		it_end = it_end;
-		while (it != it_end)
-		{
-			*end++ = *it++;
-		}
-		_buffers.back().end = end;
-	}
-}
+// 	if (_buffers.back().remain >= s)
+// 	{
+// 		// 쭉복사
+// 		_buffers.back().remain -= s;
+// 		while (it != it_end)
+// 		{
+// 			*end++ = *it++;
+// 		}
+// 		_buffers.back().end = end;
+// 	}
+// 	else
+// 	{
+// 		// remain만큼만 복사
+// 		it_end = it + _buffers.back().remain;
+// 		while (it != it_end)
+// 		{
+// 			*end++ = *it++;
+// 		}
+// 		// 새로 할당해서 나머지 복사
+// 		add_buffer(it_end - it_end);
+// 		end = _buffers.back().end;
+// 		it_end = it_end;
+// 		while (it != it_end)
+// 		{
+// 			*end++ = *it++;
+// 		}
+// 		_buffers.back().end = end;
+// 	}
+// }
 //------------------------------------------------------------------------------
 string		Stream::read(size_t s)
 {
@@ -209,7 +198,7 @@ size_t		Stream::pass(size_t s)
 			// cout << "  - empty buffer" << len << endl;
 			return 0;
 		}
-		if (s > end - _it_buffer)
+		if (s > static_cast<size_t>(end - _it_buffer))
 		{
 			// cout << "  - write1 bf: " << len << endl;
 			len = ::write(_fd_out, _it_buffer, end - _it_buffer);
@@ -238,7 +227,7 @@ size_t		Stream::pass()
 	if (_buffers.empty())
 		return 0;
 	len = ::write(_fd_out, _it_buffer, end - _it_buffer);
-	if (len != end - _it_buffer)
+	if (len != static_cast<size_t>(end - _it_buffer))
 	{
 		_it_buffer += len;
 	}

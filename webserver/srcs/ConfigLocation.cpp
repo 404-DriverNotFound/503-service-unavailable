@@ -93,12 +93,12 @@ const set<string>&	ConfigLocation::get_cgi_extensions() const
 
 std::ostream&		operator<<(std::ostream& os, const ConfigLocation& conf)
 {
-	// cout << "Location Configurations:" << endl;
+	cout << "Location Configurations:" << endl;
 	
-	// cout << static_cast<const AConfig&>(conf);
-	// cout << std::setw(16) << "auth_type: "			<< conf.get_auth_type() << endl;	
-	// cout << std::setw(16) << "auth: "				<< conf.get_auth() << endl;
-	// cout << std::setw(16) << "cgi_extensions: "		<< conf.get_cgi_extensions() << endl;
+	cout << static_cast<const AConfig&>(conf);
+	cout << std::setw(16) << "auth_type: "			<< conf.get_auth_type() << endl;	
+	cout << std::setw(16) << "auth: "				<< conf.get_auth() << endl;
+	cout << std::setw(16) << "cgi_extensions: "		<< conf.get_cgi_extensions() << endl;
 
 	return os;
 }

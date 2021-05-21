@@ -31,9 +31,8 @@ class Http
 	private:
 		Http(const Http&);
 		Http&	operator=(const Http&);
-		Http();
 	public:
-		Http(int fd);
+		Http();
 		~Http();
 	/*==========================================================================
 		Method

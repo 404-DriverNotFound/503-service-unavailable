@@ -101,7 +101,7 @@ string		Tokenizer::seq(const char* seq)
 {
 	string			token;
 	
-	size_t		idx = str.find(seq, it - str.begin().base());
+	ssize_t		idx = str.find(seq, it - str.begin().base());
 	if (idx != -1)
 		token.assign(it, it + idx);
 	it += idx + ft::strlen(seq);

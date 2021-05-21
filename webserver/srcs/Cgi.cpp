@@ -77,7 +77,7 @@ char * const*	Cgi::make_meta_variable()
 {
 	char**	result = new char*[meta_variables.size() + 1];
 
-	for (int i = 0 ; i < meta_variables.size(); ++i)
+	for (size_t i = 0 ; i < meta_variables.size(); ++i)
 	{
 		result[i] = const_cast<char*>(meta_variables[i].c_str());
 	}

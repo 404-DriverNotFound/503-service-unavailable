@@ -34,6 +34,7 @@ class Webserver
 		static ConfigGlobal						config;
 		static vector<Socket*>					sockets;
 		static FdSet							l_set;
+		static bool								server_state;
 		#if __BONUS__ == 1
 		static pthread_mutex_t					select_mutex;
 		int										worker_serial;
@@ -78,6 +79,7 @@ class Webserver
 		void			check_new_connection();
 		void			manage_clients();
 		int				select_routine();
+		void			destroy_clients();
 
 	/*==========================================================================
 		Static Member Manager
@@ -88,6 +90,8 @@ class Webserver
 	private:
 		static void		init_server_sockets(const ConfigGlobal::port_container ports);
 		static void		listen_server_sockets();
+		static void		destroy_server_sockets();
+		
 	/*==========================================================================
 		Exceptions
 	==========================================================================*/

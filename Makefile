@@ -4,8 +4,8 @@ NAME = webserv
 #	COMPILE OPTIONS
 #-------------------------------------------------------------------------------
 CC = clang++
-CFLAG =  --std c++98 -g
-# CFLAG = -Wall -Wextra -Werror --std c++98 -g
+# CFLAG =  --std c++98 -g
+CFLAG = -Wall -Wextra -Werror --std c++98
 ASAN = -fsanitize=address
 #-------------------------------------------------------------------------------
 #	FILE NAMES

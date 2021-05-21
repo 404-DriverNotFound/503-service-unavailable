@@ -177,10 +177,8 @@ void	StateSet::set_file(Client& ref)
 
 void	StateSet::case_cgi(Client& ref)
 {
-	const ConfigLocation&	location = ref.get_location();
 	HttpReq&				req = ref.get_httpreq();
 	HttpRes&				res = ref.get_httpres();
-	const string&			path = req.get_path().get_path_translated();
 	
 	req.set_file(File::o_create);	// req: temp file
 	res.set_file(File::o_create);	// res: temp file
@@ -234,7 +232,9 @@ void	StateSet::case_file(Client& ref)
 	}
 	else if (req.get_method() == "DELETE")
 	{
-		ft::rm_df(path.c_str());
+		req.set_file(File::o_create);
+		res.set_file(File::o_create);
+		// ft::rm_df(path.c_str());
 	}
 	else if (req.get_method() == "HEAD")
 	{

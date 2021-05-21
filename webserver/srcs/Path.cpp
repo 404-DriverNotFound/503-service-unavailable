@@ -28,8 +28,8 @@ Path::Path(string& raw)
 
 //------------------------------------------------------------------------------
 
-Path::Path(const string& ref)
-{}
+// Path::Path(const string& ref)
+// {}
 
 //------------------------------------------------------------------------------
 
@@ -38,10 +38,10 @@ Path::~Path()
 
 //------------------------------------------------------------------------------
 
-Path&				Path::operator=(Path& ref)
-{
-	return *this;
-}
+// Path&				Path::operator=(Path& ref)
+// {
+// 	return *this;
+// }
 
 /*==============================================================================
 	Method
@@ -82,7 +82,7 @@ void				Path::assemble_path(string& x, const list<string>& segments)
 	list<string>::const_iterator it = _segments.begin();
 	// x.append(*it);
 	// ++it;
-	while (it != _segments.end())
+	while (it != segments.end())
 	{
 		x.append(*it);
 		++it;
@@ -162,7 +162,7 @@ void				Path::set_extension(list<string>& segments)
 	if (segments.empty())
 		return;
 	string& segment = segments.back();
-	size_t	idx = segment.rfind('.');
+	ssize_t	idx = segment.rfind('.');
 	if (idx != -1)
 	{
 		_extension = &segment[idx];

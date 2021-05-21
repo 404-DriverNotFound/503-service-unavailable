@@ -19,4 +19,5 @@ class StateMethod : public State
 		State*		method_head(Client& ref);
 		State*		method_get(Client& ref);
 		State*		method_put(Client& ref);
+		State*		method_delete(Client& ref);
 };

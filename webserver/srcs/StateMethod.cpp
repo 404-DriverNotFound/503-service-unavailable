@@ -16,11 +16,6 @@ State* StateMethod::action(Client& ref)
 {
 	// cout << "---------------------------------------\n";
 	// cout << "Method : " <<  __func__ << endl;
-	const string&	method = ref.get_httpreq().get_method();
-	HttpReq&		req = ref.get_httpreq();
-	HttpRes&		res = ref.get_httpres();
-	Stream&			res_stream = res.get_stream();
-
 	switch (ref.get_httpreq().get_path().get_flag())
 	{
 	case Path::flag_cgi:
@@ -49,11 +44,6 @@ State* StateMethod::action(Client& ref)
 
 State*		StateMethod::case_cgi(Client& ref)
 {
-	const string&	method = ref.get_httpreq().get_method();
-	HttpReq&		req = ref.get_httpreq();
-	HttpRes&		res = ref.get_httpres();
-	Stream&			res_stream = res.get_stream();
-
 	ref.set_cgi();
 	ref.make_meta_variable();
 	// ref.print_meta_variable();
@@ -121,7 +111,6 @@ State*		StateMethod::case_not_exist(Client& ref)
 
 State*		StateMethod::method_head(Client& ref)
 {
-	HttpReq&		req = ref.get_httpreq();
 	HttpRes&		res = ref.get_httpres();
 	Stream&			res_stream = res.get_stream();
 
@@ -129,22 +118,12 @@ State*		StateMethod::method_head(Client& ref)
 	res.get_stream() << res.get_start_line();
 	res.get_stream() << res.get_content_length();
 	res.get_stream() << "\r\n";
-	// STOP
-	// if (res.get_status_code() >= 400)
-	// {
-	// 	res.set_len_msg(res_stream.size() + res.get_file_size());
-	// 	return loadbody;
-	// }
-	// else
-	{
-		res.set_len_msg(res_stream.size());
-		return waiting;
-	}
+	res.set_len_msg(res_stream.size());
+	return waiting;
 }
 
 State*		StateMethod::method_get(Client& ref)
 {
-	HttpReq&		req = ref.get_httpreq();
 	HttpRes&		res = ref.get_httpres();
 	Stream&			res_stream = res.get_stream();
 
@@ -153,13 +132,11 @@ State*		StateMethod::method_get(Client& ref)
 	res.get_stream() << res.get_content_length();
 	res.get_stream() << "\r\n";
 	res.set_len_msg(res_stream.size() + res.get_file_size());
-
 	return loadbody;
 }
 
 State*		StateMethod::method_put(Client& ref)
 {
-	HttpReq&		req = ref.get_httpreq();
 	HttpRes&		res = ref.get_httpres();
 	Stream&			res_stream = res.get_stream();
 
@@ -168,6 +145,17 @@ State*		StateMethod::method_put(Client& ref)
 	res.get_stream() << res.get_content_length();
 	res.get_stream() << "\r\n";
 	res.set_len_msg(res_stream.size() + res.get_file_size());
+	return loadbody;
+}
 
+State*		StateMethod::method_delete(Client& ref)
+{
+	HttpRes&		res = ref.get_httpres();
+	Stream&			res_stream = res.get_stream();
+
+	res.set_status_code(204);	// no content
+	res.get_stream() << res.get_start_line();
+	res.get_stream() << "\r\n";
+	res.set_len_msg(res_stream.size());
 	return loadbody;
 }

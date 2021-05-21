@@ -53,7 +53,7 @@ class Client
 		int							client_action();
 		void						routine();
 		void						recv_socket(size_t len);
-		void						send_socket(size_t len);
+		void						send_socket();
 		void						update_birth();
 		bool						get_next_line();
 		bool						is_expired();

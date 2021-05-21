@@ -9,7 +9,7 @@
 	Constructor & Destructor
 ==============================================================================*/
 HttpReq::HttpReq(int fd)
-: Http(fd)
+: Http()
 {
 	set_stream_fd(fd);
 }

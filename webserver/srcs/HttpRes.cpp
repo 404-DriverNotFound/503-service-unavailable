@@ -11,10 +11,10 @@
 	Constructor & Destructor
 ==============================================================================*/
 HttpRes::HttpRes(int fd)
-: Http(fd),
+: Http(),
+  _status_code(200),
   _len_msg(0),
-  _len_send(0),
-  _status_code(200)
+  _len_send(0)
 {
 	set_stream_fd(fd);
 }
@@ -108,8 +108,14 @@ string		HttpRes::get_start_line()
 string		HttpRes::get_allow(set<string>& method_set)
 {
 	string	line("Allow: ");
-	// TODO location set으로 반복처리
-
+	set<string>::iterator it = method_set.begin();
+	while (it != method_set.end())
+	{
+		if (it != method_set.begin())
+			line += ", ";
+		line += *it;
+		++it;
+	}
 	line += "\r\n";
 	return line;
 }
@@ -119,7 +125,7 @@ string		HttpRes::get_allow(set<string>& method_set)
 string		HttpRes::get_content_language(const string& accept_language)
 {
 	string	line("Content-Language: ");
-	//TODO: 
+	line += accept_language;
 	line += "\r\n";
 	return line;
 }

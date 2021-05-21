@@ -13,7 +13,7 @@ ConfigGlobal::ConfigGlobal(int argc, char** argv, char** env)
 	int			fd = open_file(argc, argv, env);
 	Stream		stream(10000, fd);
 
-	read_file(fd, stream);
+	read_file(stream);
 	deque<string>	lines = get_lines(stream);
 	
 	parse(lines);
@@ -60,6 +60,7 @@ ConfigGlobal&	ConfigGlobal::operator=(const ConfigGlobal& ref)
 int				ConfigGlobal::open_file(int argc, char** argv, char** env)
 {
 	int		fd;
+	(void)env;
 
 	if (argc == 1)
 	{
@@ -78,7 +79,7 @@ int				ConfigGlobal::open_file(int argc, char** argv, char** env)
 	Method
 ==============================================================================*/
 
-void			ConfigGlobal::read_file(int fd, Stream& stream)
+void			ConfigGlobal::read_file(Stream& stream)
 {
 	while (stream.fill(10000));
 }

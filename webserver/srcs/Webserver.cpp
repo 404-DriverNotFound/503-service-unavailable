@@ -6,6 +6,7 @@
 ConfigGlobal		Webserver::config;
 vector<Socket*>		Webserver::sockets;
 FdSet				Webserver::l_set;
+bool				Webserver::server_state = true;
 #if __BONUS__ == 1
 pthread_mutex_t		Webserver::select_mutex;
 int					Webserver::prev_worker = 0;
@@ -24,11 +25,7 @@ Webserver::Webserver()
 
 Webserver::~Webserver()
 {
-	while (!_clients.empty())
-	{
-		delete _clients.front();
-		_clients.pop_front();
-	}
+	destroy_clients();
 }
 
 
@@ -64,6 +61,10 @@ void		Webserver::init_static_members(int argc, char** argv, char** env)
 
 void		Webserver::destroy_static_members()
 {
+	#if __BONUS__ == 1
+	pthread_mutex_destroy(&select_mutex);
+	#endif
+	destroy_server_sockets();
 }
 
 //------------------------------------------------------------------------------
@@ -81,6 +82,36 @@ void		Webserver::init_server_sockets(const ConfigGlobal::port_container ports)
 		++it;
 	}
 }
+
+//------------------------------------------------------------------------------
+
+void		Webserver::destroy_server_sockets()
+{
+	socket_iterator it = sockets.begin();
+	socket_iterator end = sockets.end();
+	while (it != end)
+	{
+		delete *it;
+		++it;
+	}	
+}
+
+//------------------------------------------------------------------------------
+
+void		Webserver::destroy_clients()
+{
+	client_iterator it = _clients.begin();
+	client_iterator end = _clients.end();
+	while (it != end)
+	{
+		delete *it;
+		++it;
+	}	
+}
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 
 void		Webserver::listen_server_sockets()
 {
@@ -102,13 +133,11 @@ void			Webserver::start_server()
 {
 
 
-	while (42)
+	while (Webserver::server_state)
 	{
 		#if __BONUS__ == 1
 		pthread_mutex_lock(&select_mutex);
 		// cout << "####################################################################\n";
-		prev_worker = worker_serial;
-
 		// cout << "Worker " << worker_serial << endl;
 		#else
 		// cout << "####################################################################\n";
@@ -144,7 +173,6 @@ int				Webserver::select_routine()
 	int result = select(config.get_max_connection(), &_r_set.bits, &_w_set.bits, &_e_set.bits, (&select_timeout));
 	if (result < 0)
 	{
-		perror("func: start server : ");
 		throw SelectFailed();
 	}
 	return result;
@@ -177,11 +205,6 @@ void			Webserver::check_new_connection()
 
 void			Webserver::manage_clients()
 {
-	#ifdef DBG
-	#endif
-
-	char	temp[1];
-
 	for (client_iterator it = _clients.begin() ; it != _clients.end() ; ++it)
 	{
 		if (_e_set.is_set((*it)->get_socket().fd))

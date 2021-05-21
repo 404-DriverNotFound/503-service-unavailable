@@ -25,19 +25,20 @@ struct Socket
 	Canonical Form
 	--------------------------------------------------------------------------*/
 	private:
-				Socket();
-				Socket(const Socket& x);
-	Socket&		operator=(const Socket& x);
+		Socket();
+		Socket(const Socket& x);
+		Socket&		operator=(const Socket& x);
 	public:
-				Socket(int fd);							// accept
-				Socket(uint32_t port, uint32_t ip);		// bind
-	virtual		~Socket();
+		Socket(int fd);							// accept
+		Socket(uint32_t port, uint32_t ip);		// bind
+		virtual		~Socket();
 	/*--------------------------------------------------------------------------
 	Method
 	--------------------------------------------------------------------------*/
-	void		bind(uint32_t port, uint32_t ip);
-	void		accept(int serv_sock);
-	void		listen(size_t connections);
+	public:
+		void		bind(uint32_t port, uint32_t ip);
+		void		accept(int serv_sock);
+		void		listen(size_t connections);
 
 	/*==========================================================================
 	getter

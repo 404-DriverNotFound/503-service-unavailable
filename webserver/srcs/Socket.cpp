@@ -29,20 +29,20 @@
 
 //------------------------------------------------------------------------------
 
-			Socket::Socket(const Socket& x)
-: fd(-1)
-{
-	throw 10000;
-}
+// 			Socket::Socket(const Socket& x)
+// : fd(-1)
+// {
+// 	throw 10000;
+// }
 
 //------------------------------------------------------------------------------
 
-Socket&		Socket::operator=(const Socket& x)
-{
-	throw 10000;
-	fd = -1;
-	return *this;
-}
+// Socket&		Socket::operator=(const Socket& x)
+// {
+// 	throw 10000;
+// 	fd = -1;
+// 	return *this;
+// }
 
 //------------------------------------------------------------------------------
 
@@ -68,7 +68,7 @@ void		Socket::bind(uint32_t port, uint32_t ip)
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 
-	s_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	s_addr.sin_addr.s_addr = htonl(ip);
 	s_addr.sin_family = AF_INET;
 	s_addr.sin_port = htons(port);
 	if (::bind(fd, reinterpret_cast<sockaddr*>(&s_addr), sizeof(s_addr)))

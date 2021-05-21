@@ -42,10 +42,10 @@ struct Stream
 	private:
 		Stream();
 		Stream(const Stream& x);
+		Stream&			operator=(const Stream& x);
 	public:
 						Stream(size_t default_capacity, int fd_in, int fd_out = 1);
 						~Stream();
-		Stream&			operator=(const Stream& x);
 
 	/*==========================================================================
 		Method
