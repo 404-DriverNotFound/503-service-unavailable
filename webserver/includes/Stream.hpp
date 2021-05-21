@@ -52,7 +52,7 @@ struct Stream
 	==========================================================================*/
 		void			init(size_t default_capacity, int fd_in, int fd_out = 1);
 		size_t			pass(size_t s);					// 스트림 내부 버퍼로부터 외부의 fd로 바로 쓰기
-		size_t			pass();							// pass 최댓값
+		size_t			pass();							// pass 버퍼 한 줄
 		ssize_t			fill(size_t s);					// 스트림 내부로 읽어들이기
 		void			write(const string& str);		// 스트림에 데이터 쓰기
 		void			write(uint8_t*	buff, size_t s);
@@ -72,6 +72,7 @@ struct Stream
 		size_t			size();
 		void			print();
 		void			print_line();
+		size_t			get_last_capacity();			// 마지막 버퍼의 남은 수용량
 	/*==========================================================================
 		Setter
 	==========================================================================*/
@@ -85,4 +86,5 @@ struct Stream
 		int				get_fd_in();
 		int				get_fd_out();
 		size_t			get_pass_remain();
+		uint8_t*		get_start();
 };

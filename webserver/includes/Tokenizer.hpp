@@ -26,6 +26,7 @@ class Tokenizer
 		string			set(const char* sep);
 		string			chr(char sep);
 		list<string>	chr_list(char sep);
+		list<string>	path_segment();
 		string			rest();
 		void			iter();
 };

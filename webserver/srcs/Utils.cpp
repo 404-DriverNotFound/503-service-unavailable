@@ -482,7 +482,7 @@ ssize_t		ft::file_size(const char* path)
 	if (stat(path, &stat_f) < 0)
 	{
 		#ifdef DBG
-		cout << "wrong_path: " << path << endl;
+		// cout << "wrong_path: " << path << endl;
 		#endif
 		return -1;
 	}
@@ -566,7 +566,7 @@ bool		ft::rm_df(const char *path)
 			temp_path += file->d_name;
 
 			#ifdef DBG
-			cout << temp_path << endl;
+			// cout << temp_path << endl;
 			#endif
 
 			if (ft::is_dir(temp_path.c_str()))

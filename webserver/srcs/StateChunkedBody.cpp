@@ -5,7 +5,7 @@
 
 StateChunkedBody::StateChunkedBody()
 {
-	len = 0xfffff;
+	len = 0xffffff;
 }
 
 StateChunkedBody::~StateChunkedBody()
@@ -14,7 +14,7 @@ StateChunkedBody::~StateChunkedBody()
 
 State* StateChunkedBody::action(Client& ref)
 {
-	cout << "Chunked body : " << __func__ << endl;
+	// cout << "Chunked body : " << __func__ << endl;
 	if (ref.read_chunked())
 		return chunkedbody_crlf;
 	else

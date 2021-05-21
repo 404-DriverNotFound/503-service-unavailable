@@ -102,9 +102,9 @@ bool			HttpReq::set_index_page(const set<string>& pages)
 	return _path.set_index_page(pages);
 }
 //------------------------------------------------------------------------------
-void			HttpReq::set_root(const string& root, const set<string>& ex)
+void			HttpReq::set_root_replace(const string& root, const set<string>& ex)
 {
-	_path.set_root(root, ex);
+	_path.set_root_replace(root, ex);
 }
 //------------------------------------------------------------------------------
 void			HttpReq::set_root_front(const string& root, const set<string>& ex)

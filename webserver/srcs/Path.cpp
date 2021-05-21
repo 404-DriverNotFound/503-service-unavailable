@@ -52,12 +52,12 @@ void				Path::arrange_segment(list<string>& segments)
 	list<string>::iterator it = segments.begin();
 	while (it != segments.end())
 	{
-		if (*it == ".")
+		if (*it == "/.")
 		{
 			it = segments.erase(it);
 			continue;
 		}
-		else if (*it == "..")
+		else if (*it == "/..")
 		{
 			if (it != segments.begin())
 			{
@@ -80,14 +80,14 @@ void				Path::arrange_segment(list<string>& segments)
 void				Path::assemble_path(string& x, const list<string>& segments)
 {
 	list<string>::const_iterator it = _segments.begin();
-	x.append(*it);
-	++it;
+	// x.append(*it);
+	// ++it;
 	while (it != _segments.end())
 	{
 		x.append(*it);
 		++it;
-		if (it != _segments.end())
-			x.append("/");
+		// if (it != _segments.end())
+		// 	x.append("/");
 	}
 }
 
@@ -117,7 +117,7 @@ void				Path::set_path(string& raw)
 	_query.swap(query_tmp);
 
 	Tokenizer		tokenizer_path(path_tmp);
-	list<string>	segment_tmp = tokenizer_path.chr_list('/');
+	list<string>	segment_tmp = tokenizer_path.path_segment();
 
 	arrange_segment(segment_tmp);
 	set_extension(segment_tmp);
@@ -127,10 +127,9 @@ void				Path::set_path(string& raw)
 
 //------------------------------------------------------------------------------
 
-void				Path::set_root(const string& root, const set<string>& location_extensions)
+void				Path::set_root_replace(const string& root, const set<string>& location_extensions)
 {
 	_segments.front() = root;
-	_segments.front().append("/");
 	set_path_translated();
 	set_flag(location_extensions);
 }
@@ -151,8 +150,8 @@ bool				Path::set_index_page(const set<string>& pages)
 	string	filename = ft::find(_path_translated, pages);
 	if (filename.empty())
 		return false;
-	_segments.push_back(filename);
-	_path_translated.append(filename);
+	_segments.push_back("/" + filename);
+	_path_translated.append("/" + filename);
 	return true;
 }
 
@@ -186,7 +185,6 @@ void				Path::set_flag(const set<string>& location_extensions)
 	{
 		if (S_ISDIR(s.st_mode))
 		{
-			_path_translated.append("/");
 			_flag = flag_dir;
 		}
 		else
@@ -246,10 +244,7 @@ Path::flag			Path::get_flag() const
 
 string				Path::get_location_name() const
 {
-	if (_segments.empty())
-		return "/";
-	else
-		return "/" + _segments.front();
+	return _segments.front();
 }
 
 // int			main()

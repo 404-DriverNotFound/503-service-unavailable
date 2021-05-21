@@ -20,7 +20,7 @@ StateHead::~StateHead()
 
 State* StateHead::action(Client& ref)
 {
-	cout << "Head : " << __func__ << endl;
+	// cout << "Head : " << __func__ << endl;
 	while (ref.get_httpreq().get_next_line())
 	{
 		if (ref.get_httpreq().get_string().empty())

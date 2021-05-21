@@ -1,13 +1,13 @@
 [global]
 max_connection	300
-temp_dir		./root
+temp_dir		/Users/minckim/goinfre/root
 cgi_bin			.py root
 timeout			100
 select_timeout	2
-worker			4
+worker			6
 
 [server]
-root			./root
+root			/Users/minckim/goinfre/root
 name			localhost
 port			9191
 error_page		error.html
@@ -48,3 +48,4 @@ error_page		error.html
 method			GET POST
 cgi_extension	.php .bla
 body_max		200000000
+ 

@@ -104,22 +104,30 @@ void			Webserver::start_server()
 
 	while (42)
 	{
-		// #if __BONUS__ == 1
-		// pthread_mutex_lock(&select_mutex);
+		#if __BONUS__ == 1
+		pthread_mutex_lock(&select_mutex);
 		// cout << "####################################################################\n";
-		// prev_worker = worker_serial;
+		prev_worker = worker_serial;
 
 		// cout << "Worker " << worker_serial << endl;
-		// #else
-		// #endif
+		#else
+		// cout << "####################################################################\n";
+		#endif
 
 
-		cout << "####################################################################\n";
 		if (select_routine() == 0)	// timeout
 		{
+			#if __BONUS__ == 1
+			pthread_mutex_unlock(&select_mutex);
+			#endif
+
 			continue;
 		}
 		check_new_connection();
+
+		#if __BONUS__ == 1
+		pthread_mutex_unlock(&select_mutex);
+		#endif
 		manage_clients();
 	}
 }
@@ -152,13 +160,13 @@ void			Webserver::check_new_connection()
 		if (_r_set.is_set((*it)->fd))
 		{
 			_clients.push_back(new Client((*it)->fd, config.get_server(htons((*it)->s_addr.sin_port)), _r_set, _w_set));
-			cout << "new connection: " << (*it)->fd << " -> " << _clients.back()->get_socket().get_fd() << endl;
+			// cout << "new connection: " << (*it)->fd << " -> " << _clients.back()->get_socket().get_fd() << endl;
 			_o_set.set(_clients.back()->get_socket().get_fd());
 			// _r_set.clr((*it)->fd);
 		}
 		if (_e_set.is_set((*it)->fd))
 		{
-			cout << "Selet Error!" << endl;
+			// cout << "Selet Error!" << endl;
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
 		++it;
@@ -180,15 +188,15 @@ void			Webserver::manage_clients()
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
-		cout << "======================"<< endl;
-		cout << "  socket: " << (*it)->get_socket().fd << endl;
-		cout << "----------------------"<< endl;
+		// cout << "======================"<< endl;
+		// cout << "  socket: " << (*it)->get_socket().fd << endl;
+		// cout << "----------------------"<< endl;
 
 		(*it)->routine();
 
 		if ((*it)->get_state() == NULL)
 		{
-			cout << "delete socket: " << (*it)->get_socket().fd << endl;
+			// cout << "delete socket: " << (*it)->get_socket().fd << endl;
 			_o_set.clr((*it)->get_socket().get_fd());
 			delete *it;
 			it = _clients.erase(it);

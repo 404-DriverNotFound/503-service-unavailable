@@ -46,7 +46,7 @@ AConfig::AConfig(map<string, string>& config_server_map)
 	set_method		(	config_server_map["method"]		);
 	set_head_max	(	config_server_map["head_max"]	);
 	set_body_max	(	config_server_map["body_max"]	);
-	set_autoindex	(	config_server_map["autoinedx"]	);
+	set_autoindex	(	config_server_map["autoindex"]	);
 }
 
 /*------------------------------------------------------------------------------

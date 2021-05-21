@@ -12,11 +12,9 @@ StateDone::~StateDone()
 
 State* StateDone::action(Client& ref)
 {
-	cout << "Done : " <<  __func__ << endl;
+	// cout << "Done : " <<  __func__ << endl;
 	/*clear*/
-	ref.update_birth();
-	ref.get_httpreq().clear();
-	ref.get_httpres().clear();
+	ref.clear();
 	return startline;
 	// return NULL;
 }

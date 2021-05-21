@@ -102,7 +102,15 @@ bool			Cgi::check_exit()
 }
 
 //------------------------------------------------------------------------------
+void			Cgi::print_meta_variable()
+{
+	char* const*		meta = make_meta_variable();
+	char* const*		head = meta;
 
+	while (*meta)
+		cout << *meta++ << endl;
+	delete[] head;
+}
 
 /*
 int			main(void)

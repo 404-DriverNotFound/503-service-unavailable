@@ -3,7 +3,7 @@
 
 StateChunkedBodyCRLF::StateChunkedBodyCRLF()
 {
-	len = 0xfffff;
+	len = 0xffffff;
 }
 
 StateChunkedBodyCRLF::~StateChunkedBodyCRLF()
@@ -12,7 +12,7 @@ StateChunkedBodyCRLF::~StateChunkedBodyCRLF()
 
 State* StateChunkedBodyCRLF::action(Client& ref)
 {
-	cout << "chunked body crlf : " << __func__ << endl;
+	// cout << "chunked body crlf : " << __func__ << endl;
 	if (ref.read_crlf())
 	{
 		return chunkedbody_len;

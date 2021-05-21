@@ -5,7 +5,7 @@
 
 StateChunkedBodyLen::StateChunkedBodyLen()
 {
-	len = 0xfffff;
+	len = 0xffffff;
 }
 
 StateChunkedBodyLen::~StateChunkedBodyLen()
@@ -14,7 +14,7 @@ StateChunkedBodyLen::~StateChunkedBodyLen()
 
 State* StateChunkedBodyLen::action(Client& ref)
 {
-	cout << "chunked body len : " << __func__ << endl;
+	// cout << "chunked body len : " << __func__ << endl;
 	if (ref.set_chunked_length())
 	{
 		if (ref.get_httpreq().get_stream().get_pass_remain() > ref.get_location().get_body_max())

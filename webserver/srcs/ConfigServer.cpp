@@ -39,7 +39,7 @@ void			ConfigServer::set_port(string& val)
 {
 	if (val.empty())
 	{
-		cout << "<port> ";
+		// cout << "<port> ";
 		throw ConfigElementEmpty();
 	}
 	_port = ft::atoi(val);
@@ -63,13 +63,13 @@ const ConfigServer::location_container&	ConfigServer::get_locations() const
 
 std::ostream&		operator<<(std::ostream& os, const ConfigServer& conf)
 {
-	cout << "Server Configurations:" << endl;
+	// cout << "Server Configurations:" << endl;
 
-	cout << static_cast<const AConfig&>(conf);
-	cout << std::setw(16) << "port: " << conf.get_port() << endl << endl;
+	// cout << static_cast<const AConfig&>(conf);
+	// cout << std::setw(16) << "port: " << conf.get_port() << endl << endl;
 	for (ConfigServer::location_const_iterator it = conf.get_locations().begin() ; it != conf.get_locations().end() ; ++it)
 	{
-		cout << it->second << endl;
+		// cout << it->second << endl;
 	}
 	return os;
 }

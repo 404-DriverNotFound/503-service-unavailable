@@ -100,7 +100,7 @@ struct Cgi
 	char * const*	make_argv();
 	char * const*	make_meta_variable();
 	bool			check_exit();
-
+	void			print_meta_variable();
 	/*--------------------------------------------------------------------------
 	Static Method
 	--------------------------------------------------------------------------*/	

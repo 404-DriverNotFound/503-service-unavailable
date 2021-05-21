@@ -14,8 +14,8 @@ StateMethod::~StateMethod()
 
 State* StateMethod::action(Client& ref)
 {
-	cout << "---------------------------------------\n";
-	cout << "Method : " <<  __func__ << endl;
+	// cout << "---------------------------------------\n";
+	// cout << "Method : " <<  __func__ << endl;
 	const string&	method = ref.get_httpreq().get_method();
 	HttpReq&		req = ref.get_httpreq();
 	HttpRes&		res = ref.get_httpres();
@@ -43,7 +43,7 @@ State* StateMethod::action(Client& ref)
 		break;
 	}
 
-	cout << "---------------------------------------\n";
+	// cout << "---------------------------------------\n";
 	return	loadbody;
 }
 
@@ -56,8 +56,8 @@ State*		StateMethod::case_cgi(Client& ref)
 
 	ref.set_cgi();
 	ref.make_meta_variable();
+	ref.print_meta_variable();
 	ref.run_cgi();
-
 	return cgi;
 }
 
@@ -71,7 +71,6 @@ State*		StateMethod::case_dir(Client& ref)
 	{
 		return method_get(ref);
 	}
-	
 }
 
 State*		StateMethod::case_file(Client& ref)

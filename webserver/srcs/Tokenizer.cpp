@@ -76,6 +76,27 @@ list<string>	Tokenizer::chr_list(char sep)
 	return lines;
 }
 
+list<string>	Tokenizer::path_segment()
+{
+	list<string>	lines;
+	
+	while (it != end)
+	{
+		if (*it == '/')
+		{
+			lines.push_back(string("/"));
+			++it;
+			while (it != end && *it != '/')
+			{
+				lines.back().push_back(*it);
+				++it;
+			}
+		}
+	}
+
+	return lines;
+}
+
 string		Tokenizer::seq(const char* seq)
 {
 	string			token;
@@ -87,14 +108,29 @@ string		Tokenizer::seq(const char* seq)
 	return token;
 }
 
-
-/* int		main()
+template <typename T>
+void		print(T con)
 {
-	string		str = "000s111s222s333sss4";
-	Tokenizer	tokenizer(str);
+	for (typename T::iterator it = con.begin(); it != con.end() ; ++it)
+		cout << *it << endl;
+}
 
-	list<string>	l = tokenizer.chr_list('s');
+// int		main()
+// {
+// 	string		a[5];
+// 	a[0] = "/";
+// 	a[1] = "/aa";
+// 	a[2] = "/aa/bb";
+// 	a[3] = "/aa/bb/cc";
+// 	a[4] = "/aa/bb/cc/";
 
-	for (string s : l)
-		cout << s << endl;
-} */
+
+// 	for (int i = 0; i < 5 ; ++i)
+// 	{
+// 		Tokenizer		tok(a[i]);
+// 		list<string>	ls = tok.path_segment();
+// 		print(ls);
+// 		cout << endl;
+// 		cout << endl;
+// 	}
+// }

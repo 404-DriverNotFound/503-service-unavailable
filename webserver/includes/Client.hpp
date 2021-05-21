@@ -35,6 +35,7 @@ class Client
 		State*						_state;
 		HttpReq						_req;
 		HttpRes						_res;
+	public:
 		Cgi*						_cgi;
 	/*==========================================================================
 		Constructor & Destructor
@@ -58,6 +59,9 @@ class Client
 		bool						is_expired();
 		void						make_meta_variable();
 		void						run_cgi();
+		void						del_cgi();
+		void						clear();
+		void						print_meta_variable();
 	/*==========================================================================
 		Getter
 	==========================================================================*/

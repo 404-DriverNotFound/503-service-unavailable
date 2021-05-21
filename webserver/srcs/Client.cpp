@@ -12,12 +12,14 @@ Client::Client(int accept_fd, const server_container& ref, FdSet& r_set, FdSet& 
   _w_set(w_set),
   _state(State::startline),
   _req(_socket.fd),
-  _res(_socket.fd)
+  _res(_socket.fd),
+  _cgi(0)
 {
 }
 
 Client::~Client()
 {
+	del_cgi();
 }
 
 /*==============================================================================
@@ -64,8 +66,9 @@ void				Client::send_socket(size_t len)
 
 	if (get_httpres().load_body())
 	{
-		_state = State::done;
+		clear();
 	}
+	
 }
 //------------------------------------------------------------------------------
 void				Client::update_birth()
@@ -96,6 +99,8 @@ void	Client::routine()
 	}
 	catch(int code)
 	{
+		if (code == 400)
+			exit(1);
 		cout << "mange error!\n";
 		const string&	path = _req.get_path().get_path_translated();
 
@@ -138,7 +143,29 @@ void			Client::run_cgi()
 {
 	_cgi->start_cgi();
 }
-
+//------------------------------------------------------------------------------
+void			Client::clear()
+{
+	update_birth();
+	get_httpreq().clear();
+	get_httpres().clear();
+	del_cgi();
+	_state = State::startline;
+}
+//------------------------------------------------------------------------------
+void			Client::del_cgi()
+{
+	if (_cgi)
+	{
+		delete _cgi;
+		_cgi = 0;
+	}
+}
+//------------------------------------------------------------------------------
+void			Client::print_meta_variable()
+{
+	_cgi->print_meta_variable();
+}
 
 /*==============================================================================
 setter
@@ -184,17 +211,17 @@ void				Client::make_meta_variable()
 	_cgi->meta_variables.reserve(17 + _req.get_headers().size());
 	_cgi->meta_variables.assign(17, string());
 
-	_cgi->meta_variables[0] = string("AUTH_TYPE="		).append(_location->get_auth_type());
-	_cgi->meta_variables[1] = string("CONTENT_LENGTH="	).append(_req.get_header("CONTNET_LENGTH"));
-	_cgi->meta_variables[2] = string("CONTENT_TYPE="		).append(_req.get_header("CONTNET_TYPE"));
-	_cgi->meta_variables[3] = string("GATEWAY_INTERFACE=").append("CGI/1.1");
-	_cgi->meta_variables[4] = string("PATH_INFO="		).append(_req.get_path().get_path_info());
-	_cgi->meta_variables[5] = string("PATH_TRANSLATED="	).append(_req.get_path().get_path_translated());
-	_cgi->meta_variables[6] = string("QUERY_STRING="		).append(_req.get_path()._query);
-	_cgi->meta_variables[7] = string("REMOTE_ADDR="		).append("");
-	_cgi->meta_variables[8] = string("REMOTE_IDENT="		).append(_req.get_header("AUTHORIZATION"));
-	_cgi->meta_variables[9] = string("REMOTE_USER="		).append("");
-	_cgi->meta_variables[10] = string("REQUEST_METHOD="	).append(get_method());
+	_cgi->meta_variables[0]  = string("AUTH_TYPE="			).append(_location->get_auth_type());
+	_cgi->meta_variables[1]  = string("CONTENT_LENGTH="		).append(_req.get_header("CONTNET_LENGTH"));
+	_cgi->meta_variables[2]  = string("CONTENT_TYPE="		).append(_req.get_header("CONTNET_TYPE"));
+	_cgi->meta_variables[3]  = string("GATEWAY_INTERFACE="	).append("CGI/1.1");
+	_cgi->meta_variables[4]  = string("PATH_INFO="			).append(_req.get_path().get_path_info());
+	_cgi->meta_variables[5]  = string("PATH_TRANSLATED="	).append(_req.get_path().get_path_translated());
+	_cgi->meta_variables[6]  = string("QUERY_STRING="		).append(_req.get_path()._query);
+	_cgi->meta_variables[7]  = string("REMOTE_ADDR="		).append("");
+	_cgi->meta_variables[8]  = string("REMOTE_IDENT="		).append(_req.get_header("AUTHORIZATION"));
+	_cgi->meta_variables[9]  = string("REMOTE_USER="		).append("");
+	_cgi->meta_variables[10] = string("REQUEST_METHOD="		).append(get_method());
 	_cgi->meta_variables[11] = string("REQUEST_URI="		).append(_req.get_path().get_path_info());
 	_cgi->meta_variables[12] = string("SCRIPT_NAME="		).append(Webserver::get_cgi_bin(_req.get_path()._extension));
 	_cgi->meta_variables[13] = string("SERVER_NAME="		).append(_server->get_name());

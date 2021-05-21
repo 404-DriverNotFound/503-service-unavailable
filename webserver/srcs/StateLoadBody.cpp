@@ -12,14 +12,13 @@ StateLoadBody::~StateLoadBody()
 
 State*	StateLoadBody::action(Client& ref)
 {
-	cout << std::setw(13) << "LoadBody : " <<  __func__ << endl;
-	cout << std::setw(13) << "file fd : " << ref.get_httpres().get_file_fd() << endl;
-	cout << std::setw(13) << "file name : " << ref.get_httpres().get_file_name() << endl;
-	cout << std::setw(13) << "fd in : " << ref.get_httpres().get_stream().get_fd_in() << endl;
-	cout << std::setw(13) << "fd out : " << ref.get_httpres().get_stream().get_fd_out() << endl;
-	if (ref.get_httpres().get_stream().fill(0xffff) == 0)
-	{
+	ssize_t		len_read;
+	HttpRes&	res = ref.get_httpres();
+	if (res.get_file_size() <= res.get_stream().get_last_capacity())
+		len_read = res.get_stream().fill(res.get_file_size());
+	else
+		len_read = res.get_stream().fill(0xffffffff);
+	if (len_read == 0)
 		return waiting;
-	}
 	return loadbody;
 }

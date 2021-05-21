@@ -3,7 +3,7 @@
 
 StateChunkedBodyEnd::StateChunkedBodyEnd()
 {
-	len = 0xfffff;
+	len = 0xffffff;
 }
 
 StateChunkedBodyEnd::~StateChunkedBodyEnd()
@@ -12,7 +12,7 @@ StateChunkedBodyEnd::~StateChunkedBodyEnd()
 
 State* StateChunkedBodyEnd::action(Client& ref)
 {
-	cout << "chunked body end : " << __func__ << endl;
+	// cout << "chunked body end : " << __func__ << endl;
 	if (ref.read_crlf())
 	{
 		return method;

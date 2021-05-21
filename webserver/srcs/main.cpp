@@ -13,25 +13,25 @@ int		main(int argc, char** argv, char** env)
 	try
 	{
 		Webserver::init_static_members(argc, argv, env);
-		cout << Webserver::config << endl;
+		// cout << Webserver::config << endl;
 
-		// #if __BONUS__ == 1
-		// pthread_t*	worker = new pthread_t[Webserver::config.get_worker()];
-		// Webserver*	webserver = new Webserver[Webserver::config.get_worker()];
-		// for (int i = 0 ; i < Webserver::config.get_worker() ; ++i)
-		// {
-		// 	cout << "Creating Worker: " << i << endl;
-		// 	webserver[i].worker_serial = i;
-		// 	pthread_create(&worker[i], 0, run_webserver, &webserver[i]);
-		// }
-		// for (int i = 0 ; i < Webserver::config.get_worker() ; ++i)
-		// {
-		// 	cout << "Waiting Worker: " << i << endl;
-		// 	pthread_join(worker[i], 0);
-		// }
-		// #else
+		#if __BONUS__ == 1
+		pthread_t*	worker = new pthread_t[Webserver::config.get_worker()];
+		Webserver*	webserver = new Webserver[Webserver::config.get_worker()];
+		for (int i = 0 ; i < Webserver::config.get_worker() ; ++i)
+		{
+			// cout << "Creating Worker: " << i << endl;
+			webserver[i].worker_serial = i;
+			pthread_create(&worker[i], 0, run_webserver, &webserver[i]);
+		}
+		for (int i = 0 ; i < Webserver::config.get_worker() ; ++i)
+		{
+			// cout << "Waiting Worker: " << i << endl;
+			pthread_join(worker[i], 0);
+		}
+		#else
 		Webserver().start_server();
-		// #endif
+		#endif
 	}
 	catch(const std::exception& e)
 	{

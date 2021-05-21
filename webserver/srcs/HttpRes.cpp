@@ -84,7 +84,7 @@ bool			HttpRes::load_body()
 		return false;
 	_len_send += _stream.pass();
 
-	cout << "send msg: " << _len_send << " / " << _len_msg << endl;
+	// cout << "send msg: " << _len_send << " / " << _len_msg << endl;
 	
 	if (_len_send >= _len_msg)
 		return true;

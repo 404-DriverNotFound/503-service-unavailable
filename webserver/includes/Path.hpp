@@ -56,7 +56,7 @@ class Path
 	==========================================================================*/
 	public:
 		void			set_path(string& raw);
-		void			set_root(const string& root, const set<string>& extensions);
+		void			set_root_replace(const string& root, const set<string>& extensions);
 		void			set_root_front(const string& root, const set<string>& extensions);
 		bool			set_index_page(const set<string>& pages);
 	private:

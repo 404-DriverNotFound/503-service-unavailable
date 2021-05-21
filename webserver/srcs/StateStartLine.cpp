@@ -19,7 +19,7 @@ StateStartLine::~StateStartLine()
 
 State* StateStartLine::action(Client& ref)
 {
-	cout << "StartLine : " << __func__ << endl;
+	// cout << "StartLine : " << __func__ << endl;
 	if (ref.get_httpreq().get_next_line())
 	{
 		ref.get_httpreq().set_start_line();

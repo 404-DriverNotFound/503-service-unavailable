@@ -22,7 +22,7 @@ StateSet::~StateSet()
 
 State*	StateSet::action(Client& ref)
 {
-	cout << "Set : " << __func__ << endl;
+	// cout << "Set : " << __func__ << endl;
 	set_server(ref);
 	set_location(ref);
 	check_auth(ref);
@@ -63,7 +63,7 @@ void	StateSet::set_server(Client& ref)
 	map<string, string>::iterator	it_header = ref.get_httpreq().get_headers().find("HOST");
 	if (it_header == ref.get_httpreq().get_headers().end())
 	{
-		cout << "Host Empty" << endl;
+		// cout << "Host Empty" << endl;
 		throw 400;
 	}
 
@@ -73,7 +73,7 @@ void	StateSet::set_server(Client& ref)
 	map<string, ConfigServer>::const_iterator	it_server = ref.get_servers().find(host);
 	if (it_server == ref.get_servers().end())
 	{
-		cout << "Server Not Found" << endl;
+		// cout << "Server Not Found" << endl;
 		throw 404;
 	}
 	ref.set_server(it_server->second);
@@ -83,38 +83,40 @@ void	StateSet::set_server(Client& ref)
 
 void	StateSet::set_location(Client& ref)
 {
-	cout << __func__ << endl;
+	// cout << __func__ << endl;
+	typedef const map<string, ConfigLocation>&			location_container;
 	typedef map<string, ConfigLocation>::const_iterator	location_iterator;
 
 	string				location_name = ref.get_httpreq().get_path().get_location_name();
-	location_iterator	it_location = ref.get_server().get_locations().find(location_name);
+	location_container	locations = ref.get_server().get_locations();
+	location_iterator	it_location = locations.find(location_name);
 
-	if (it_location == ref.get_server().get_locations().end())
+	if (it_location == locations.end())	// if not found
 	{
-		if ((it_location = ref.get_server().get_locations().find("/")) == ref.get_server().get_locations().end())
+		// find: "/"
+		it_location = locations.find("/");
+		if (it_location == locations.end())
 		{
 			throw 404;
 		}
-		const ConfigLocation&	location = it_location->second;
-		ref.set_location(location);
-		ref.get_httpreq().set_root_front(location.get_root(), location.get_cgi_extensions());
-		return;
+		location_name = "/";
 	}
 	const ConfigLocation&	location = it_location->second;
-	cout << it_location->second.get_name() << "-------------" << endl;
-	cout << it_location->second.get_root() << "-------------" << endl;
 	ref.set_location(location);
 	if (location_name == "/")
+	{
 		ref.get_httpreq().set_root_front(location.get_root(), location.get_cgi_extensions());
+	}
 	else
-		ref.get_httpreq().set_root(location.get_root(), location.get_cgi_extensions());
+	{
+		ref.get_httpreq().set_root_replace(location.get_root(), location.get_cgi_extensions());
+	}
 }
 
 //------------------------------------------------------------------------------
 
 void	StateSet::check_auth(Client& ref)
 {
-	cout << __func__ << endl;
 	if (ref.get_location().get_auth().empty())
 		return;
 	
@@ -139,7 +141,6 @@ void	StateSet::check_auth(Client& ref)
 
 void	StateSet::check_method(Client& ref)
 {
-	cout << __func__ << endl;
 	const set<string>&	method = ref.get_location().get_method();
 	set<string>::const_iterator	it = method.find(ref.get_httpreq().get_method());
 	if (it == method.end())
@@ -150,7 +151,7 @@ void	StateSet::check_method(Client& ref)
 
 void	StateSet::set_file(Client& ref)
 {
-	cout << __func__ << ": flag: " << ref.get_httpreq().get_path().get_flag() <<  endl;
+	// cout << __func__ << ": flag: " << ref.get_httpreq().get_path().get_flag() <<  endl;
 
 	switch(ref.get_httpreq().get_path().get_flag())
 	{
@@ -248,7 +249,7 @@ void	StateSet::case_not_exist(Client& ref)
 	HttpRes&				res = ref.get_httpres();
 	const string&			path = req.get_path().get_path_translated();
 
-	cout << "Path: " << path << endl;
+	// cout << "Path: " << path << endl;
 	if (req.get_method() == "PUT")
 	{
 		req.set_file(path, File::o_create);

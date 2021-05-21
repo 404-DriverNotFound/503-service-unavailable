@@ -269,6 +269,13 @@ void		Stream::print_line()
 	::write(1, _it_buffer,  _buffers.front().end - _it_buffer);
 }
 //------------------------------------------------------------------------------
+size_t		Stream::get_last_capacity()
+{
+	if (_buffers.empty())
+		return 0;
+	return _buffers.back().remain;
+}
+//------------------------------------------------------------------------------
 bool		Stream::get_chr_token(string &token, const char c)
 {
 	uint8_t*	end;
@@ -465,6 +472,11 @@ int			Stream::get_token_factor()
 size_t		Stream::get_pass_remain()
 {
 	return _pass_remain;
+}
+//------------------------------------------------------------------------------
+uint8_t*	Stream::get_start()
+{
+	return _it_buffer;
 }
 
 /* 

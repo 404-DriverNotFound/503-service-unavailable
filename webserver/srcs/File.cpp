@@ -57,7 +57,7 @@ bool			File::is_temp() const
 
 void			File::rewind()
 {
-	lseek(_fd, SEEK_SET, 0);
+	lseek(_fd, 0, SEEK_SET);
 }
 
 void			File::close()
