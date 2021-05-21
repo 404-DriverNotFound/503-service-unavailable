@@ -56,7 +56,7 @@ State*		StateMethod::case_cgi(Client& ref)
 
 	ref.set_cgi();
 	ref.make_meta_variable();
-	ref.print_meta_variable();
+	// ref.print_meta_variable();
 	ref.run_cgi();
 	return cgi;
 }

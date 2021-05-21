@@ -28,7 +28,7 @@ Method
 
 void				Client::recv_socket(size_t len)
 {
-	cout << __func__ << endl;
+	// cout << __func__ << endl;
 	if (_r_set.is_set(_socket.fd) == false)
 		return ;
 	size_t test;
@@ -37,32 +37,32 @@ void				Client::recv_socket(size_t len)
 		_state = NULL;
 	}
 
-	cout <<   "vvvvvvvvvvv recv vvvvvvvvvvvvvv" << endl;
-	if (_req.get_stream().size() < 1000)
-		_req.get_stream().print();
-	else
-	{
-		cout << "len: " << _req.get_stream().size() << endl;
-	}
-	cout << "\n^^^^^^^^^^^ recv ^^^^^^^^^^^^^^" << endl;
+	// cout <<   "vvvvvvvvvvv recv vvvvvvvvvvvvvv" << endl;
+	// if (_req.get_stream().size() < 1000)
+	// 	_req.get_stream().print();
+	// else
+	// {
+	// 	cout << "len: " << _req.get_stream().size() << endl;
+	// }
+	// cout << "\n^^^^^^^^^^^ recv ^^^^^^^^^^^^^^" << endl;
 
 	// cout << "recv_byte: " << test << endl << "state_len: " << len << endl;
 }
 //------------------------------------------------------------------------------
 void				Client::send_socket(size_t len)
 {
-	cout << __func__ << endl;
+	// cout << __func__ << endl;
 	if (_w_set.is_set(_socket.fd) == false)
 		return ;
 
-	cout <<   "vvvvvvvvvvv send vvvvvvvvvvvvvv" << endl;
-	if (_res.get_stream().size() < 1000)
-		_res.get_stream().print_line();
-	else
-	{
-		cout << "len: " << _res.get_stream().size() << endl;
-	}
-	cout << "\n^^^^^^^^^^^ send ^^^^^^^^^^^^^^" << endl;
+	// cout <<   "vvvvvvvvvvv send vvvvvvvvvvvvvv" << endl;
+	// if (_res.get_stream().size() < 1000)
+	// 	_res.get_stream().print_line();
+	// else
+	// {
+	// 	cout << "len: " << _res.get_stream().size() << endl;
+	// }
+	// cout << "\n^^^^^^^^^^^ send ^^^^^^^^^^^^^^" << endl;
 
 	if (get_httpres().load_body())
 	{
@@ -101,7 +101,7 @@ void	Client::routine()
 	{
 		if (code == 400)
 			exit(1);
-		cout << "mange error!\n";
+		// cout << "mange error!\n";
 		const string&	path = _req.get_path().get_path_translated();
 
 		_res.set_status_code(code);
@@ -205,7 +205,7 @@ void				Client::set_cgi()
 void				Client::make_meta_variable()
 {
 	#ifdef DBG
-	cout << __func__ << endl;
+	// cout << __func__ << endl;
 	#endif
 
 	_cgi->meta_variables.reserve(17 + _req.get_headers().size());

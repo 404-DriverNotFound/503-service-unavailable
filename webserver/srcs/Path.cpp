@@ -173,7 +173,7 @@ void				Path::set_extension(list<string>& segments)
 
 void				Path::set_flag(const set<string>& location_extensions)
 {
-	cout << __func__ << endl;
+	// cout << __func__ << endl;
 	_flag = flag_not_exist;
 	struct stat		s;
 	if (!_extension.empty() && location_extensions.find(_extension) != location_extensions.end())
@@ -192,7 +192,7 @@ void				Path::set_flag(const set<string>& location_extensions)
 			_flag = flag_file;
 		}
 	}
-	cout << "flag: " << _path_translated << endl;
+	// cout << "flag: " << _path_translated << endl;
 	return;
 }
 
