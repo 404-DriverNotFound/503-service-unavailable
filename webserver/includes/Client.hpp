@@ -35,7 +35,6 @@ class Client
 		State*						_state;
 		HttpReq						_req;
 		HttpRes						_res;
-	public:
 		Cgi*						_cgi;
 	/*==========================================================================
 		Constructor & Destructor
@@ -62,6 +61,7 @@ class Client
 		void						del_cgi();
 		void						clear();
 		void						print_meta_variable();
+		void						manage_error(int code);
 	/*==========================================================================
 		Getter
 	==========================================================================*/

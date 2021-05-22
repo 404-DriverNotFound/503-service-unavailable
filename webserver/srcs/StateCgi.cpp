@@ -11,6 +11,7 @@ StateCgi::~StateCgi()
 
 State*	StateCgi::action(Client& ref)
 {
+	// cout << __func__ << ": cgi" << endl;
 	if (ref.check_cgi_exit())
 	{
 		terminate_cgi(ref);

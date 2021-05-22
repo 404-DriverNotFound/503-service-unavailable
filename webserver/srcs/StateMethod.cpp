@@ -71,15 +71,15 @@ State*		StateMethod::case_file(Client& ref)
 	{
 		return method_get(ref);
 	}
+	else if (method == "POST")
+	{
+		return method_put(ref);
+	}
 	else if (method == "HEAD")
 	{
 		return method_head(ref);
 	}
 	else if (method == "PUT")
-	{
-		return method_put(ref);
-	}
-	else if (method == "POST")
 	{
 		return method_put(ref);
 	}

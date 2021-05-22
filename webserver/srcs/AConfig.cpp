@@ -126,7 +126,7 @@ void			AConfig::set_body_max(string& val)
 {
 	if (val.empty())
 	{
-		_head_max = 0x20000;
+		_body_max = 0x20000;
 		return;
 	}
 	_body_max = ft::atoi(val);

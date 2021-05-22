@@ -380,25 +380,25 @@ Nonmember
 
 std::ostream&		operator<<(std::ostream& os, ConfigGlobal& conf)
 {
-	// cout << "============================" << endl;
-	// cout << "Global Configurations:" << endl;
-	// cout << "----------------------------" << endl;
-	// cout << std::setw(16) << "max connection: "	<< conf.get_max_connection()	<< endl;
-	// cout << std::setw(16) << "temp dir: "		<< conf.get_temp_dir()			<< endl;
-	// cout << std::setw(16) << "timeout: "		<< conf.get_timeout()			<< endl;
-	// cout << std::setw(16) << "worker: "			<< conf.get_worker()			<< endl;
-	// cout << std::setw(16) << "sel timeout: "	<< conf.get_select_timeout()	<< endl;
+	cout << "============================" << endl;
+	cout << "Global Configurations:" << endl;
+	cout << "----------------------------" << endl;
+	cout << std::setw(16) << "max connection: "	<< conf.get_max_connection()	<< endl;
+	cout << std::setw(16) << "temp dir: "		<< conf.get_temp_dir()			<< endl;
+	cout << std::setw(16) << "timeout: "		<< conf.get_timeout()			<< endl;
+	cout << std::setw(16) << "worker: "			<< conf.get_worker()			<< endl;
+	cout << std::setw(16) << "sel timeout: "	<< conf.get_select_timeout()	<< endl;
 
 	ConfigGlobal::port_iterator	it_port = conf.get_ports().begin();
 	while (it_port != conf.get_ports().end())
 	{
-		// cout << "============================" << endl;
-		// cout << "port:" << it_port->first << endl;
-		// cout << "----------------------------" << endl;
+		cout << "============================" << endl;
+		cout << "port:" << it_port->first << endl;
+		cout << "----------------------------" << endl;
 		ConfigGlobal::server_iterator it_server = it_port->second.begin();
 		while (it_server != it_port->second.end())
 		{
-			// cout << it_server->second << endl;
+			cout << it_server->second << endl;
 			++it_server;
 		}
 		++it_port;

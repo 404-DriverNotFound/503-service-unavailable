@@ -44,13 +44,12 @@ void			Cgi::start_cgi()
 		
 		if (execve(Webserver::get_cgi_bin(extension).c_str(), argv, make_meta_variable()))
 		{
-			std::cerr << "CGI doesn't start" << endl;
-			std::cerr << "argv[0]" << argv[0] << endl;
-			std::cerr << "argv[1]" << argv[1] << endl;
-
-			perror("");
-			exit(500);
-			// throw 500;	// status code 500
+			// std::cerr << "CGI doesn't start" << endl;
+			// std::cerr << "argv[0]" << argv[0] << endl;
+			// std::cerr << "argv[1]" << argv[1] << endl;
+			// perror("");
+			// exit(500);
+			throw 500;
 		}
 	}
 	else if (pid < 0)

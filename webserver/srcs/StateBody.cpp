@@ -20,7 +20,7 @@ StateBody::~StateBody()
 //--------------------
 State* StateBody::action(Client& ref)
 {
-	// cout << "Body : " <<  __func__ << endl;
+	// cout <<  __func__  << ": recv body" << endl;
 	if (ref.read_chunked())
 		return method;
 	else

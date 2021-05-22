@@ -245,9 +245,9 @@ void		Stream::print()
 	list<Buffer>::iterator end = _buffers.end();
 	while (it != end)
 	{
-		if (it->end - _it_buffer)
+		if (it->end - it->start)
 		{
-			::write(1, it->start, it->end - _it_buffer);
+			::write(1, it->start, it->end - it->start);
 		}
 		++it;
 	}
@@ -345,39 +345,71 @@ bool		Stream::get_seq_token(string &token, const char* seq)
 //------------------------------------------------------------------------------
 bool		Stream::get_line(string &token)
 {
-	uint8_t*	end;
 	if (_token_factor)
 		token.clear();
-	while (42)
+	while (!_buffers.empty())
 	{
-		if (_buffers.empty())
-		{
-			_token_factor = false;
-			return false;
-		}
-		end = _buffers.front().end;
+		uint8_t*	head = _it_buffer;
+		uint8_t*	end = _buffers.front().end;
+
 		while (_it_buffer != end)
 		{
-			if ('\n' == *_it_buffer)
+			if (*_it_buffer == '\n')
 			{
+				// copy
+				token.insert(token.end(), head, _it_buffer);
+				_token_factor = true;
+				if (*--token.end() == '\r')
+					token.erase(--token.end());
 				++_it_buffer;
 				if (_it_buffer == end)
 					delete_buffer();
-				if (*--token.end() == '\r')
-				{
-					token.erase(--token.end());
-				}
-				_token_factor = true;
 				return true;
 			}
-			token.push_back(*_it_buffer);
 			++_it_buffer;
 		}
+		token.insert(token.end(), head, _it_buffer);
 		delete_buffer();
 	}
 	_token_factor = false;
 	return false;
 }
+
+// bool		Stream::get_line(string &token)
+// {
+// 	uint8_t*	end;
+// 	if (_token_factor)
+// 		token.clear();
+// 	while (42)
+// 	{
+// 		if (_buffers.empty())
+// 		{
+// 			_token_factor = false;
+// 			return false;
+// 		}
+// 		end = _buffers.front().end;
+// 		while (_it_buffer != end)
+// 		{
+// 			if ('\n' == *_it_buffer)
+// 			{
+// 				++_it_buffer;
+// 				if (_it_buffer == end)
+// 					delete_buffer();
+// 				if (*--token.end() == '\r')
+// 				{
+// 					token.erase(--token.end());
+// 				}
+// 				_token_factor = true;
+// 				return true;
+// 			}
+// 			token.push_back(*_it_buffer);
+// 			++_it_buffer;
+// 		}
+// 		delete_buffer();
+// 	}
+// 	_token_factor = false;
+// 	return false;
+// }
 //------------------------------------------------------------------------------
 void		Stream::add_buffer(size_t s)
 {

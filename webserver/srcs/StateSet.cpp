@@ -191,7 +191,8 @@ void	StateSet::case_dir(Client& ref)
 	HttpRes&				res = ref.get_httpres();
 	const string&			path = req.get_path().get_path_translated();
 
-	req.set_file(File::o_create);	// req: temp file
+	if (ref.get_method() != "GET" && ref.get_method() != "HEAD")
+		req.set_file(File::o_create);	// req: temp file
 	if (req.set_index_page(location.get_index_page()) == false) // index page not found
 	{
 		if (location.get_autoindex() == true)	// autoindex on?

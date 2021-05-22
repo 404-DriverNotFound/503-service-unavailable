@@ -137,10 +137,14 @@ void			Webserver::start_server()
 	{
 		#if __BONUS__ == 1
 		pthread_mutex_lock(&select_mutex);
-		// cout << "####################################################################\n";
-		// cout << "Worker " << worker_serial << endl;
+			#ifdef DBG
+			// cout << "####################################################################\n";
+			// cout << "Worker " << worker_serial << endl;
+			#endif
 		#else
-		// cout << "####################################################################\n";
+			#ifdef DBG
+			// cout << "####################################################################\n";
+			#endif
 		#endif
 
 
@@ -211,12 +215,7 @@ void			Webserver::manage_clients()
 		{
 			throw SelectFailed();	// TODO: 아무튼 fd에 이상이 생긴것. 새로운 예외클래스 추가
 		}
-		// cout << "======================"<< endl;
-		// cout << "  socket: " << (*it)->get_socket().fd << endl;
-		// cout << "----------------------"<< endl;
-
 		(*it)->routine();
-
 		if ((*it)->get_state() == NULL)
 		{
 			// cout << "delete socket: " << (*it)->get_socket().fd << endl;

@@ -11,7 +11,7 @@ StateWait::~StateWait()
 
 State*	StateWait::action(Client& ref)
 {
-	// cout << "Wait" << __func__ << endl;
+	// cout  << __func__ << ": Wait" << endl;
 	(void)ref;
 	return waiting;
 }

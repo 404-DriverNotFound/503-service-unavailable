@@ -12,12 +12,13 @@ StateLoadBody::~StateLoadBody()
 
 State*	StateLoadBody::action(Client& ref)
 {
+	// cout << __func__ << ": load body..." << endl;
 	ssize_t		len_read;
 	HttpRes&	res = ref.get_httpres();
 	if (res.get_file_size() <= res.get_stream().get_last_capacity())
 		len_read = res.get_stream().fill(res.get_file_size());
 	else
-		len_read = res.get_stream().fill(0xffffffff);
+		len_read = res.get_stream().fill(0xffff);
 	if (len_read == 0)
 		return waiting;
 	return loadbody;

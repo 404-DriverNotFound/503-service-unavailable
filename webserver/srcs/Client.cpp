@@ -37,16 +37,14 @@ void				Client::recv_socket(size_t len)
 		_state = NULL;
 	}
 
-	// cout <<   "vvvvvvvvvvv recv vvvvvvvvvvvvvv" << endl;
-	// if (_req.get_stream().size() < 1000)
-	// 	_req.get_stream().print();
-	// else
-	// {
-	// 	cout << "len: " << _req.get_stream().size() << endl;
-	// }
-	// cout << "\n^^^^^^^^^^^ recv ^^^^^^^^^^^^^^" << endl;
-
-	// cout << "recv_byte: " << test << endl << "state_len: " << len << endl;
+	#ifdef DBG
+		cout <<   "vvvvvvvvvvv recv vvvvvvvvvvvvvv" << endl;
+		if (_req.get_stream().size() < 500)
+			_req.get_stream().print();
+		else
+			cout << "len: " << _req.get_stream().size() << endl;
+		cout << "\n^^^^^^^^^^^ recv ^^^^^^^^^^^^^^" << endl;
+	#endif
 }
 //------------------------------------------------------------------------------
 void				Client::send_socket()
@@ -55,14 +53,14 @@ void				Client::send_socket()
 	if (_w_set.is_set(_socket.fd) == false)
 		return ;
 
-	// cout <<   "vvvvvvvvvvv send vvvvvvvvvvvvvv" << endl;
-	// if (_res.get_stream().size() < 1000)
-	// 	_res.get_stream().print_line();
-	// else
-	// {
-	// 	cout << "len: " << _res.get_stream().size() << endl;
-	// }
-	// cout << "\n^^^^^^^^^^^ send ^^^^^^^^^^^^^^" << endl;
+	#ifdef DBG
+		cout <<   "vvvvvvvvvvv send vvvvvvvvvvvvvv" << endl;
+		if (_res.get_stream().size() < 500)
+			_res.get_stream().print_line();
+		else
+			cout << "len: " << _res.get_stream().size() << endl;
+		cout << "\n^^^^^^^^^^^ send ^^^^^^^^^^^^^^" << endl;
+	#endif
 
 	if (get_httpres().load_body())
 	{
@@ -85,6 +83,12 @@ bool				Client::is_expired()
 //------------------------------------------------------------------------------
 void	Client::routine()
 {
+	#ifdef DBG
+	cout << "======================"<< endl;
+	cout << "  socket: " << _socket.fd << endl;
+	cout << "----------------------"<< endl;
+	#endif
+
 	// usleep(300000);
 	if (is_expired())
 	{
@@ -99,25 +103,30 @@ void	Client::routine()
 	}
 	catch(int code)
 	{
-		if (code == 400)
-			exit(1);
-		// cout << "mange error!\n";
-		const string&	path = _req.get_path().get_path_translated();
-
-		_res.set_status_code(code);
-		if (_req.set_index_page(_location->get_error_page()) == false)	// error page not found
-		{
-			_res.set_file(File::o_create);
-			::write(_res.get_file_fd(), "Error!", 6);
-			lseek(_res.get_file_fd(), SEEK_SET, 0);
-		}
-		else
-		{
-			_res.set_file(path, File::o_read);
-		}
-		_state = StateSet::check_transfer_type(*this);
+		manage_error(code);
 	}
 	send_socket();
+}
+//------------------------------------------------------------------------------
+void				Client::manage_error(int code)
+{
+	// if (code == 400)
+	// 	exit(1);
+	// cout << "mange error!\n";
+	const string&	path = _req.get_path().get_path_translated();
+
+	_res.set_status_code(code);
+	if (!_location || _req.set_index_page(_location->get_error_page()) == false)	// error page not found
+	{
+		_res.set_file(File::o_create);
+		::write(_res.get_file_fd(), "Error!", 6);
+		lseek(_res.get_file_fd(), SEEK_SET, 0);
+	}
+	else
+	{
+		_res.set_file(path, File::o_read);
+	}
+	_state = StateSet::check_transfer_type(*this);
 }
 //------------------------------------------------------------------------------
 int					Client::client_action()
@@ -150,6 +159,8 @@ void			Client::clear()
 	get_httpreq().clear();
 	get_httpres().clear();
 	del_cgi();
+	_server = 0;
+	_location = 0;
 	_state = State::startline;
 }
 //------------------------------------------------------------------------------
@@ -242,14 +253,7 @@ void				Client::make_meta_variable()
 		_cgi->meta_variables.back() += it_header->second;
 		++it_header;
 	}
-
-	// for (vector<string>::iterator it = _cgi->meta_variables.begin(); it != _cgi->meta_variables.end() ; ++it)
-	// {
-	// 	cout << *it << endl;
-	// }
 }
-
-
 
 /*==============================================================================
 getter

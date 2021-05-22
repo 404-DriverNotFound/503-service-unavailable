@@ -48,6 +48,9 @@ int		main(int argc, char** argv, char** env)
 	try
 	{
 		Webserver::init_static_members(argc, argv, env);
+
+		// cout << Webserver::config << endl;
+		
 		#if __BONUS__ == 1
 			bonus_routine();
 		#else
