@@ -198,7 +198,7 @@ void	StateSet::case_dir(Client& ref)
 		if (location.get_autoindex() == true)	// autoindex on?
 		{
 			res.set_file(File::o_create);	// temp file && autoindex
-			res.set_autoindex_page(path);
+			res.set_autoindex_page(location, path);
 		}
 		else // autoindex off
 		{

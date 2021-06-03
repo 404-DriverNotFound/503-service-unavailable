@@ -1,6 +1,7 @@
 #pragma once
 #include "Http.hpp"
 #include "Time.hpp"
+#include "ConfigLocation.hpp"
 
 /*##############################################################################
 	
@@ -48,7 +49,7 @@ class HttpRes : public Http
 		Setter
 	==========================================================================*/
 		void		set_status_code(int code);
-		void		set_autoindex_page(const string& path);
+		void		set_autoindex_page(const ConfigLocation& location, const string& path);
 		void		set_stream_fd(int fd);
 		void		set_stream_file_fd();
 		void		set_file(File::flag flag = File::o_create);

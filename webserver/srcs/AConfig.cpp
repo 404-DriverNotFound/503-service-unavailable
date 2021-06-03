@@ -141,12 +141,15 @@ void			AConfig::set_autoindex(string& val)
 		return;
 	}
 	if (val == "on")
+	{
 		_autoindex = true;
+	}
 	else if (val == "off")
+	{
 		_autoindex = false;
+	}
 	else
 		throw ConfigElementInvalid();
-	
 }
 
 /*------------------------------------------------------------------------------

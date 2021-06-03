@@ -32,10 +32,36 @@ void		HttpRes::set_status_code(int code)
 }
 //------------------------------------------------------------------------------
 
-void		HttpRes::set_autoindex_page(const string& path)
+void		HttpRes::set_autoindex_page(const ConfigLocation& location, const string& path)
 {
-	ft::make_dir_list(path, _file->get_fd());
+	DIR				*dir_ptr		=	NULL;
+	struct dirent	*file			=	NULL;
+	if (ft::is_dir(path.c_str()))
+	{
+		dir_ptr = opendir(path.c_str());
+		while ((file = readdir(dir_ptr)) != NULL)
+		{
+			string	total;
+			string	dfname;
+			string	url = "." + location.get_name();
+			if (ft::strcmp(file->d_name, ".") == 0)
+			{
+				continue;
+			}
+			total += "<A href = \"";
+			url += file->d_name;
+			total += url;
+			total += "\" target = \"self\">";
+			total += file->d_name;
+			total += "</A>";
+			total += "<br>";
+			write(_file->get_fd(), total.c_str(), strlen(total.c_str()));
+		}
+		lseek(_file->get_fd(), SEEK_SET, 0);
+		closedir(dir_ptr);
+	}
 }
+
 //------------------------------------------------------------------------------
 void			HttpRes::set_stream_fd(int fd)
 {

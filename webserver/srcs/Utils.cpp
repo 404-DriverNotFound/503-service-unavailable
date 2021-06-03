@@ -588,7 +588,6 @@ void		ft::make_dir_list(const string& path, int fd)
 {
 	DIR				*dir_ptr		=	NULL;
 	struct dirent	*file			=	NULL;
-
 	if (ft::is_dir(path.c_str()))
 	{
 		dir_ptr = opendir(path.c_str());
@@ -611,7 +610,8 @@ void		ft::make_dir_list(const string& path, int fd)
 			total += "<br>";
 			write(fd, total.c_str(), strlen(total.c_str()));
 		}
-		close(fd);
+		lseek(fd, SEEK_SET, 0);
+		// close(fd);
 		closedir(dir_ptr);
 	}
 }

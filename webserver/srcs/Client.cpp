@@ -4,6 +4,7 @@
 #include "../includes/StateSet.hpp"
 #include "../includes/StateStartLine.hpp"
 #include "../includes/StateDone.hpp"
+// #define DBG
 
 Client::Client(int accept_fd, const server_container& ref, FdSet& r_set, FdSet& w_set)
 : _socket(accept_fd),
@@ -39,7 +40,7 @@ void				Client::recv_socket(size_t len)
 
 	#ifdef DBG
 		cout <<   "vvvvvvvvvvv recv vvvvvvvvvvvvvv" << endl;
-		if (_req.get_stream().size() < 500)
+		if (_req.get_stream().size() < 1000)
 			_req.get_stream().print();
 		else
 			cout << "len: " << _req.get_stream().size() << endl;
@@ -55,7 +56,7 @@ void				Client::send_socket()
 
 	#ifdef DBG
 		cout <<   "vvvvvvvvvvv send vvvvvvvvvvvvvv" << endl;
-		if (_res.get_stream().size() < 500)
+		if (_res.get_stream().size() < 1000)
 			_res.get_stream().print_line();
 		else
 			cout << "len: " << _res.get_stream().size() << endl;
