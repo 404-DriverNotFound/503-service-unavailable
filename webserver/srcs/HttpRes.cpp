@@ -55,7 +55,7 @@ void		HttpRes::set_autoindex_page(const ConfigLocation& location, const string& 
 			total += file->d_name;
 			total += "</A>";
 			total += "<br>";
-			write(_file->get_fd(), total.c_str(), strlen(total.c_str()));
+			write(_file->get_fd(), total.c_str(), ft::strlen(total.c_str()));
 		}
 		lseek(_file->get_fd(), SEEK_SET, 0);
 		closedir(dir_ptr);

@@ -49,6 +49,7 @@ LIST_SRCS = \
 	
 DIR_SRCS = ./webserver/srcs/
 DIR_OBJS = ./objs/
+DIR_TMP = ./tmp/
 
 SRCS = $(addprefix $(DIR_SRCS), $(addsuffix .cpp, $(LIST_SRCS)))
 OBJS = $(addprefix $(DIR_OBJS), $(addsuffix .o, $(LIST_SRCS)))
@@ -69,10 +70,13 @@ all : $(NAME)
 $(DIR_OBJS):
 	mkdir $(DIR_OBJS)
 
-$(NAME) : $(DIR_OBJS) $(OBJS)
+$(DIR_TMP):
+	mkdir $(DIR_TMP)
+
+$(NAME) : $(DIR_OBJS) $(OBJS) $(DIR_TMP)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME)
 
-bonus : $(DIR_OBJS) set_bonus $(OBJS)
+bonus : $(DIR_OBJS) set_bonus $(OBJS) $(DIR_TMP)
 	$(CC) $(CFLAG) $(OBJS) -o $(NAME) -lpthread
 	rm -rf bonus_file
 
@@ -94,6 +98,7 @@ clean:
 	$(RM) $(OBJS)
 
 fclean:
+	$(RM) $(DIR_TMP)
 	$(RM) $(DIR_OBJS)
 	$(RM) $(NAME)
 

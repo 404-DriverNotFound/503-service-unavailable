@@ -1,32 +1,56 @@
 [global]
-max_connection 300
-server
-	root ./root
-	temp_file_dir /Users/minckim/goinfre
-	server_name localhost
-	port 9191
-	error_page error.html
-	index index.html
-	head_length 8000
-	body_length 10000000
-	autoindex on
-	timeout 10
-	location /
-		method GET
-		index index.html index.php index.txt
-	location /put_test
-		root /
-		index index.html index.php index.txt
-		method PUT
-		cgi_extension .php .bla
-	location /post_body
-		root /
-		index index.html index.php index.txt
-		method POST PUT GET
-		cgi_extension .php .bla
-		body_length 100
-	location /directory
-		root /YoupiBanane
-		index youpi.bad_extension
-		method GET POST
-		cgi_extension .php .bla
+max_connection	300
+temp_dir		./tmp
+cgi_bin			.py root
+timeout			500
+select_timeout	2
+worker			6
+
+[server]
+root			/
+name			localhost
+port			9191
+error_page		error.html
+index_page		index.html
+head_max		8000
+body_max		10000000
+
+[location]
+name			/
+root			/
+method			GET
+autoindex		on
+
+[location]
+name			/put_test
+root			/
+index_page		index.html index.php index.txt
+error_page		error.html
+method			PUT
+cgi_extension	.php .bla
+
+[location]
+name			/post_body
+root			/
+index_page		index.html index.php index.txt
+error_page		error.html
+method			POST PUT GET
+cgi_extension	.php .bla
+body_max		100
+
+[location]
+name			/directory
+root			/YoupiBanane
+index_page		youpi.bad_extension
+error_page		error.html
+method			GET POST
+cgi_extension	.php .bla
+body_max		200000000
+
+[location]
+name			/YoupiBanane
+root			/YoupiBanane
+method			GET POST
+cgi_extension	.php .bla
+body_max		200000000
+autoindex		on

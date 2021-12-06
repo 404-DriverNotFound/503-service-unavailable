@@ -1,25 +1,27 @@
 [global]
 max_connection	300
-temp_dir		/Users/minckim/goinfre/tmp
+temp_dir		./tmp
 cgi_bin			.py root
 timeout			500
 select_timeout	2
 worker			6
 
 [server]
-root			/Users/minckim/goinfre/root
+root			./root
 name			localhost
 port			9191
 error_page		error.html
 index_page		index.html
 head_max		8000
 body_max		10000000
+autoindex		on
 
 [location]
 name			/
 root			/
 method			GET
-autoindex		on
+index_page		index.html index.php index.txt
+error_page		error.html
 
 [location]
 name			/put_test
@@ -46,11 +48,4 @@ error_page		error.html
 method			GET POST
 cgi_extension	.php .bla
 body_max		200000000
-
-[location]
-name			/YoupiBanane
-root			/YoupiBanane
-method			GET POST
-cgi_extension	.php .bla
-body_max		200000000
-autoindex		on
+ 
