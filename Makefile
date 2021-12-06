@@ -101,5 +101,7 @@ fclean:
 	$(RM) $(DIR_TMP)
 	$(RM) $(DIR_OBJS)
 	$(RM) $(NAME)
+	$(RM) ./root/multiple_same
+	$(RM) ./root/file_should_exist_after
 
 re: fclean all
